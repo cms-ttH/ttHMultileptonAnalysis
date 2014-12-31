@@ -1,11 +1,11 @@
 #input and output file names
-input file location: histos_3l_ttW_studies_2t_lepCut
-input file label: ttV_Aug11
-output file location: pdf_3l_ttW_studies_2t_lepCut_blind
+input file location: histos/3l_ttW_studies_2t_lepCut
+input file label: ttV_Nov14
+output file location: pdf/3l_ttW_studies_2t_lepCut
 
 #drawing options
 skip systematics: true
-draw ratio plot: false
+draw ratio plot: true
 draw legend: true
 log scale: false
 save png: true
@@ -71,15 +71,17 @@ systematics:
 # Samples drawn on top, scaling (1.0, 2.0, "norm" for area-normalized) 
 
 signal samples:
-    ttbarW:
-    #ttW:
+    #ttbarW:
+    ttW:
         draw name: "t#bar{t}W"
-        color: kGreen-5
-        #color: kBlue
+        #color: kGreen-5
+        color: kBlue
         samples: [ttbarW]
-        stack or line: stack
+        #stack or line: stack
+        stack or line: line
         line width: 2 # must be integer
-        scale: 1.0
+        #scale: 1.0
+        scale: "norm"
 
 #Samples in each group will be added together and appear as a single entry in the stack plot
 background samples:
@@ -100,53 +102,42 @@ background samples:
     wz_lll:
         draw name: "WZ"
         color: kViolet-4
-        samples: [wz_lf_lll, wz_cc_lll, wz_b_lll, wz_bb_lll]
+        samples: [wz_lll]
 
-    zz_lowmll:
-        draw name: "ZZ/ZZ*"
-        color: kAzure-8
-        samples: [zz_lowmll]
+#     zz_lowmll:
+#         draw name: "ZZ/ZZ*"
+#         color: kAzure-8
+#         samples: [zz_lowmll]
                                 
     zz_llll:
         draw name: "ZZ"
         color: kAzure-9
-        samples: [zz_lf_llll, zz_cc_llll, zz_b_llll, zz_bb_llll]
+        samples: [zz_llll]
         
-    Others:
-        draw name: "Rare SM"
-        color: kSpring+8
-        samples: [tbZ_ll, WpWpqq, WWDPI] #WmWmqq
-
-
-    triboson:
-        draw name: "triboson"
+    multiboson:
+        draw name: "multiboson"
         color: kViolet
-        samples: [www, wwz]
+        samples: [www, wwz] #wzz, zzz
+        
+    ttbarX:
+        draw name: "t#bar{t}+X"
+        color: kSpring+8
+        samples: [tbZ_ll, ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
 
-    ttbarGStar:
-        draw name: "t#bar{t}G*"
-        color: kCyan-3
-        samples: [ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt]
-                                        
+#     ttH125:
+#         draw name: "t#bar{t}H"
+#         color: kRed
+#         samples: [ttH125]
+
     ttbarZ:
         draw name: "t#bar{t}Z"
         color: kSpring+2
         samples: [ttbarZ]
                                         
-    ttbarWW:
-        draw name: "t#bar{t}WW"
-        color: kBlue-9
-        samples: [ttbarWW]
-                                        
-    ttH125:
-        draw name: "t#bar{t}H125"
-        color: kRed
-        samples: [ttH125]
-
-#     ttbarW:
-#         draw name: "t#bar{t}W"
-#         color: kGreen-5
-#         samples: [ttbarW]
+    ttbarW:
+        draw name: "t#bar{t}W"
+        color: kGreen-5
+        samples: [ttbarW]
         
 #distribution: [title, underflow, overflow]
 distributions:
@@ -154,25 +145,28 @@ distributions:
     numJets: ['number of jets', true, true]
     numLooseBJets: ['number of loose b-tagged jets', true, true]
     numMediumBJets: ['number of medium b-tagged jets', true, true]
-    numTightBJets: ['number of tight b-tagged jets', true, true]
-    all_SS_leptons_by_pt_2_pt: ['Second SS lepton pT', true, true]
-    all_SS_leptons_by_pt_2_eta: ['Second SS lepton eta', true, true]
-    #all_SS_leptons_by_pt_2_jetBTagCSV: ['Second SS lepton jetBTagCSV', true, true]
-    met_ld: ['MetLD', true, true]
-    all_SS_leptons_by_pt_1_pt: ['First SS lepton pT', true, true]
-    all_OS_leptons_by_pt_1_pt: ['OS lepton pT', true, true]
-    jets_by_pt_1_pt: ['First jet pT', false, true]
-    jets_by_pt_2_pt: ['Second jet pT', false, true]
-    min_mass_leplep_all: ['min dilepton mass', true, true]
-    min_mass_leplep_OS: ['min OS dilepton mass', true, true]
-    met_pt: ['MET', true, true]
-    mht: ['MHT', true, true]
-    sum_pt: ['Sum pT', true, true]
-    sum_jet_pt: ['Sum jet pT', true, true]
-    mass_of_jets: ['Mass of all jets', true, true]
-    jets_MT_mass_ratio: ['MT/mass of all jets', true, true]
-    everything_MT_mass_ratio: ['MT/mass of everything', true, true]
+#     numTightBJets: ['number of tight b-tagged jets', true, true]
+#     all_SS_leptons_by_pt_2_pt: ['Second SS lepton pT', true, true]
+#     all_SS_leptons_by_pt_2_eta: ['Second SS lepton eta', true, true]
+#     #all_SS_leptons_by_pt_2_jetBTagCSV: ['Second SS lepton jetBTagCSV', true, true]
+#     met_ld: ['MetLD', true, true]
+#     all_SS_leptons_by_pt_1_pt: ['First SS lepton pT', true, true]
+#     all_OS_leptons_by_pt_1_pt: ['OS lepton pT', true, true]
+#     jets_by_pt_1_pt: ['First jet pT', false, true]
+#     jets_by_pt_2_pt: ['Second jet pT', false, true]
+#     min_mass_leplep_all: ['min dilepton mass', true, true]
+#     min_mass_leplep_OS: ['min OS dilepton mass', true, true]
+#     met_pt: ['MET', true, true]
+#     mht: ['MHT', true, true]
+#     sum_pt: ['Sum pT', true, true]
+#     sum_jet_pt: ['Sum jet pT', true, true]
+#     mass_of_jets: ['Mass of all jets', true, true]
+#     jets_MT_mass_ratio: ['MT/mass of all jets', true, true]
+#     everything_MT_mass_ratio: ['MT/mass of everything', true, true]
 
-    Match_ttW_3l_Bb: ['match score Bb', true, true]
+#     Match_ttW_3l_Bb: ['match score Bb', true, true]
     FinalBDT: ['final BDT', false, false]
+    FinalBDT_Oct31: ['final BDT Oct31', false, false]
+    #FinalBDT_blind: ['final BDT', false, false]
+    #FinalBDT_Oct31_blind: ['final BDT Oct31', false, false]
 

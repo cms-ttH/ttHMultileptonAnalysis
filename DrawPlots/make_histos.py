@@ -22,6 +22,8 @@ def main():
     parser.add_argument('-lm', '--limits', action='store_true', help='Limit mode: this uses systematics and distributions for limits.')
     args = parser.parse_args()
 
+    print os.environ['HOSTNAME']
+
     with open(args.config_file_name) as config_file:
         config = yaml.load(config_file)
 
@@ -44,8 +46,9 @@ def main():
     output_directory = config['output directory']
     if args.limits:
         output_directory = config['limits output directory']
-        
+
     plot_helper.make_sure_directories_exist([os.path.join(output_directory, category) for category in lepton_categories])
+
     if args.web:
         www_plot_directories = [os.path.join('plots', config['label'], output_directory, lepton_category) for lepton_category in lepton_categories]
         plot_helper.setup_web_posting(www_plot_directories, 4, args.config_file_name)
@@ -150,6 +153,8 @@ def submit_batch_jobs(config, samples, lepton_categories, jet_tag_categories):
     argument_string = ' '.join([a for a in sys.argv[1:] if a != '-b' and a != '-batch'])
 
     condor_header = 'universe = vanilla \nexecutable = make_histos.py \nnotification = Never \ngetenv = True \n+IsExpressJob = False'
+    ### Setting to run on 32 open cores on earth
+    #condor_header = 'universe = vanilla \nexecutable = make_histos.py \nnotification = Never \ngetenv = True \n+IsExpressJob = True'
     for sample in samples:
         for lepton_category in lepton_categories:
             for jet_tag_category in jet_tag_categories:
@@ -159,6 +164,8 @@ def submit_batch_jobs(config, samples, lepton_categories, jet_tag_categories):
                 condor_submit_file.write('\nlog = batch_logs/%s/%s_%s_%s_%s.log' % (config['label'], config['label'], sample, jet_tag_category, lepton_category))
                 condor_submit_file.write('\noutput = batch_logs/%s/%s_%s_%s_%s.stdout' % (config['label'], config['label'], sample, jet_tag_category, lepton_category))
                 condor_submit_file.write('\nerror = batch_logs/%s/%s_%s_%s_%s.stderr' % (config['label'], config['label'], sample, jet_tag_category, lepton_category))
+                #condor_submit_file.write('\nrequirements = (machine != "skynet005.crc.nd.edu" && machine != "skynet006.crc.nd.edu" && machine != "skynet008.crc.nd.edu")')
+                condor_submit_file.write('\nRequestMemory = 1000')
                 condor_submit_file.write('\nqueue 1')
                 condor_submit_file.close()
 

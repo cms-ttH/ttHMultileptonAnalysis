@@ -152,7 +152,7 @@ def draw_histos(args, config, distribution, tree, output_file, cat):
 
     ## Draw the signal histograms
     canvas = ROOT.TCanvas('hist '+distribution+cat_str, 'hist '+distribution+cat_str)
-    hist = ROOT.TH1F('hist_'+distribution+cat_str, 'hist_'+distribution+cat_str, nBins, xMin, xMax)
+    hist = ROOT.TH1D('hist_'+distribution+cat_str, 'hist_'+distribution+cat_str, nBins, xMin, xMax)
 
     ## Draw first variable
     tree.Draw(vars[0]+' >> hist_'+distribution+cat_str, sel_strings[vars[0]].draw_string, '')
@@ -168,7 +168,7 @@ def draw_histos(args, config, distribution, tree, output_file, cat):
         bkg_vars_new[var] = bkg_sel_strings[var].keys()
 
     bkg_canvas = ROOT.TCanvas('bkg_hist '+distribution+cat_str, 'bkg hist '+distribution+cat_str)
-    bkg_hist = ROOT.TH1F('bkg_hist_'+distribution+cat_str, 'bkg_hist_'+distribution+cat_str, nBins, xMin, xMax)
+    bkg_hist = ROOT.TH1D('bkg_hist_'+distribution+cat_str, 'bkg_hist_'+distribution+cat_str, nBins, xMin, xMax)
 
     ## Draw for first signal variable and first background variable
     tree.Draw(bkg_vars_new[vars[0]][0]+' >> bkg_hist_'+distribution+cat_str, bkg_sel_strings[var][bkg_vars_new[vars[0]][0]], '')
@@ -183,7 +183,7 @@ def draw_histos(args, config, distribution, tree, output_file, cat):
 
     ## Draw the ratio histogram
     ratio_canvas = ROOT.TCanvas('ratio '+distribution+cat_str, 'ratio '+distribution+cat_str)
-    ratio_hist = ROOT.TH1F('ratio_'+distribution+cat_str, 'ratio_'+distribution+cat_str, nBins, xMin, xMax)
+    ratio_hist = ROOT.TH1D('ratio_'+distribution+cat_str, 'ratio_'+distribution+cat_str, nBins, xMin, xMax)
 
     ## Fill each bin with sig / bkg
     for i in range(nBins):
@@ -264,7 +264,7 @@ def draw_corrs(args, config, distribution, tree, output_file, cat):
     ## Number of bins for the correlation histogram
     nBins_corr = config['distributions'][distribution]['num corr bins']
     bin_width_corr = (xMax - xMin) / nBins_corr
-    corr = ROOT.TH1F('corr_'+distribution+'_'+dependencies[0]+cat_str, 'corr_'+distribution+'_'+dependencies[0]+cat_str, nBins_corr, xMin, xMax)
+    corr = ROOT.TH1D('corr_'+distribution+'_'+dependencies[0]+cat_str, 'corr_'+distribution+'_'+dependencies[0]+cat_str, nBins_corr, xMin, xMax)
 
     ## Get the ratio histograms for the dependent and independent distributions
     ratio_dist = output_file.Get('ratio_'+distribution+cat_str)
@@ -275,8 +275,8 @@ def draw_corrs(args, config, distribution, tree, output_file, cat):
         avg_ratio_dist = 0
         avg_ratio_indep = 0
         ## Make temporary histograms for this correlation bin
-        hist_indep = ROOT.TH1F('hist_indep_'+dependencies[0]+cat_str, 'hist_indep_'+dependencies[0]+cat_str, nBins_indep, xMin_indep, xMax_indep)
-        hist_dist = ROOT.TH1F('hist_dist_'+dependencies[0]+cat_str, 'hist_dist_'+dependencies[0]+cat_str, nBins, xMin, xMax)
+        hist_indep = ROOT.TH1D('hist_indep_'+dependencies[0]+cat_str, 'hist_indep_'+dependencies[0]+cat_str, nBins_indep, xMin_indep, xMax_indep)
+        hist_dist = ROOT.TH1D('hist_dist_'+dependencies[0]+cat_str, 'hist_dist_'+dependencies[0]+cat_str, nBins, xMin, xMax)
         ## Loop over variables for independent distribution
         for var_indep in vars_indep:
             sel_string = plot_helper.DrawStringMaker()

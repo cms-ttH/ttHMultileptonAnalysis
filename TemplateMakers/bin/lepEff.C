@@ -114,7 +114,7 @@ int main (int argc, char** argv) {
 //   GenericCollection<BNleptonCollection> preselectedLeptons(beanHelper);
 //   GenericCollection<BNleptonCollection> tightLooseLeptons(beanHelper);
   GenericCollection<BNleptonCollection> tightLoosePreselectedLeptons(beanHelper);
-
+  
   GenericCollection<BNjetCollection> jets(beanHelper);
   GenericCollection<BNjetCollection> jetsByCSV(beanHelper);
   GenericCollection<BNjetCollection> looseCSVJets(beanHelper);
@@ -140,7 +140,8 @@ int main (int argc, char** argv) {
 //   BTagWeights myBTagWeights(WPs, &(jets.ptrToItems), "skipSyst");
 //   kinVars.push_back(&myBTagWeights);
 
-  PUWeights myPU(&lepHelper, &(events.ptrToItems), "skipSyst");
+  //PUWeights myPU(&lepHelper, &(events.ptrToItems), "skipSyst");
+  PUWeights myPU(&lepHelper, &(events.ptrToItems));
   kinVars.push_back(&myPU);
 
   TopPtWeights myTopPt(&lepHelper, &(mcParticles.ptrToItems), "skipSyst");
@@ -191,7 +192,8 @@ int main (int argc, char** argv) {
   GenericCollectionSizeVariable<BNjetCollection> numJets(&(jets.ptrToItems), "numJets");
   kinVars.push_back(&numJets);
   numJets.setCutMin(2);
-  //cutVars.push_back(&numJets);
+//   // Use for MatchLD and BDT validation
+//   cutVars.push_back(&numJets);
 
   GenericCollectionSizeVariable<BNjetCollection> numLooseBJets(&(looseCSVJets.ptrToItems), "numLooseBJets");
   kinVars.push_back(&numLooseBJets);
@@ -199,7 +201,8 @@ int main (int argc, char** argv) {
   GenericCollectionSizeVariable<BNjetCollection> numMediumBJets(&(mediumCSVJets.ptrToItems), "numMediumBJets");
   kinVars.push_back(&numMediumBJets);
   numMediumBJets.setCutMin(1);
-  //cutVars.push_back(&numMediumBJets);
+//   // Use for MatchLD and BDT validation
+//   cutVars.push_back(&numMediumBJets);
 
   GenericCollectionSizeVariable<BNmuonCollection> numAllMuons(&(tightLoosePreselectedMuons.ptrToItems), "numAllMuons");
   kinVars.push_back(&numAllMuons);
@@ -231,11 +234,14 @@ int main (int argc, char** argv) {
   kinVars.push_back(&numTightLeptons);
 
   ////////////////////////// lep MVAs
-  LepMVAs<BNleptonCollection> myLepMVAsAllLeptons(&lepHelper, &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 2);
-  kinVars.push_back(&myLepMVAsAllLeptons);
+//   LepMVAs<BNleptonCollection> myLepMVAsAllLeptons(&lepHelper, &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 2);
+//   kinVars.push_back(&myLepMVAsAllLeptons);
 
   LepCuts<BNleptonCollection> myLepCutsAllLeptons(beanHelper, &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 2);
   kinVars.push_back(&myLepCutsAllLeptons);
+
+  DBCorrectedRelIsoDR04s myDBCorrectedRelIsoDR04s(&lepHelper, &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 2);
+  kinVars.push_back(&myDBCorrectedRelIsoDR04s);
 
   ////////////////////////// composite objects
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection>
@@ -248,7 +254,7 @@ int main (int argc, char** argv) {
     myZLikeMassLepLepSFOS("mass", "closest_to", "ZLike_mass_leplep_SFOS",
                           &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
                           &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
-                          91.2, "same_flavour", "opposite_sign");
+                          91.0, "same_flavour", "opposite_sign");
   kinVars.push_back(&myZLikeMassLepLepSFOS);
   
   TwoObjectKinematic<BNleptonCollection, BNjetCollection>
@@ -270,23 +276,23 @@ int main (int argc, char** argv) {
   summaryTree->Branch("dataset", (void*)dataset, "dataset/C");
 
   ////////// all leptons //////////
-  //Used for muon tight charge
-  GenericCollectionMember<int, BNleptonCollection>
-  allLeptonNumberOfValidTrackerHitsInnerTrack(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "numberOfValidTrackerHitsInnerTrack", "all_leptons_by_pt", KinematicVariableConstants::INT_INIT, 2);
-  kinVars.push_back(&allLeptonNumberOfValidTrackerHitsInnerTrack);
+//   //Used for muon tight charge
+//   GenericCollectionMember<int, BNleptonCollection>
+//   allLeptonNumberOfValidTrackerHitsInnerTrack(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "numberOfValidTrackerHitsInnerTrack", "all_leptons_by_pt", KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfValidTrackerHitsInnerTrack);
 
-  //Used for electron tight charge
-  GenericCollectionMember<int, BNleptonCollection>
-  allLeptonIsGsfCtfScPixChargeConsistent(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "isGsfCtfScPixChargeConsistent", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
-  kinVars.push_back(&allLeptonIsGsfCtfScPixChargeConsistent);
+//   //Used for electron tight charge
+//   GenericCollectionMember<int, BNleptonCollection>
+//   allLeptonIsGsfCtfScPixChargeConsistent(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "isGsfCtfScPixChargeConsistent", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonIsGsfCtfScPixChargeConsistent);
 
-  GenericCollectionMember<int, BNleptonCollection>
-  allLeptonPassConvVeto(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "passConvVeto", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
-  kinVars.push_back(&allLeptonPassConvVeto);
+//   GenericCollectionMember<int, BNleptonCollection>
+//   allLeptonPassConvVeto(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "passConvVeto", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonPassConvVeto);
 
-  GenericCollectionMember<int, BNleptonCollection>
-  allLeptonNumberOfExpectedInnerHits(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "numberOfExpectedInnerHits", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
-  kinVars.push_back(&allLeptonNumberOfExpectedInnerHits);
+//   GenericCollectionMember<int, BNleptonCollection>
+//   allLeptonNumberOfExpectedInnerHits(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "numberOfExpectedInnerHits", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfExpectedInnerHits);
 
 //   //Should be used for muon tight charge, but unfilled in BEANs
 //   GenericCollectionMember<double, BNleptonCollection>
@@ -308,9 +314,9 @@ int main (int argc, char** argv) {
   allLeptonEta(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "eta", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
   kinVars.push_back(&allLeptonEta);
 
-  GenericCollectionMember<double, BNleptonCollection>
-  allLeptonPhi(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "phi", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-  kinVars.push_back(&allLeptonPhi);
+//   GenericCollectionMember<double, BNleptonCollection>
+//   allLeptonPhi(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "phi", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonPhi);
 
   GenericCollectionMember<int, BNleptonCollection>
   allLeptonTkCharge(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems), "tkCharge", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
@@ -405,9 +411,9 @@ int main (int argc, char** argv) {
   metPt(Reflex::Type::ByName("BNmet"), &(met.ptrToItems), "pt", "met",  KinematicVariableConstants::FLOAT_INIT, 1);
   kinVars.push_back(&metPt);
 
-  GenericCollectionMember<double, BNmetCollection>
-  met1d(Reflex::Type::ByName("BNmet"), &(met.ptrToItems), "pt", "metpfType1CorrectedMetBN",  KinematicVariableConstants::FLOAT_INIT, 1);
-  kinVars.push_back(&met1d);
+//   GenericCollectionMember<double, BNmetCollection>
+//   met1d(Reflex::Type::ByName("BNmet"), &(met.ptrToItems), "pt", "metpfType1CorrectedMetBN",  KinematicVariableConstants::FLOAT_INIT, 1);
+//   kinVars.push_back(&met1d);
 
   int numExtraPartons = -99;
   summaryTree->Branch("numExtraPartons", &numExtraPartons);
@@ -426,44 +432,46 @@ int main (int argc, char** argv) {
   eventNumber(Reflex::Type::ByName("BNevent"),  &(events.ptrToItems), "evt", "eventInfo",  KinematicVariableConstants::INT_INIT, 1);
   kinVars.push_back(&eventNumber);
 
-  MetLD myMetLD(&myMHT, &metPt);
-  kinVars.push_back(&myMetLD);
-
-  ////////// Final BDT inputs ////////////
-
-  cutVars.push_back(&numJets);
-  cutVars.push_back(&numMediumBJets);
-
-  //// SS ttW
-  //myMatchTester_ttW_SS
-  //myMatchTester_ttbar_fake_SS
-  //myMetLD  
-  GenericCollectionMember<double, BNjetCollection> allJetByCSVBtagCombinedSecVertex(Reflex::Type::ByName("BNjet"), &(jetsByCSV.ptrToItems),
-                                                                                    "btagCombinedSecVertex", "jets_by_CSV",  KinematicVariableConstants::FLOAT_INIT, 2);
-  kinVars.push_back(&allJetByCSVBtagCombinedSecVertex);
+//   ///////////////////////////////////////
+//   // Begin for MatchLD and BDT validation
+//   ///////////////////////////////////////
   
-  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection>
-    myMTOfEverything("MT", "vector_sum", "MT_of_everything",
-                     &(met.ptrToItems), "met", 1, 1,
-                     &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 2,
-                     &(jets.ptrToItems), "jets_by_pt", 1, 99);
-  kinVars.push_back(&myMTOfEverything);
+//   ////////// Final BDT inputs ////////////
+
+//   //// SS ttW
+//   //myMatchTester_ttW_SS
+//   //myMatchTester_ttbar_fake_SS
+//   //myMetLD  
+//   GenericCollectionMember<double, BNjetCollection> allJetByCSVBtagCombinedSecVertex(Reflex::Type::ByName("BNjet"), &(jetsByCSV.ptrToItems),
+//                                                                                     "btagCombinedSecVertex", "jets_by_CSV",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allJetByCSVBtagCombinedSecVertex);
   
-  //// 3l ttW
-  //numMediumBJets
-  //MT_of_everything
-  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection>
-    myMassOfEverything("mass", "vector_sum", "mass_of_everything",
-                     &(met.ptrToItems), "met", 1, 1,
-                     &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 2,
-                     &(jets.ptrToItems), "jets_by_pt", 1, 99);
-  kinVars.push_back(&myMassOfEverything);
+//   ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection>
+//     myMTOfEverything("MT", "vector_sum", "MT_of_everything",
+//                      &(met.ptrToItems), "met", 1, 1,
+//                      &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 2,
+//                      &(jets.ptrToItems), "jets_by_pt", 1, 99);
+//   kinVars.push_back(&myMTOfEverything);
+  
+//   //// 3l ttW
+//   //numMediumBJets
+//   //MT_of_everything
+//   ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection>
+//     myMassOfEverything("mass", "vector_sum", "mass_of_everything",
+//                      &(met.ptrToItems), "met", 1, 1,
+//                      &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 2,
+//                      &(jets.ptrToItems), "jets_by_pt", 1, 99);
+//   kinVars.push_back(&myMassOfEverything);
 
-  //Slight modification of MatchTester_ttW_3l
-  MatchTester_ttbar_ll myMatchTester_ttbar_ll(&(tightLoosePreselectedLeptons.ptrToItems), &(jetsByCSV.ptrToItems));
-  kinVars.push_back(&myMatchTester_ttbar_ll);
+//   //Slight modification of MatchTester_ttW_3l
+//   MatchTester_ttbar_ll myMatchTester_ttbar_ll(&(tightLoosePreselectedLeptons.ptrToItems), &(jetsByCSV.ptrToItems));
+//   kinVars.push_back(&myMatchTester_ttbar_ll);
 
-  ////////// End of Final BDT inputs ////////////
+//   ////////// End of Final BDT inputs ////////////
+  
+//   ///////////////////////////////////////
+//   // End for MatchLD and BDT validation
+//   ///////////////////////////////////////
   
 
   if (debug > 9) { cout << "Hooking variables to tree" << endl;}
@@ -498,12 +506,12 @@ int main (int argc, char** argv) {
     tightLoosePreselectedMuons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatMuonsLoosePFlow");
     tightLoosePreselectedElectrons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatElectronsGSF");
 
-    //lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //Apply Rochester for data only
-    bool applyRochester = (lepHelper.isData);
-    if (applyRochester) lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //bool applySmearing = !(lepHelper.isData);
-    //No smearing
+    //New lepton energy scaling and smearing for MC -AWB 13/11/14
+    bool lepEnergyCorr = !(lepHelper.isData);
+    if (lepEnergyCorr) lepHelper.shiftLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 0.9936, 0.996, 0.988);
+    if (lepEnergyCorr) lepHelper.smearLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 1.0);
+    if (lepEnergyCorr) lepHelper.apply_SMP_12_011_correction_mu(tightLoosePreselectedMuons.rawItems, true);
+    //No smearing of other lepton variables
     bool applySmearing = false;
     if (applySmearing) {
       lepHelper.fillMCMatchAny(tightLoosePreselectedMuons.rawItems, mcParticles.rawItems, 0.3);
@@ -564,16 +572,16 @@ int main (int argc, char** argv) {
 //     tightLooseLeptons.pushBackAndSort(tightLooseMuons.items);
     tightLoosePreselectedLeptons.resetAndPushBack(tightLoosePreselectedElectrons.items);
     tightLoosePreselectedLeptons.pushBackAndSort(tightLoosePreselectedMuons.items);
-
+    
     jets.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatJetsPFlow");
     jets.cleanJets(tightLoosePreselectedLeptons.items);
     jets.correctRawJets(jetSyst);
-    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, '-');
+    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, '-');
     jetsByCSV.initializeRawItemsSortedByCSV(jets.items);
     looseCSVJets.initializeRawItems(jets.rawItems);
-    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'L');
+    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'L');
     mediumCSVJets.initializeRawItems(jets.rawItems);
-    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'M');
+    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'M');
 
     met.initializeRawItems(ev, "BNproducer","patMETsPFlow");
     met.getCorrectedMet(jets);

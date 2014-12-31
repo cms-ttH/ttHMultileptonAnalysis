@@ -68,7 +68,7 @@ def draw_histos(args, config, distribution, tree, output_file):
 
     #output_file.cd()
     canvas = ROOT.TCanvas('hist '+distribution, 'hist '+distribution)
-    hist = ROOT.TH1F('hist_'+distribution, 'hist_'+distribution, nBins, xMin, xMax)
+    hist = ROOT.TH1D('hist_'+distribution, 'hist_'+distribution, nBins, xMin, xMax)
 
     tree.Draw(vars[0]+' >> hist_'+distribution, sel_strings[vars[0]].draw_string, '')
     for var in vars:
@@ -93,7 +93,7 @@ def draw_probs(args, config, distribution, output_file):
     bin_width = (xMax - xMin) / nBins
     target = config['distributions'][distribution]['target']
     
-    prob = ROOT.TH1F('prob_'+distribution, 'prob_'+distribution, nBins, xMin, xMax)
+    prob = ROOT.TH1D('prob_'+distribution, 'prob_'+distribution, nBins, xMin, xMax)
 
     if target == 'max':
         integral = hist.Integral(0, nBins+1)
@@ -180,13 +180,13 @@ def draw_corrs(args, config, distribution, tree, output_file):
 
     nBins_corr = config['num corr bins']
     bin_width_corr = (xMax - xMin) / nBins_corr
-    corr = ROOT.TH1F('corr_'+distribution+'_'+dependencies[0], 'corr_'+distribution+'_'+dependencies[0], nBins_corr, xMin, xMax)
+    corr = ROOT.TH1D('corr_'+distribution+'_'+dependencies[0], 'corr_'+distribution+'_'+dependencies[0], nBins_corr, xMin, xMax)
 
     prob_dep = output_file.Get('prob_'+dependencies[0])
     
     for i in range(nBins_corr):
         avg_prob_dep = 0
-        hist_dep = ROOT.TH1F('hist_dep_'+dependencies[0], 'hist_dep_'+dependencies[0], nBins, xMin_dep, xMax_dep)
+        hist_dep = ROOT.TH1D('hist_dep_'+dependencies[0], 'hist_dep_'+dependencies[0], nBins, xMin_dep, xMax_dep)
         iVar = 0
         for var_dep in vars_dep:
             sel_string = plot_helper.DrawStringMaker()

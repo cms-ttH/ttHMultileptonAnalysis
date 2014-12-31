@@ -18,7 +18,7 @@ common cuts SS:
     #2_leptons: numAllLeptons == 2
     2_leptons: (numAllLeptons == 2 || numAllLeptons == 3)
     3rd_lepton: (numAllLeptons == 2 || (all_leptons_by_pt_3_lepMVA < 0.7 || all_leptons_by_pt_3_pt < 10 ))
-    z_mask: (numAllElectrons < 2 || abs(ZLike_mass_leplep_SF_all-91.2) > 10)
+    z_mask: (numAllElectrons < 2 || abs(ZLike_mass_leplep_SF_all-91.0) > 10)
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10
     tight_charge: all_leptons_by_pt_1_CERN_tight_charge && all_leptons_by_pt_2_CERN_tight_charge ##Now includes conv_veto and inner_hits
     same_charge: abs(all_leptons_by_pt_1_tkCharge+all_leptons_by_pt_2_tkCharge) == 2
@@ -29,7 +29,7 @@ common cuts 3l:
     #3_leptons: numAllLeptons == 3
     3_leptons: (numAllLeptons == 3 || numAllLeptons == 4)
     4th_lepton: (numAllLeptons == 3 || (all_leptons_by_pt_4_lepMVA < -0.3 || all_leptons_by_pt_4_pt < 10))
-    z_mask: abs(ZLike_mass_leplep_SFOS_all-91.2) > 10
+    z_mask: abs(ZLike_mass_leplep_SFOS_all-91.0) > 10
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10
     right_charge: abs(all_leptons_by_pt_1_tkCharge+all_leptons_by_pt_2_tkCharge+all_leptons_by_pt_3_tkCharge) == 1
     1loose: all_OS_leptons_by_pt_1_lepMVA > -0.3

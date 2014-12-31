@@ -15,7 +15,7 @@ common cuts:
     3_leptons: numAllLeptons == 3
     #3_leptons: (numAllLeptons == 3 || numAllLeptons == 4)
     #4th_lepton: (numAllLeptons == 3 || (all_leptons_by_pt_4_lepCut < 1 || all_leptons_by_pt_4_pt < 10) )
-    z_selection: abs(ZLike_mass_leplep_SFOS_all-91.2) < 10
+    z_selection: abs(ZLike_mass_leplep_SFOS_all-91.0) < 10
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10
     lepCSV: all_leptons_by_pt_1_lepCut > -1 && all_leptons_by_pt_2_lepCut > -1 && all_leptons_by_pt_3_lepCut > -1
     3tight: all_SS_leptons_by_pt_1_lepCut == 2 && all_SS_leptons_by_pt_2_lepCut == 2 && all_OS_leptons_by_pt_1_lepCut == 2
@@ -304,7 +304,7 @@ distributions:
     ZLike_mass_leplep_SFOS_all:
         expression: ZLike_mass_leplep_SFOS_all
         axis labels: ['Z mass', Events]
-        binning: [*default_num_bins, 76.2, 106.2]
+        binning: [*default_num_bins, 76.0, 106.0]
 
     ZLike_pt_leplep_SFOS_all:
         expression: ZLike_pt_leplep_SFOS_all

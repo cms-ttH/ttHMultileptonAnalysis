@@ -15,7 +15,7 @@ common cuts:
     3_leptons: numAllLeptons == 3
     #3_leptons: (numAllLeptons == 3 || numAllLeptons == 4)
     #4th_lepton: (numAllLeptons == 3 || (all_leptons_by_pt_4_lepCut < 1 || all_leptons_by_pt_4_pt < 10) )
-    z_mask: abs(ZLike_mass_leplep_SFOS_all-91.2) > 10
+    z_mask: abs(ZLike_mass_leplep_SFOS_all-91.0) > 10
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10
     2tight1loose: all_SS_leptons_by_pt_1_lepCut == 2 && all_SS_leptons_by_pt_2_lepCut == 2 && all_OS_leptons_by_pt_1_lepCut == 2
     right_charge: abs(all_leptons_by_pt_1_tkCharge+all_leptons_by_pt_2_tkCharge+all_leptons_by_pt_3_tkCharge) == 1

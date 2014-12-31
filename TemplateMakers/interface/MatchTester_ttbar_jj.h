@@ -120,6 +120,8 @@ void MatchTester_ttbar_jj::evaluate() {
   //std::cout << "Evaluating MatchTester_ttbar_jj with " << (*leptons)->size() << " and " << (*jets)->size() << " jets" << std::endl;
   
   if ( (*jets)->size() < 5) return;
+  unsigned int max_jets = (*jets)->size();
+  if (max_jets > 8) max_jets = 8; //Prevent huge computing time on anomalous events
 
   TLorentzVector jet1_vect;
   TLorentzVector jet2_vect;
@@ -155,26 +157,26 @@ void MatchTester_ttbar_jj::evaluate() {
   
   //std::cout << "About to enter jet loop" << std::endl;
   
-  for (unsigned int iJet1 = 0; iJet1 < (*jets)->size(); iJet1++) {    
+  for (unsigned int iJet1 = 0; iJet1 < max_jets; iJet1++) {    
     //std::cout << "iJet1 = " << iJet1 << std::endl;    
     jet1_vect.SetPtEtaPhiE((*jets)->at(iJet1).pt, (*jets)->at(iJet1).eta, (*jets)->at(iJet1).phi, (*jets)->at(iJet1).energy);
 
-  for (unsigned int iJet2 = 0; iJet2 < (*jets)->size(); iJet2++) {
+  for (unsigned int iJet2 = 0; iJet2 < max_jets; iJet2++) {
     if (iJet2 == iJet1) continue;
     //std::cout << "iJet2 = " << iJet2 << std::endl;      
     jet2_vect.SetPtEtaPhiE((*jets)->at(iJet2).pt, (*jets)->at(iJet2).eta, (*jets)->at(iJet2).phi, (*jets)->at(iJet2).energy);
 
-  for (unsigned int iJet3 = 0; iJet3 < (*jets)->size(); iJet3++) {
+  for (unsigned int iJet3 = 0; iJet3 < max_jets; iJet3++) {
     if (iJet3 == iJet1 || iJet3 == iJet2) continue;
     //std::cout << "iJet3 = " << iJet3 << std::endl;      
     jet3_vect.SetPtEtaPhiE((*jets)->at(iJet3).pt, (*jets)->at(iJet3).eta, (*jets)->at(iJet3).phi, (*jets)->at(iJet3).energy);
 
-  for (unsigned int iJet4 = 0; iJet4 < (*jets)->size(); iJet4++) {
+  for (unsigned int iJet4 = 0; iJet4 < max_jets; iJet4++) {
     if (iJet4 == iJet1 || iJet4 == iJet2 || iJet4 == iJet3) continue;
     //std::cout << "iJet4 = " << iJet4 << std::endl;      
     jet4_vect.SetPtEtaPhiE((*jets)->at(iJet4).pt, (*jets)->at(iJet4).eta, (*jets)->at(iJet4).phi, (*jets)->at(iJet4).energy);
 
-  for (unsigned int iJet5 = 0; iJet5 < (*jets)->size(); iJet5++) {
+  for (unsigned int iJet5 = 0; iJet5 < max_jets; iJet5++) {
     if (iJet5 == iJet1 || iJet5 == iJet2 || iJet5 == iJet3 || iJet5 == iJet4) continue;
     //std::cout << "iJet5 = " << iJet5 << std::endl;      
     jet5_vect.SetPtEtaPhiE((*jets)->at(iJet5).pt, (*jets)->at(iJet5).eta, (*jets)->at(iJet5).phi, (*jets)->at(iJet5).energy);
@@ -279,7 +281,7 @@ void MatchTester_ttbar_jj::evaluate() {
     }
     
 
-    for (unsigned int iJet6 = 0; iJet6 < (*jets)->size(); iJet6++) {
+    for (unsigned int iJet6 = 0; iJet6 < max_jets; iJet6++) {
       if (iJet6 == iJet1 || iJet6 == iJet2 || iJet6 == iJet3 || iJet6 == iJet4 || iJet6 == iJet5) continue;
       //std::cout << "iJet6 = " << iJet6 << std::endl;      
       jet6_vect.SetPtEtaPhiE((*jets)->at(iJet6).pt, (*jets)->at(iJet6).eta, (*jets)->at(iJet6).phi, (*jets)->at(iJet6).energy);

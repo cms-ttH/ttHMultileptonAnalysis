@@ -29,7 +29,7 @@ void getNumExtraPartons(BEANhelper* beanHelper, BNmcparticleCollection& mcPartic
 void dibosonPlusHFKeepEventFunction(BEANhelper * beanHelper, BNmcparticleCollection& mcParticles,
                                     BNjetCollection& rawJets, bool & dibosonPlusHFKeepEventBool) {
 
-  dibosonPlusHFKeepEventBool = beanHelper->dibosonPlusHFKeepEvent(mcParticles, rawJets);
+  dibosonPlusHFKeepEventBool = beanHelper->dibosonPlusHFKeepEvent(mcParticles, rawJets, 25.0, jetID::jetLoosePU);
 
   return;
 }
@@ -243,7 +243,7 @@ int main (int argc, char** argv) {
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZLikeMassLepLepSFAll("mass", "closest_to", "ZLike_mass_leplep_SF_all",
                                                                                    &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
                                                                                    &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
-                                                                                   91.2, "same_flavour");
+                                                                                   91.0, "same_flavour");
   kinVars.push_back(&myZLikeMassLepLepSFAll);  
   
   TightCharges myTightCharges(&(tightLoosePreselectedLeptons.ptrToItems), "CERN_tight_charge", "all_leptons_by_pt", 2);
@@ -529,12 +529,12 @@ int main (int argc, char** argv) {
     tightLoosePreselectedMuons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatMuonsLoosePFlow");
     tightLoosePreselectedElectrons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatElectronsGSF");
 
-    //lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //Apply Rochester for data only
-    bool applyRochester = (lepHelper.isData);
-    if (applyRochester) lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //bool applySmearing = !(lepHelper.isData);
-    //No smearing
+    //New lepton energy scaling and smearing for MC -AWB 13/11/14
+    bool lepEnergyCorr = !(lepHelper.isData);
+    if (lepEnergyCorr) lepHelper.shiftLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 0.9936, 0.996, 0.988);
+    if (lepEnergyCorr) lepHelper.smearLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 1.0);
+    if (lepEnergyCorr) lepHelper.apply_SMP_12_011_correction_mu(tightLoosePreselectedMuons.rawItems, true);
+    //No smearing of other lepton variables
     bool applySmearing = false;
     if (applySmearing) {
       lepHelper.fillMCMatchAny(tightLoosePreselectedMuons.rawItems, mcParticles.rawItems, 0.3);
@@ -595,14 +595,14 @@ int main (int argc, char** argv) {
     jets.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatJetsPFlow");
     jets.correctRawJets(jetSyst);
     jets.cleanJets(tightLoosePreselectedLeptons.items);
-    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, '-');
+    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, '-');
     jetsByCSV.initializeRawItemsSortedByCSV(jets.items);
     looseCSVJets.initializeRawItems(jets.rawItems);
-    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'L');
+    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'L');
     mediumCSVJets.initializeRawItems(jets.rawItems);
-    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'M');
+    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'M');
     tightCSVJets.initializeRawItems(jets.rawItems);
-    tightCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'T');
+    tightCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'T');
     notLooseCSVJets.initializeRawItems(beanHelper->GetDifference(jets.items, looseCSVJets.items));
 
     met.initializeRawItems(ev, "BNproducer", "patMETsPFlow");

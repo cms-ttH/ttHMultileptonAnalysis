@@ -16,7 +16,7 @@ public:
   vector<BranchInfo<double>> myVars;
   
   //Input variables for SS dilepton
-  Float_t varnumJets;
+  Float_t varMT_of_everything;
   Float_t varnumMediumBJets;
   Float_t varMatch_ttZ_3l_Bb;
   Float_t varMatch_ttZ_3l_Bq;
@@ -30,11 +30,13 @@ public:
   vector<TMVA::Reader *> reader;
 
   BNjetCollection **jets;
+  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * myMTOfEverything;
   BNjetCollection **mediumCSVJets;
   MatchTester_ttZ_3l * myMatchTester_ttZ_3l;
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> * myZLikeMassLepLepSFOSAll;
 
   FinalBDT_ttZ_3l(BNjetCollection **_jets,
+                  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * _myMTOfEverything,
                   BNjetCollection **_mediumCSVJets,
                   MatchTester_ttZ_3l * _myMatchTester_ttZ_3l,
                   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> * _myZLikeMassLepLepSFOSAll);
@@ -44,10 +46,11 @@ public:
 };
 
 FinalBDT_ttZ_3l::FinalBDT_ttZ_3l(BNjetCollection **_jets,
+                                 ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * _myMTOfEverything,
                                  BNjetCollection **_mediumCSVJets,
                                  MatchTester_ttZ_3l * _myMatchTester_ttZ_3l,
                                  TwoObjectKinematic<BNleptonCollection,BNleptonCollection> * _myZLikeMassLepLepSFOSAll):
-  jets(_jets), mediumCSVJets(_mediumCSVJets), myMatchTester_ttZ_3l(_myMatchTester_ttZ_3l),
+  jets(_jets), myMTOfEverything(_myMTOfEverything), mediumCSVJets(_mediumCSVJets), myMatchTester_ttZ_3l(_myMatchTester_ttZ_3l),
   myZLikeMassLepLepSFOSAll(_myZLikeMassLepLepSFOSAll) {
 
   //std::cout << "Setting up FinalBDT_ttZ_3l" << std::endl;
@@ -64,8 +67,7 @@ FinalBDT_ttZ_3l::FinalBDT_ttZ_3l(BNjetCollection **_jets,
 
     reader.push_back( new TMVA::Reader( "!Color:!Silent" ));
 
-    if (jj == 1) {
-      reader[jj]->AddVariable( "numJets", &varnumJets ); }
+    reader[jj]->AddVariable( "MT_of_everything", &varMT_of_everything );
     reader[jj]->AddVariable( "numMediumBJets", &varnumMediumBJets );
     if (jj == 0) {
       reader[jj]->AddVariable( "Match_ttZ_3l_Bb", &varMatch_ttZ_3l_Bb );
@@ -78,7 +80,7 @@ FinalBDT_ttZ_3l::FinalBDT_ttZ_3l(BNjetCollection **_jets,
       reader[jj]->AddVariable( "Match_ttZ_3l_Bbqq", &varMatch_ttZ_3l_Bbqq ); }
     reader[jj]->AddVariable( "ZLike_mass_leplep_SFOS_all", &varZLike_mass_leplep_SFOS_all );
 
-    TString dir = (string(getenv("CMSSW_BASE"))+"/src/ttHMultileptonAnalysis/TemplateMakers/data/NOVa/BDT_weights_ttZ_3l/").c_str();
+    TString dir = (string(getenv("CMSSW_BASE"))+"/src/ttHMultileptonAnalysis/TemplateMakers/data/NOVa/Nov14/ttZ_vs_WZ_and_ttbar_3l/").c_str();
     TString label = catList[jj];
     TString file_name = "TMVAClassification_BDTG.weights.xml";
     //TString file_name = "TMVAClassification_CFMlpANN.weights.xml";
@@ -99,9 +101,11 @@ void FinalBDT_ttZ_3l::evaluate() {
 
   //std::cout << "Inside FinalBDT_ttZ_3l::evaluate()" << std::endl;
   
+  myMTOfEverything->evaluate();
   myMatchTester_ttZ_3l->evaluate();
   myZLikeMassLepLepSFOSAll->evaluate();
-  varnumJets = (*jets)->size()*1.0;
+
+  varMT_of_everything = (*myMTOfEverything).myVars[0].branchVal;
   varnumMediumBJets = (*mediumCSVJets)->size()*1.0;
 
   std::string branchName = "";
@@ -119,7 +123,9 @@ void FinalBDT_ttZ_3l::evaluate() {
   //std::cout << "Here" << std::endl;
   varZLike_mass_leplep_SFOS_all = (*myZLikeMassLepLepSFOSAll).myVars[0].branchVal;
 
-//   std::cout << "varnumJets: " << varnumJets << std::endl;
+//   std::cout << "                               " << std::endl;
+//   std::cout << "------- FinalBDT_ttZ_3l -------" << std::endl;
+//   std::cout << "varMT_of_everything: " << varMT_of_everything << std::endl;
 //   std::cout << "varnumMediumBJets: " << varnumMediumBJets << std::endl;
 //   std::cout << "varMatch_ttZ_3l_Bb: " << varMatch_ttZ_3l_Bb << std::endl;
 //   std::cout << "varMatch_ttZ_3l_Bq: " << varMatch_ttZ_3l_Bq << std::endl;
@@ -129,7 +135,7 @@ void FinalBDT_ttZ_3l::evaluate() {
 //   std::cout << "varMatch_ttZ_3l_bqq: " << varMatch_ttZ_3l_bqq << std::endl;
 //   std::cout << "varMatch_ttZ_3l_Bbqq: " << varMatch_ttZ_3l_Bbqq << std::endl;
 //   std::cout << "varZLike_mass_leplep_SFOS_all: " << varZLike_mass_leplep_SFOS_all << std::endl;
-
+  
   for( unsigned int jj = 0 ; jj < 2 ; ++jj ) {
     
     TMVA::Reader  *tmpReader = reader[jj];
@@ -142,6 +148,7 @@ void FinalBDT_ttZ_3l::evaluate() {
     if (jj == 0 && (*jets)->size() == 3) branches["FinalBDT_ttZ_3l"].branchVal = annOut;
     if (jj == 1 && (*jets)->size() >= 4) branches["FinalBDT_ttZ_3l"].branchVal = annOut;
 
+//     std::cout << "annOut[jj]: " << annOut << "[" << jj << "]" << std::endl;
   }
 
   //Clean out values from last event

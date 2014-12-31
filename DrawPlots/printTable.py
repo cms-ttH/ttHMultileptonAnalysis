@@ -97,7 +97,7 @@ def main ():
 			#	1. What distribution?
 			#	2. Which plots?
 			#	3. Title for the plots
-			#	4,5,6. New binning, just like TH1F arguments (bins, xMin, xMax)
+			#	4,5,6. New binning, just like TH1D arguments (bins, xMin, xMax)
 			#	7. Lepton selection
 			#	8. Year
 			#	9. make "plots" or "print" table

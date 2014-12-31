@@ -43,10 +43,8 @@ TightChargeAndLepCutScaleFactors::TightChargeAndLepCutScaleFactors (int _numLeps
   tightBranchName = Form("lepCutTight%dLepSF%s", numLeps, label.c_str());
   branches[looseBranchName] = BranchInfo<double>(looseBranchName);
   branches[tightBranchName] = BranchInfo<double>(tightBranchName);
-  if (numLeps < 4) {
-    tightChargeBranchName = Form("tightCharge%dLepSF%s", numLeps, label.c_str());
-    branches[tightChargeBranchName] = BranchInfo<double>(tightChargeBranchName);
-  }
+  tightChargeBranchName = Form("tightCharge%dLepSF%s", numLeps, label.c_str());
+  branches[tightChargeBranchName] = BranchInfo<double>(tightChargeBranchName);
 }
 
 void TightChargeAndLepCutScaleFactors::evaluate() {
@@ -83,9 +81,7 @@ void TightChargeAndLepCutScaleFactors::evaluate() {
   }
   branches[looseBranchName].branchVal = totalLooseSF;
   branches[tightBranchName].branchVal = totalTightSF;
-  if (numLeps < 4) {
-    branches[tightChargeBranchName].branchVal = totalTightChargeSF;
-  }
+  branches[tightChargeBranchName].branchVal = totalTightChargeSF;
 }
 
 double TightChargeAndLepCutScaleFactors::fetch(BNlepton* lepton, TH2D* histo) {

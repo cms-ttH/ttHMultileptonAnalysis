@@ -13,7 +13,7 @@ limits skip systematics: false
 common cuts:
     cleanup: min_mass_leplep_all > 12
     4_leptons: numAllLeptons >= 4
-    z_selection: abs(ZLike_mass_leplep_SFOS_all-91.2) < 10
+    z_selection: abs(ZLike_mass_leplep_SFOS_all-91.0) < 10
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10
     lepCSV: all_leptons_by_pt_1_lepCut > -1 && all_leptons_by_pt_2_lepCut > -1 && all_leptons_by_pt_3_lepCut > -1 && all_leptons_by_pt_4_lepCut > -1
     4tight: all_leptons_by_pt_1_lepCut == 2 && all_leptons_by_pt_2_lepCut == 2 && all_leptons_by_pt_3_lepCut == 2 && all_leptons_by_pt_4_lepCut == 2
@@ -23,55 +23,55 @@ common cuts:
 jet tag categories:
 #     ge0j: ['numJets >= 0']
 #     ge2j: ['numJets >= 2']
-#     ge0j_Zpeak: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 10']
-#     ge2j_Zpeak: ['numJets >= 2 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 10']
-#     ge0j_Zmask: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 10']
-#     ge2j_Zmask: ['numJets >= 2 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 10']
+#     ge0j_Zpeak: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10']
+#     ge2j_Zpeak: ['numJets >= 2 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10']
+#     ge0j_Zmask: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10']
+#     ge2j_Zmask: ['numJets >= 2 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10']
 # #     ge0j_metLD: ['numJets >= 0 && met_ld > 0.2']
 # #     ge2j_metLD: ['numJets >= 2 && met_ld > 0.2']
 # #     ge0j_1bloose: ['numJets >= 0 && numLooseBJets >= 1']
 # #     ge2j_1bloose: ['numJets >= 2 && numLooseBJets >= 1']
 # #     ge0j_metLD_1bloose: ['numJets >= 0 && met_ld > 0.2 && numLooseBJets >= 1']
 # #     ge2j_metLD_1bloose: ['numJets >= 2 && met_ld > 0.2 && numLooseBJets >= 1']
-#     ge0j_Zpeak_metLD_1bloose: ['numJets >= 0  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 10 && met_ld > 0.2 && numLooseBJets >= 1']
-    #ge2j_Zpeak_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 10 && met_ld > 0.2']
-    ge2j_Zpeak_lowMet_lf: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 10 && (met_ld < 0.2 || numLooseBJets == 0)']
-    ge2j_Zpeak_metLD_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 10 && met_ld > 0.2 && numLooseBJets >= 1']
-    #ge2j_Zmask_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 10 && numLooseBJets >= 1']
-    ge2j_Zmask_lowMet_lf: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 10 && (met_ld < 0.2 || numLooseBJets == 0)']
-    ge2j_Zmask_metLD_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 10 && met_ld > 0.2 && numLooseBJets >= 1']
+#     ge0j_Zpeak_metLD_1bloose: ['numJets >= 0  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && met_ld > 0.2 && numLooseBJets >= 1']
+    #ge2j_Zpeak_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && met_ld > 0.2']
+    ge2j_Zpeak_lowMet_lf: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && (met_ld < 0.2 || numLooseBJets == 0)']
+    ge2j_Zpeak_metLD_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && met_ld > 0.2 && numLooseBJets >= 1']
+    #ge2j_Zmask_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10 && numLooseBJets >= 1']
+    ge2j_Zmask_lowMet_lf: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10 && (met_ld < 0.2 || numLooseBJets == 0)']
+    ge2j_Zmask_metLD_1bloose: ['numJets >= 2  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10 && met_ld > 0.2 && numLooseBJets >= 1']
 
 #     2lep_pt: ['all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
 #     3lep_pt: ['all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
 #     4lep_pt: ['all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
-#     2lep_pt_Zpeak1_Zpeak2: ['abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
-#     3lep_pt_Zpeak1_Zpeak2: ['abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
-#     4lep_pt_Zpeak1_Zpeak2: ['abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
+#     2lep_pt_Zpeak1_Zpeak2: ['abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
+#     3lep_pt_Zpeak1_Zpeak2: ['abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
+#     4lep_pt_Zpeak1_Zpeak2: ['abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
-#     2lep_pt_Zpeak1_Zmask2: ['abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
-#     3lep_pt_Zpeak1_Zmask2: ['abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
-#     4lep_pt_Zpeak1_Zmask2: ['abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
+#     2lep_pt_Zpeak1_Zmask2: ['abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
+#     3lep_pt_Zpeak1_Zmask2: ['abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
+#     4lep_pt_Zpeak1_Zmask2: ['abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
-#     2lep_pt_Zmask1: ['abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
-#     3lep_pt_Zmask1: ['abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
-#     4lep_pt_Zmask1: ['abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
+#     2lep_pt_Zmask1: ['abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
+#     3lep_pt_Zmask1: ['abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
+#     4lep_pt_Zmask1: ['abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
 #     eq0j_2lep_pt: ['numJets == 0 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
 #     eq0j_3lep_pt: ['numJets == 0 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
 #     eq0j_4lep_pt: ['numJets == 0 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
-#     eq0j_2lep_pt_Zpeak1_Zpeak2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
-#     eq0j_3lep_pt_Zpeak1_Zpeak2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
-#     eq0j_4lep_pt_Zpeak1_Zpeak2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
+#     eq0j_2lep_pt_Zpeak1_Zpeak2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
+#     eq0j_3lep_pt_Zpeak1_Zpeak2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
+#     eq0j_4lep_pt_Zpeak1_Zpeak2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
-#     eq0j_2lep_pt_Zpeak1_Zmask2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
-#     eq0j_3lep_pt_Zpeak1_Zmask2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
-#     eq0j_4lep_pt_Zpeak1_Zmask2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.2) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
+#     eq0j_2lep_pt_Zpeak1_Zmask2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
+#     eq0j_3lep_pt_Zpeak1_Zmask2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
+#     eq0j_4lep_pt_Zpeak1_Zmask2: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 15 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
-#     eq0j_2lep_pt_Zmask1: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
-#     eq0j_3lep_pt_Zmask1: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
-#     eq0j_4lep_pt_Zmask1: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
+#     eq0j_2lep_pt_Zmask1: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10']
+#     eq0j_3lep_pt_Zmask1: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10']
+#     eq0j_4lep_pt_Zmask1: ['numJets == 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10 && all_leptons_by_pt_4_pt > 10']
 
 
 lepton categories:
@@ -337,7 +337,7 @@ distributions:
     ZLike_mass_leplep_SFOS_all:
         expression: ZLike_mass_leplep_SFOS_all
         axis labels: ['Z mass', Events]
-        binning: [*default_num_bins, 76.2, 106.2]
+        binning: [*default_num_bins, 76.0, 106.0]
 
 #     ZLike_mass_leplep_SFOS_all_med:
 #         expression: ZLike_mass_leplep_SFOS_all

@@ -64,3 +64,12 @@ singletbar_tW
 ww_ll
 wz_lljj
 zz_lljj
+
+ttbarW_ND_gen
+ttbarZ_ND_gen
+ttbar_M166
+ttbar_M169
+ttbar_M171
+ttbar_M173
+ttbar_M175
+ttbar_M178

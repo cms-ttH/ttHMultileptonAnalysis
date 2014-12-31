@@ -43,11 +43,15 @@ def main():
     if args.label:
         config['input file label'] = args.label
 
+    out_location = config['output file location']
+    if config['blinded']:
+        out_location = config['output file location']+'_blind'
+
     if args.web:
         www_plot_directories = []
         for lepton_category in lepton_categories:
             for jet_tag_category in jet_tag_categories:
-                www_plot_directories.append(os.path.join(config['output file location'], lepton_category, jet_tag_category))
+                www_plot_directories.append(os.path.join(out_location, lepton_category, jet_tag_category))
 
         plot_helper.setup_web_posting(www_plot_directories, 4, args.config_file_name, args.cosmetics_config_file_name)
 
@@ -67,11 +71,11 @@ def main():
     print_yield_table(raw_yields, 'raw yields', '.0f')
 
     if args.pie:
-        make_yield_pie_charts(yields, config['output file location'], draw_names(signal_samples), jet_tag_categories)
+        make_yield_pie_charts(yields, out_location, draw_names(signal_samples), jet_tag_categories)
 
     if args.web:
-        plot_helper.update_indexes(os.path.join(config['output file location'], '..'))
-        print '\nFinished processing.  Plots will be posted to: http://www.crc.nd.edu/~%s/%s' % (os.environ['USER'], config['output file location'])
+        plot_helper.update_indexes(os.path.join(out_location, '..'))
+        print '\nFinished processing.  Plots will be posted to: http://www.crc.nd.edu/~%s/%s' % (os.environ['USER'], out_location)
 
 def print_yield_table(yields, title, precision):
     columns = ['sample'] + lepton_categories.keys()
@@ -94,6 +98,10 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
 
     (luminosity_info_tex, selection_info_tex, SF_info_tex) = make_info_tex_objects(lepton_category, jet_tag_category)
 
+    out_location = config['output file location']
+    if config['blinded']:
+        out_location = config['output file location']+'_blind'
+        
     histogram_dictionary = {}
     mc_sum = 0.0
     signal_sum = 0.0
@@ -156,15 +164,18 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
 #                     stack_plot.Add(signal_histogram, 'hist')
 
                 signal_sum = signal_histograms[sample_group].Integral()
+                signal_scaling = 1.0
                 if signal_sum > 0:
                     if signal_samples[sample_group]['scale'] == 'norm':
-                        signal_histograms[sample_group].Scale(mc_sum / signal_sum)
-                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.2f x %0.2f)' % (signal_samples[sample_group]['draw name'], signal_sum, (signal_histograms[sample_group].Integral() / signal_sum)), legend_option)
+                        signal_scaling = mc_sum / signal_sum
+                        signal_histograms[sample_group].Scale(signal_scaling)
+                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.2f x %0.2f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
                     else:
-                        signal_histograms[sample_group].Scale(signal_samples[sample_group]['scale'])
-                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.2f x %0.2f)' % (signal_samples[sample_group]['draw name'], signal_sum, (signal_histograms[sample_group].Integral() / signal_sum)), legend_option)
+                        signal_scaling = signal_samples[sample_group]['scale']
+                        signal_histograms[sample_group].Scale(signal_scaling)
+                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.2f x %0.2f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
                 else:
-                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (0.0x1.0)' % signal_samples[sample_group]['draw name'], legend_option)
+                    stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (0.0x1.0)' % signal_samples[sample_group]['draw name'], legend_option)
 
                 yields[jet_tag_category][signal_samples[sample_group]['draw name']][lepton_category] = histogram_dictionary[sample_group+'_nominal'].Integral()
                 raw_yields[jet_tag_category][signal_samples[sample_group]['draw name']][lepton_category] = histogram_dictionary[sample_group+'_nominal'].GetEntries()
@@ -207,7 +218,9 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
             return
 
     if draw_mc_error_histo:
-        mc_error_histogram = TH1F('mc_error_histogram', '', nBins, xMin, xMax)
+        #mc_error_histogram = TH1D('mc_error_histogram', '', nBins, xMin, xMax)
+        mc_error_histogram = stack_plot.GetStack().Last().Clone('mc_error_histogram')
+        mc_error_histogram.SetTitle('')
         for i in range(1, nBins+1):
             mc_error_histogram.SetBinContent(i, stack_plot.GetStack().Last().GetBinContent(i))
             bin_error_squared = math.pow(lumi_trigger_SF_error * stack_plot.GetStack().Last().GetBinContent(i), 2)
@@ -223,7 +236,7 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
 
         mc_error_histogram.SetFillStyle(cosmetics['mc error fill style'])
         mc_error_histogram.SetFillColor(cosmetics['mc error fill color'])
-        stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%0.2f) ' % (mc_sum + signal_sum), 'f')
+        stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%0.1f) ' % (mc_sum + signal_sum), 'f')
 
     yields[jet_tag_category]['all backgrounds'][lepton_category] = mc_sum
     yields[jet_tag_category]['all signals'][lepton_category] = all_signals
@@ -288,19 +301,24 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
         if not skip_data:
             (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram)
         else:
-            (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, signal_histograms.items()[-1])
+            (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, signal_histograms.items()[0][1])
+            ratio_histogram.Scale(1.0/signal_scaling)
 
         ratio_histogram = configure_ratio_histogram(ratio_histogram, distribution)
         ratio_error_histogram = configure_ratio_error_histogram(ratio_error_histogram)
-        ratio_histogram.DrawCopy()
 
         if not skip_data:
+            ratio_histogram.DrawCopy()
             ratio_error_histogram.DrawCopy('e2same')
             ratio_histogram.Draw('sameaxis')
             ## asymmetrical poisson errors for data in ratio plot
-            g_ratio = make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, signal_histograms.items()[-1], stack_plot)
+            g_ratio = make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, signal_histograms.items()[0][1], stack_plot)
             g_ratio = configure_data_ratio_asymmetric_errors(g_ratio)
             g_ratio.Draw('psame')
+
+        else:
+            ratio_histogram.SetLineWidth(cosmetics['g ratio line width'])
+            ratio_histogram.DrawCopy()
 
         l = TLine()
         l.DrawLine(xMin, 1., xMax, 1.)
@@ -310,18 +328,18 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
         cumalitive_histo.DrawCopy()
         cumalitive_histo.Draw('sameaxis')
 
-    output_dir = os.path.join(config['output file location'], lepton_category+'_'+jet_tag_category)
+    output_dir = os.path.join(out_location, lepton_category+'_'+jet_tag_category)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     plot_name = '%s_%s/%s' % (lepton_category, jet_tag_category, distribution)
-    if (config['save png']): canvas.SaveAs(config['output file location']+'/'+plot_name+'.png')
-    if (config['save pdf']): canvas.SaveAs(config['output file location']+'/'+plot_name+'.pdf')
+    if (config['save png']): canvas.SaveAs(out_location+'/'+plot_name+'.png')
+    if (config['save pdf']): canvas.SaveAs(out_location+'/'+plot_name+'.pdf')
 
     if args.web:
         www_base_directory = plot_helper.get_www_base_directory()
-        www_plot_directory = os.path.join(www_base_directory, config['output file location'], lepton_category, jet_tag_category)
-        plot_helper.copy_to_www_area(config['output file location'], www_plot_directory, plot_name)
+        www_plot_directory = os.path.join(www_base_directory, out_location, lepton_category, jet_tag_category)
+        plot_helper.copy_to_www_area(out_location, www_plot_directory, plot_name)
 
     gPad.Close()
     top_canvas.Close()
@@ -334,7 +352,7 @@ def get_group_histogram(distribution, systematic, samples_in_group, lepton_categ
     for sample in samples_in_group:
         try:
             sample_histogram = get_histogram(distribution, systematic, sample, lepton_category, jet_tag_category, sample_group)
-            sample_histogram.Sumw2()
+            #sample_histogram.Sumw2() ##No longer necessary - done in plot_helper -AWB 30/10/14
             if not group_histogram:
                 group_histogram = sample_histogram
             else:
@@ -511,7 +529,7 @@ def get_configured_data_asymmetric_errors(data_histogram):
     return ggg
 
 def make_cumalitive_histo(n_bins, x_min, x_max, bg_histo, signal_histo, distribution):
-    cumalitive_histo = TH1F('cumalitive_histo', '', n_bins, x_min, x_max)
+    cumalitive_histo = TH1D('cumalitive_histo', '', n_bins, x_min, x_max)
     cumalitive_histo.SetStats(kFALSE)
     ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'C. BG/sig')
     cumalitive_histo.SetTitle(ratio_title_string)
@@ -539,8 +557,13 @@ def make_cumalitive_histo(n_bins, x_min, x_max, bg_histo, signal_histo, distribu
     return cumalitive_histo
 
 def make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram):
-    ratio_histogram = TH1F('ratio_histogram', '', nBins, xMin, xMax)
-    ratio_error_histogram = TH1F('ratio_error_histogram', '', nBins, xMin, xMax)
+    #ratio_histogram = TH1D('ratio_histogram', '', nBins, xMin, xMax)
+    #ratio_error_histogram = TH1D('ratio_error_histogram', '', nBins, xMin, xMax)
+
+    ratio_histogram = data_histogram.Clone('ratio_histogram')
+    ratio_error_histogram = data_histogram.Clone('ratio_error_histogram')
+    ratio_histogram.SetTitle('')
+    ratio_error_histogram.SetTitle('')
 
     for i in range(1, nBins+1):
         mc_value = mc_error_histogram.GetBinContent(i)
@@ -586,8 +609,12 @@ def configure_ratio_histogram(ratio_histogram, distribution):
     ratio_histogram.SetMarkerColor(cosmetics['ratio hist marker color'])
 
     if config['blinded']:
-        ratio_histogram.SetLineColor(cosmetics['ratio hist line color blind'])
-        ratio_histogram.SetMarkerColor(cosmetics['ratio hist marker color blind'])
+        ratio_histogram.SetMinimum(0)
+        ratio_histogram.SetMaximum(1)
+        ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'Signal/MC')
+        ratio_histogram.SetTitle(ratio_title_string)
+        ratio_histogram.SetLineColor(config['signal samples'][config['signal samples'].keys()[0]]['color'])
+        ratio_histogram.SetMarkerColor(config['signal samples'][config['signal samples'].keys()[0]]['color'])
 
     return ratio_histogram
 ## end configure_ratio_histogram

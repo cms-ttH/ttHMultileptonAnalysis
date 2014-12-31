@@ -29,7 +29,7 @@ void getNumExtraPartons(BEANhelper* beanHelper, BNmcparticleCollection& mcPartic
 void dibosonPlusHFKeepEventFunction(BEANhelper * beanHelper, BNmcparticleCollection& mcParticles,
                                     BNjetCollection& rawJets, bool & dibosonPlusHFKeepEventBool) {
 
-  dibosonPlusHFKeepEventBool = beanHelper->dibosonPlusHFKeepEvent(mcParticles, rawJets);
+  dibosonPlusHFKeepEventBool = beanHelper->dibosonPlusHFKeepEvent(mcParticles, rawJets, 25.0, jetID::jetLoosePU);
 
   return;
 }
@@ -131,6 +131,7 @@ int main (int argc, char** argv) {
   GenericCollection<BNleptonCollection> tightLeptons(beanHelper);
   GenericCollection<BNleptonCollection> tightLooseLeptons(beanHelper);
   GenericCollection<BNleptonCollection> tightLoosePreselectedLeptons(beanHelper);
+  GenericCollection<BNleptonCollection> testLeptons(beanHelper);
 
   GenericCollection<BNleptonCollection> tightLoosePreselectedZLeptons(beanHelper);
   GenericCollection<BNleptonCollection> tightLoosePreselectedNonZLeptons(beanHelper);
@@ -605,7 +606,7 @@ int main (int argc, char** argv) {
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZLikeMassLepLepSFOSAll("mass", "closest_to", "ZLike_mass_leplep_SFOS_all",
                                                                                      &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
                                                                                      &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
-                                                                                     91.2, "same_flavour", "opposite_sign");
+                                                                                     91.0, "same_flavour", "opposite_sign");
   kinVars.push_back(&myZLikeMassLepLepSFOSAll);  
 
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZLikePtLepLepSFOSAll("vectPt", "max", "ZLike_pt_leplep_SFOS_all",
@@ -621,13 +622,13 @@ int main (int argc, char** argv) {
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZLikeMassLepLepSFOSAll2("mass", "closest_to", "ZLike_mass_leplep_SFOS_all_2",
                                                                                            &(tightLoosePreselectedNonZLeptons.ptrToItems), "all_nonZ_leptons_by_pt", 1, 99,
                                                                                            &(tightLoosePreselectedNonZLeptons.ptrToItems), "all_nonZ_leptons_by_pt", 1, 99,
-                                                                                           91.2, "same_flavour", "opposite_sign");
+                                                                                           91.0, "same_flavour", "opposite_sign");
   kinVars.push_back(&myZLikeMassLepLepSFOSAll2);
 
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZLikeMassLepLepAFASAll2("mass", "closest_to", "ZLike_mass_leplep_AFAS_all_2",
                                                                                            &(tightLoosePreselectedNonZLeptons.ptrToItems), "all_nonZ_leptons_by_pt", 1, 99,
                                                                                            &(tightLoosePreselectedNonZLeptons.ptrToItems), "all_nonZ_leptons_by_pt", 1, 99,
-                                                                                           91.2);
+                                                                                           91.0);
   kinVars.push_back(&myZLikeMassLepLepAFASAll2);
 
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZStarLikeMassLepLepSFOSAll("mass", "closest_to", "ZStarLike_mass_leplep_SFOS_all",
@@ -1169,12 +1170,21 @@ int main (int argc, char** argv) {
   MatchTester_ttbar_fake_3l myMatchTester_ttbar_fake_3l(&(tightLoosePreselectedLeptons.ptrToItems), &(jetsByCSV.ptrToItems));
   kinVars.push_back(&myMatchTester_ttbar_fake_3l);
 
-  FinalBDT_ttZ_3l myFinalBDT_ttZ_3l(&(jets.ptrToItems), &(mediumCSVJets.ptrToItems), &myMatchTester_ttZ_3l, &myZLikeMassLepLepSFOSAll);
+  FinalBDT_ttZ_3l myFinalBDT_ttZ_3l(&(jets.ptrToItems), &myMTOfEverything, &(mediumCSVJets.ptrToItems),
+                                    &myMatchTester_ttZ_3l, &myZLikeMassLepLepSFOSAll);
   kinVars.push_back(&myFinalBDT_ttZ_3l);
+  
+  FinalBDT_ttZ_3l_Oct31 myFinalBDT_ttZ_3l_Oct31(&(jets.ptrToItems), &(mediumCSVJets.ptrToItems),
+                                                &myMatchTester_ttZ_3l, &myZLikeMassLepLepSFOSAll);
+  kinVars.push_back(&myFinalBDT_ttZ_3l_Oct31);
 
-  FinalBDT_ttW_3l myFinalBDT_ttW_3l(&(jets.ptrToItems), &(mediumCSVJets.ptrToItems), &myMTOfEverything,
-                                    &myMassOfEverything, &myMatchTester_ttbar_fake_3l, &myMatchTester_ttW_3l);
+  FinalBDT_ttW_3l myFinalBDT_ttW_3l(&(met.ptrToItems), &myMTOfEverything, &(jets.ptrToItems), &(jetsByCSV.ptrToItems),
+                                    &myMatchTester_ttbar_fake_3l, &myMatchTester_ttW_3l, &(leptonsSS.ptrToItems));
   kinVars.push_back(&myFinalBDT_ttW_3l);
+
+  FinalBDT_ttW_3l_Oct31 myFinalBDT_ttW_3l_Oct31(&(jets.ptrToItems), &(mediumCSVJets.ptrToItems), &myMTOfEverything,
+                                                &myMassOfEverything, &myMatchTester_ttbar_fake_3l, &myMatchTester_ttW_3l);
+  kinVars.push_back(&myFinalBDT_ttW_3l_Oct31);
 
 //   MatchTester_ttZ_3l_GP myMatchTester_ttZ_3l_GP(&(tightLoosePreselectedNonZLeptons.ptrToItems), &(jetsByCSV.ptrToItems), &(met.ptrToItems));
 //   kinVars.push_back(&myMatchTester_ttZ_3l_GP);
@@ -1231,12 +1241,12 @@ int main (int argc, char** argv) {
     tightLoosePreselectedElectrons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatElectronsGSF");
 //     tightLoosePreselectedTaus.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatTausPFlow");
 
-    //lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //Apply Rochester for data only
-    bool applyRochester = (lepHelper.isData);
-    if (applyRochester) lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //bool applySmearing = !(lepHelper.isData);
-    //No smearing
+    //New lepton energy scaling and smearing for MC -AWB 13/11/14
+    bool lepEnergyCorr = !(lepHelper.isData);
+    if (lepEnergyCorr) lepHelper.shiftLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 0.9936, 0.996, 0.988);
+    if (lepEnergyCorr) lepHelper.smearLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 1.0);
+    if (lepEnergyCorr) lepHelper.apply_SMP_12_011_correction_mu(tightLoosePreselectedMuons.rawItems, true);
+    //No smearing of other lepton variables
     bool applySmearing = false;
     if (applySmearing) {
       lepHelper.fillMCMatchAny(tightLoosePreselectedMuons.rawItems, mcParticles.rawItems, 0.3);
@@ -1294,6 +1304,19 @@ int main (int argc, char** argv) {
     tightLoosePreselectedLeptons.resetAndPushBack(tightLoosePreselectedElectrons.items);
     tightLoosePreselectedLeptons.pushBackAndSort(tightLoosePreselectedMuons.items);
 
+    //After the new lepton energy corrections (shiftLeptonEnergy, smearLeptonEnergy), a couple
+    //of exceptions appeared in GetDifference, with overlapping leptons with very different momenta.
+    //It's not clear why the smearing/scaling should cause this, but it didn't appear before, and
+    //now it only appears in a couple of events out of a few million, so it seems like no real worry.
+    //Keep track by running 'grep -H -r "ERROR ERROR" batch_trees/condor_logs/' -AWB 24/12/2014 
+    try{
+      testLeptons.initializeRawItems((beanHelper->GetDifference(tightLoosePreselectedLeptons.items,tightLoosePreselectedLeptons.items)));
+    }
+    catch (std::logic_error error){
+      std::cout << "ERROR ERROR!!! Two leptons have the same eta/phi but different pT! Skipping event" << std::endl;
+      continue;
+    }
+
 //     tightLoosePreselectedTaus.keepSelectedParticles(tauPreselectedID);
 //     tightTaus.initializeRawItems(tightLoosePreselectedTaus.rawItems);
 //     tightTaus.keepSelectedParticles(tauTightID);
@@ -1306,14 +1329,14 @@ int main (int argc, char** argv) {
     jets.cleanJets(tightLoosePreselectedLeptons.items);
 //     // cleanJets for ttbar_lj or ttbar_ll
 //     jets.cleanJets(tightLeptons.items);
-    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, '-');
+    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, '-');
     jetsByCSV.initializeRawItemsSortedByCSV(jets.items);
     looseCSVJets.initializeRawItems(jets.rawItems);
-    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'L');
+    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'L');
     mediumCSVJets.initializeRawItems(jets.rawItems);
-    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'M');
+    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'M');
     tightCSVJets.initializeRawItems(jets.rawItems);
-    tightCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'T');
+    tightCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'T');
     notLooseCSVJets.initializeRawItems(beanHelper->GetDifference(jets.items, looseCSVJets.items));
 
     met.initializeRawItems(ev, "BNproducer", "patMETsPFlow");
@@ -1338,7 +1361,9 @@ int main (int argc, char** argv) {
     tightLoosePreselectedZLeptons.resetAndPushBack(myZLikeMassLepLepSFOSAll.selectedParticles1);
     tightLoosePreselectedZLeptons.pushBack(myZLikeMassLepLepSFOSAll.selectedParticles2);
 
+    //std::cout << "About to do tightLoosePreselectedNonZLeptons.initializeRawItems(beanHelper->GetDifference" << std::endl;
     tightLoosePreselectedNonZLeptons.initializeRawItems(beanHelper->GetDifference(tightLoosePreselectedLeptons.items, tightLoosePreselectedZLeptons.items));
+    //std::cout << "Did tightLoosePreselectedNonZLeptons.initializeRawItems(beanHelper->GetDifference" << std::endl;
 
     // Initialize SFOS pair closest to ZStar mass
     myZStarLikeMassLepLepSFOSAll.reset();

@@ -1,9 +1,16 @@
-SS label: ttV_SS_lepCuts_v1
-3l label: ttV_lepCuts_v1
-output label: FR_lepCuts_v1
+# SS label: ttV_SS_lepCuts_v1
+# 3l label: ttV_lepCuts_v1
+# output label: FR_lepCuts_v1
+# luminosity: 19450.0
+# input_trees_directory: tree_files
+# output directory: fakerate_SS_3l_lepCut
+
+SS label: ttV_SS_Sep10
+3l label: ttV_Sep10
+output label: FR_Sep10
 luminosity: 19450.0
-input_trees_directory: tree_files
-output directory: fakerate_SS_3l_lepCut
+input_trees_directory: ../tree_files
+output directory: fakerate_SS_3l_lepCut_Sep10
 
 CERN FR:
     file: '.../TemplateMakers/data/CERN/fakerate/FR_merged_data.root'
@@ -18,7 +25,7 @@ common cuts SS:
     #2_leptons: numAllLeptons == 2
     2_leptons: (numAllLeptons == 2 || numAllLeptons == 3)
     3rd_lepton: (numAllLeptons == 2 || (all_leptons_by_pt_3_lepCut < 1 || all_leptons_by_pt_3_pt < 10 ))
-    z_mask: (numAllElectrons < 2 || abs(ZLike_mass_leplep_SF_all-91.2) > 10)
+    z_mask: (numAllElectrons < 2 || abs(ZLike_mass_leplep_SF_all-91.0) > 10)
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10
     tight_charge: all_leptons_by_pt_1_CERN_tight_charge && all_leptons_by_pt_2_CERN_tight_charge ##Now includes conv_veto and inner_hits
     same_charge: abs(all_leptons_by_pt_1_tkCharge+all_leptons_by_pt_2_tkCharge) == 2
@@ -33,7 +40,7 @@ common cuts 3l:
     #3_leptons: numAllLeptons == 3
     3_leptons: (numAllLeptons == 3 || numAllLeptons == 4)
     4th_lepton: (numAllLeptons == 3 || (all_leptons_by_pt_4_lepCut < 1 || all_leptons_by_pt_4_pt < 10))
-    #z_mask: abs(ZLike_mass_leplep_SFOS_all-91.2) > 10
+    #z_mask: abs(ZLike_mass_leplep_SFOS_all-91.0) > 10
     lepton_pt: all_leptons_by_pt_1_pt > 20 && all_leptons_by_pt_2_pt > 10 && all_leptons_by_pt_3_pt > 10
     tight_charge: all_leptons_by_pt_1_CERN_tight_charge && all_leptons_by_pt_2_CERN_tight_charge && all_leptons_by_pt_3_CERN_tight_charge
     right_charge: abs(all_leptons_by_pt_1_tkCharge+all_leptons_by_pt_2_tkCharge+all_leptons_by_pt_3_tkCharge) == 1
@@ -43,7 +50,7 @@ common cuts 3l:
     #2tight1loose: all_SS_leptons_by_pt_1_lepCut == 2 && all_SS_leptons_by_pt_2_lepCut == 2 && all_OS_leptons_by_pt_1_lepCut >= 1
     le2jet: numJets <= 2
     lowMet: met_ld < 0.2 && WLike_MT_met_lep < 40
-    z_peak: abs(ZLike_mass_leplep_SFOS_all-91.2) < 10
+    z_peak: abs(ZLike_mass_leplep_SFOS_all-91.0) < 10
     #ttZ_veto: (numJets < 3 || (numMediumBJets == 0 && numLooseBJets < 2))
 
 lepton categories:
@@ -66,7 +73,7 @@ lepton categories:
     3l:
         data samples: [inclusive_data]
         cuts:
-            #lf: ( (abs(ZLike_mass_leplep_SFOS_all-91.2) > 10 && (numJets < 2 || (numJets == 2 && numMediumBJets == 0 && numLooseBJets < 2))) || (abs(ZLike_mass_leplep_SFOS_all-91.2) < 10 && (numJets < 3 || (numJets == 3 && numMediumBJets == 0 && numLooseBJets < 2)) && (met_pt*0.6 + mht*0.4) < 30 && WLike_MT_met_lep < 40) )
+            #lf: ( (abs(ZLike_mass_leplep_SFOS_all-91.0) > 10 && (numJets < 2 || (numJets == 2 && numMediumBJets == 0 && numLooseBJets < 2))) || (abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && (numJets < 3 || (numJets == 3 && numMediumBJets == 0 && numLooseBJets < 2)) && (met_pt*0.6 + mht*0.4) < 30 && WLike_MT_met_lep < 40) )
             trigger: '((dataset == "MC" && (isDoubleMuTriggerPass || isDoubleMuTriggerPass || isMuEGTriggerPass || isTripleElectronTriggerPass)) ||
             (dataset == "DoubleMu" && isDoubleMuTriggerPass) ||
             (dataset == "DoubleElectron" && (!isDoubleMuTriggerPass) && (isDoubleElectronTriggerPass || isTripleElectronTriggerPass)) ||
@@ -160,7 +167,7 @@ muon pt eta csv categories:
 #     ele_2_1: [0, 20, 40, 0.0, 2.5, -100, 1, 0.12, 0.15]
 #     ele_3_1: [0, 40, 1000, 0.0, 2.5, -100, 1, 0.14, 0.17]
 
-    ##0/1/2 3l
+    ##0/1/2 3l (Used for first two TopProperties talks, v2 of AN-14-198)
     mu_1_1: [1, 10, 15, 0.0, 2.5, -100, 1, 0.17, 0.20]
     mu_2_1: [1, 15, 20, 0.0, 2.5, -100, 1, 0.17, 0.20]
     mu_3_1: [1, 20, 30, 0.0, 2.5, -100, 1, 0.31, 0.35]
@@ -169,6 +176,16 @@ muon pt eta csv categories:
     ele_1_1: [0, 10, 20, 0.0, 2.5, -100, 1, 0.14, 0.17]
     ele_2_1: [0, 20, 40, 0.0, 2.5, -100, 1, 0.16, 0.19]
     ele_3_1: [0, 40, 1000, 0.0, 2.5, -100, 1, 0.11, 0.13]
+
+#     ##
+#     mu_1_1: [1, 10, 15, 0.0, 2.5, -100, 1, 0.0, 0.01]
+#     mu_2_1: [1, 15, 20, 0.0, 2.5, -100, 1, 0.45, 0.46]
+#     mu_3_1: [1, 20, 30, 0.0, 2.5, -100, 1, 0.0, 0.01]
+#     mu_4_1: [1, 30, 1000, 0.0, 2.5, -100, 1, 0.69, 0.70]
+    
+#     ele_1_1: [0, 10, 20, 0.0, 2.5, -100, 1, 0.29, 0.30]
+#     ele_2_1: [0, 20, 40, 0.0, 2.5, -100, 1, 0.0, 0.01]
+#     ele_3_1: [0, 40, 1000, 0.0, 2.5, -100, 1, 0.0, 0.01]
 
 # ## ------- Pt final bins (loose) ----------------
 

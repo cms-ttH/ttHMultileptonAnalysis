@@ -14,46 +14,50 @@ class FinalBDT_ttW_3l: public KinematicVariable<double> {
 public:
   //Store branch values so they are accessible to other classes
   vector<BranchInfo<double>> myVars;
-  
-  Float_t varnumMediumBJets;
+
+  Float_t varmet_pt;
   Float_t varMT_of_everything;
-  Float_t varMT_over_mass_of_everything;
+  Float_t varjets_by_pt_1_pt;
+  Float_t varjets_by_CSV_2_btagCombinedSecVertex;
   Float_t varttbar_fake_3l_top_mass_lep_blep;
-  Float_t varttW_3l_ttbar_MT_mass_ratio_B_b;
   Float_t varMatch_ttbar_fake_3l_B;
   Float_t varMatch_ttbar_fake_3l_b;
-  Float_t varMatch_ttW_3l_B;
-  Float_t varMatch_ttW_3l_b;
+  Float_t varmax_max_Match_ttbar_fake_3l_B_Match_ttbar_fake_3l_b___6_;
   Float_t varMatch_ttW_3l_Bb;
+  Float_t varall_SS_leptons_by_pt_1_pt;
+  Float_t varall_SS_leptons_by_pt_2_pt;
   
   vector<TMVA::Reader *> reader;
 
-  BNjetCollection **jets;
-  BNjetCollection **mediumCSVJets;
+  BNmetCollection **met;
   ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * myMTOfEverything;
-  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * myMassOfEverything;
+  BNjetCollection **jets;
+  BNjetCollection **jetsByCSV;
   MatchTester_ttbar_fake_3l * myMatchTester_ttbar_fake_3l;
   MatchTester_ttW_3l * myMatchTester_ttW_3l;
+  BNleptonCollection **leptonsSS;
 
-  FinalBDT_ttW_3l(BNjetCollection **_jets,
-                  BNjetCollection **_mediumCSVJets,
+  FinalBDT_ttW_3l(BNmetCollection **_met,
                   ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * _myMTOfEverything,
-                  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * _myMassOfEverything,
+                  BNjetCollection **_jets,
+                  BNjetCollection **_jetsByCSV,
                   MatchTester_ttbar_fake_3l * _myMatchTester_ttbar_fake_3l,
-                  MatchTester_ttW_3l * _myMatchTester_ttW_3l);
+                  MatchTester_ttW_3l * _myMatchTester_ttW_3l,
+                  BNleptonCollection **_leptonsSS);
 
   void evaluate();
 
 };
 
-FinalBDT_ttW_3l::FinalBDT_ttW_3l(BNjetCollection **_jets,
-                                 BNjetCollection **_mediumCSVJets,
+FinalBDT_ttW_3l::FinalBDT_ttW_3l(BNmetCollection **_met,
                                  ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * _myMTOfEverything,
-                                 ThreeObjectKinematic<BNmetCollection,BNleptonCollection,BNjetCollection> * _myMassOfEverything,
+                                 BNjetCollection **_jets,
+                                 BNjetCollection **_jetsByCSV,
                                  MatchTester_ttbar_fake_3l * _myMatchTester_ttbar_fake_3l,
-                                 MatchTester_ttW_3l * _myMatchTester_ttW_3l):
-  jets(_jets), mediumCSVJets(_mediumCSVJets), myMTOfEverything(_myMTOfEverything), myMassOfEverything(_myMassOfEverything),
-  myMatchTester_ttbar_fake_3l(_myMatchTester_ttbar_fake_3l), myMatchTester_ttW_3l(_myMatchTester_ttW_3l) {
+                                 MatchTester_ttW_3l * _myMatchTester_ttW_3l,
+                                 BNleptonCollection **_leptonsSS):
+  met(_met), myMTOfEverything(_myMTOfEverything), jets(_jets), jetsByCSV(_jetsByCSV), myMatchTester_ttbar_fake_3l(_myMatchTester_ttbar_fake_3l),
+  myMatchTester_ttW_3l(_myMatchTester_ttW_3l), leptonsSS(_leptonsSS) {
 
   //std::cout << "Setting up FinalBDT_ttW_3l" << std::endl;
   
@@ -69,21 +73,22 @@ FinalBDT_ttW_3l::FinalBDT_ttW_3l(BNjetCollection **_jets,
 
     reader.push_back( new TMVA::Reader( "!Color:!Silent" ));
     
-    if (jj == 1) {
-      reader[jj]->AddVariable( "numMediumBJets", &varnumMediumBJets ); 
-      reader[jj]->AddVariable( "MT_of_everything", &varMT_of_everything );
-      reader[jj]->AddVariable( "MT_over_mass_of_everything", &varMT_over_mass_of_everything );
-      reader[jj]->AddVariable( "ttbar_fake_3l_top_mass_lep_blep", &varttbar_fake_3l_top_mass_lep_blep );
-      reader[jj]->AddVariable( "ttW_3l_ttbar_MT_mass_ratio_B_b", &varttW_3l_ttbar_MT_mass_ratio_B_b ); }
-    reader[jj]->AddVariable( "Match_ttbar_fake_3l_B", &varMatch_ttbar_fake_3l_B );
-    reader[jj]->AddVariable( "Match_ttbar_fake_3l_b", &varMatch_ttbar_fake_3l_b ); 
     if (jj == 0) {
-      reader[jj]->AddVariable( "Match_ttW_3l_B", &varMatch_ttW_3l_B );
-      reader[jj]->AddVariable( "Match_ttW_3l_b", &varMatch_ttW_3l_b ); }
+      reader[jj]->AddVariable( "met_pt", &varmet_pt ); 
+      reader[jj]->AddVariable( "MT_of_everything", &varMT_of_everything );
+      reader[jj]->AddVariable( "jets_by_pt_1_pt", &varjets_by_pt_1_pt );
+      reader[jj]->AddVariable( "max_max_Match_ttbar_fake_3l_B_Match_ttbar_fake_3l_b___6_", &varmax_max_Match_ttbar_fake_3l_B_Match_ttbar_fake_3l_b___6_ );
+    }
     if (jj == 1) {
-      reader[jj]->AddVariable( "Match_ttW_3l_Bb", &varMatch_ttW_3l_Bb ); }
+      reader[jj]->AddVariable( "MT_of_everything", &varMT_of_everything );
+      reader[jj]->AddVariable( "jets_by_CSV_2_btagCombinedSecVertex", &varjets_by_CSV_2_btagCombinedSecVertex );
+      reader[jj]->AddVariable( "ttbar_fake_3l_top_mass_lep_blep", &varttbar_fake_3l_top_mass_lep_blep );
+      reader[jj]->AddVariable( "Match_ttW_3l_Bb", &varMatch_ttW_3l_Bb );
+    }
+    reader[jj]->AddVariable( "all_SS_leptons_by_pt_1_pt", &varall_SS_leptons_by_pt_1_pt ); 
+    reader[jj]->AddVariable( "all_SS_leptons_by_pt_2_pt", &varall_SS_leptons_by_pt_2_pt ); 
     
-    TString dir = (string(getenv("CMSSW_BASE"))+"/src/ttHMultileptonAnalysis/TemplateMakers/data/NOVa/BDT_weights_ttW_3l/").c_str();
+    TString dir = (string(getenv("CMSSW_BASE"))+"/src/ttHMultileptonAnalysis/TemplateMakers/data/NOVa/Nov14/ttW_vs_ttbar_3l/").c_str();
     TString label = catList[jj];
     TString file_name = "TMVAClassification_BDTG.weights.xml";
     //TString file_name = "TMVAClassification_CFMlpANN.weights.xml";
@@ -100,18 +105,22 @@ FinalBDT_ttW_3l::FinalBDT_ttW_3l(BNjetCollection **_jets,
 void FinalBDT_ttW_3l::evaluate() {
   if (this->evaluatedThisEvent) return;
   if ((*jets)->size() < 1) return;
+  if ((*leptonsSS)->size() < 2) return;
   evaluatedThisEvent = true;
 
   //std::cout << "Inside FinalBDT_ttW_3l::evaluate()" << std::endl;
   
   myMTOfEverything->evaluate();
-  myMassOfEverything->evaluate();
   myMatchTester_ttbar_fake_3l->evaluate();
   myMatchTester_ttW_3l->evaluate();
 
-  varnumMediumBJets = (*mediumCSVJets)->size()*1.0;
+  varmet_pt = (*met)->at(0).pt;
   varMT_of_everything = (*myMTOfEverything).myVars[0].branchVal;
-  varMT_over_mass_of_everything = (*myMTOfEverything).myVars[0].branchVal/(*myMassOfEverything).myVars[0].branchVal;
+  varjets_by_pt_1_pt = (*jets)->at(0).pt;
+  if ((*jetsByCSV)->size() < 2) varjets_by_CSV_2_btagCombinedSecVertex = -1;
+  else varjets_by_CSV_2_btagCombinedSecVertex = (*jetsByCSV)->at(1).btagCombinedSecVertex;
+  varall_SS_leptons_by_pt_1_pt = (*leptonsSS)->at(0)->pt;
+  varall_SS_leptons_by_pt_2_pt = (*leptonsSS)->at(1)->pt;
 
   std::string branchName = "";
   for (unsigned int ii = 0; ii < (*myMatchTester_ttbar_fake_3l).myVars.size(); ii++) {
@@ -120,14 +129,26 @@ void FinalBDT_ttW_3l::evaluate() {
     if (branchName == "Match_ttbar_fake_3l_B") varMatch_ttbar_fake_3l_B = max((*myMatchTester_ttbar_fake_3l).myVars[ii].branchVal,-6.0);
     if (branchName == "Match_ttbar_fake_3l_b") varMatch_ttbar_fake_3l_b = max((*myMatchTester_ttbar_fake_3l).myVars[ii].branchVal,-6.0);
   }
+  varmax_max_Match_ttbar_fake_3l_B_Match_ttbar_fake_3l_b___6_ = max(varMatch_ttbar_fake_3l_B, varMatch_ttbar_fake_3l_b);
   for (unsigned int ii = 0; ii < (*myMatchTester_ttW_3l).myVars.size(); ii++) {
     branchName = (*myMatchTester_ttW_3l).myVars[ii].branchName;
-    if (branchName == "ttW_3l_ttbar_MT_mass_ratio_B_b") varttW_3l_ttbar_MT_mass_ratio_B_b = (*myMatchTester_ttW_3l).myVars[ii].branchVal;
-    if (branchName == "Match_ttW_3l_B") varMatch_ttW_3l_B = (*myMatchTester_ttW_3l).myVars[ii].branchVal;
-    if (branchName == "Match_ttW_3l_b") varMatch_ttW_3l_b = (*myMatchTester_ttW_3l).myVars[ii].branchVal;
     if (branchName == "Match_ttW_3l_Bb") varMatch_ttW_3l_Bb = (*myMatchTester_ttW_3l).myVars[ii].branchVal;
   }
 
+//   std::cout << "                               " << std::endl;
+//   std::cout << "------- FinalBDT_ttW_3l -------" << std::endl;
+//   std::cout << "varmet_pt: " << varmet_pt << std::endl;
+//   std::cout << "varMT_of_everything: " << varMT_of_everything << std::endl;
+//   std::cout << "varjets_by_pt_1_pt: " << varjets_by_pt_1_pt << std::endl;
+//   std::cout << "varjets_by_CSV_2_btagCombinedSecVertex: " << varjets_by_CSV_2_btagCombinedSecVertex << std::endl;
+//   std::cout << "varttbar_fake_3l_top_mass_lep_blep: " << varttbar_fake_3l_top_mass_lep_blep << std::endl;
+//   std::cout << "varMatch_ttbar_fake_3l_B: " << varMatch_ttbar_fake_3l_B << std::endl;
+//   std::cout << "varMatch_ttbar_fake_3l_b: " << varMatch_ttbar_fake_3l_b << std::endl;
+//   std::cout << "varmax_max_Match_ttbar_fake_3l_B_Match_ttbar_fake_3l_b___6_: " << varmax_max_Match_ttbar_fake_3l_B_Match_ttbar_fake_3l_b___6_ << std::endl;
+//   std::cout << "varMatch_ttW_3l_Bb: " << varMatch_ttW_3l_Bb << std::endl;
+//   std::cout << "varall_SS_leptons_by_pt_1_pt: " << varall_SS_leptons_by_pt_1_pt << std::endl;
+//   std::cout << "varall_SS_leptons_by_pt_2_pt: " << varall_SS_leptons_by_pt_2_pt << std::endl;
+  
   for( unsigned int jj = 0 ; jj < 2 ; ++jj ) {
     
     TMVA::Reader  *tmpReader = reader[jj];
@@ -140,6 +161,7 @@ void FinalBDT_ttW_3l::evaluate() {
     if (jj == 0 && (*jets)->size() == 1) branches["FinalBDT_ttW_3l"].branchVal = annOut;
     if (jj == 1 && (*jets)->size() >= 2) branches["FinalBDT_ttW_3l"].branchVal = annOut;
 
+//     std::cout << "annOut[jj]: " << annOut << "[" << jj << "]" << std::endl;
   }
 
   //Clean out values from last event

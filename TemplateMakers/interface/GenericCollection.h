@@ -103,6 +103,7 @@ void GenericCollection<collectionType>::initializeRawItemsSortedByPt(edm::EventB
   reset();
   initializeRawItems(event, rawCollectionLabel, rawCollectionInstance);
 
+  // Raw items not sorted? -AWB 06/11/14
   items = bHelp->GetSortedByPt(items);
 
   ptrToItems = &items;
@@ -113,6 +114,7 @@ void GenericCollection<collectionType>::initializeRawItemsSortedByPt(const colle
   reset();
 
   rawItems = collection;
+  // Raw items not sorted? -AWB 06/11/14
   items = bHelp->GetSortedByPt(collection);
 
   ptrToItems = &items;
@@ -123,6 +125,7 @@ void GenericCollection<collectionType>::initializeRawItemsSortedByCSV(edm::Event
   reset();
   initializeRawItems(event, rawCollectionLabel, rawCollectionInstance);
 
+  // Raw items not sorted? -AWB 06/11/14
   items = bHelp->GetSortedByCSV(items);
 
   ptrToItems = &items;

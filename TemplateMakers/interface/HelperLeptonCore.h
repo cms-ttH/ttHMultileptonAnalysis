@@ -141,6 +141,12 @@ public:
   template <typename particleType> bool isPlausible(particleType particle, const BNmcparticle& mcParticle);
   template <typename particleType> BNmcparticleCollection getPlausibleParticles(particleType& particle, BNmcparticleCollection mcParticles);
   template <typename collectionType> void applyRochesterCorrections(collectionType& collection);
+  template <typename collectionType> void apply_SMP_12_011_correction_mu(collectionType& collection, bool doSmear);
+  template <typename collectionType> void apply_SMP_12_011_correction_ele(collectionType& collection, bool doSmear);
+  template <typename collectionType> void apply_gsf_Et(collectionType& collection);
+  template <typename collectionType> void apply_sc_Et(collectionType& collection);
+  template <typename collectionType> void shiftLeptonEnergy(collectionType& collection, double shift_scale_B, double shift_scale_E1, double shift_scale_E2);
+  template <typename collectionType> void smearLeptonEnergy(collectionType& collection, double smear_size);
   template <typename particleType> BNjet GetClosestJet(const BNjetCollection& jets, const particleType& particle, const double maxDeltaR);
 
   TRandom *gSmearer;
@@ -398,6 +404,201 @@ void HelperLeptonCore::applyRochesterCorrections(collectionType& collection) {
     object.pt = p4.Pt();
   }
 }
+
+template <typename collectionType>
+void HelperLeptonCore::apply_SMP_12_011_correction_mu(collectionType& collection, bool doSmear) {
+
+  //Correction factors from SMP-12-011 (AN-12-067)
+  //http://cms.cern.ch/iCMS/analysisadmin/viewanalysis?id=862&field=id&value=862&name=Inclusive%20W/Z%20cross%20section%20at%208%20TeV
+  //http://cds.cern.ch/record/1646590?ln=en
+
+  TLorentzVector p4;
+  double pi = 3.14159265358979323846;
+  double bin = 2*pi/11; //11 bins over a 2 pi range
+  double phi = -99.0;
+  double scale = 1.0;
+
+  double smear_size = 0.5; //Quoted value
+  double smear_val = 0.0;
+  double smear_scale = 1.0;
+
+  for (auto& object: collection) {
+    p4.SetPxPyPzE(object.px, object.py, object.pz, object.energy);
+    phi = p4.Phi();
+    if (isData) continue;
+    if (object.tkCharge == -1) {
+      if      (phi >= 0*bin - pi && phi < 1*bin - pi) scale = 1.005;
+      else if (phi >= 1*bin - pi && phi < 2*bin - pi) scale = 1.0075;
+      else if (phi >= 2*bin - pi && phi < 3*bin - pi) scale = 1.006;
+      else if (phi >= 3*bin - pi && phi < 4*bin - pi) scale = 1.001;
+      else if (phi >= 4*bin - pi && phi < 5*bin - pi) scale = 0.999;
+      else if (phi >= 5*bin - pi && phi < 6*bin - pi) scale = 0.9985;
+      else if (phi >= 6*bin - pi && phi < 7*bin - pi) scale = 1.0015;
+      else if (phi >= 7*bin - pi && phi < 8*bin - pi) scale = 0.9995;
+      else if (phi >= 8*bin - pi && phi < 9*bin - pi) scale = 0.999;
+      else if (phi >= 9*bin - pi && phi < 10*bin - pi) scale = 0.9965;
+      else if (phi >= 10*bin - pi && phi <= 11*bin - pi) scale = 1.002;
+    }
+    else if (object.tkCharge == 1) {
+      if      (phi >= 0*bin - pi && phi < 1*bin - pi) scale = 1.001;
+      else if (phi >= 1*bin - pi && phi < 2*bin - pi) scale = 1.0025;
+      else if (phi >= 2*bin - pi && phi < 3*bin - pi) scale = 0.998;
+      else if (phi >= 3*bin - pi && phi < 4*bin - pi) scale = 0.999;
+      else if (phi >= 4*bin - pi && phi < 5*bin - pi) scale = 1.000;
+      else if (phi >= 5*bin - pi && phi < 6*bin - pi) scale = 1.001;
+      else if (phi >= 6*bin - pi && phi < 7*bin - pi) scale = 1.0015;
+      else if (phi >= 7*bin - pi && phi < 8*bin - pi) scale = 1.004;
+      else if (phi >= 8*bin - pi && phi < 9*bin - pi) scale = 1.003;
+      else if (phi >= 9*bin - pi && phi < 10*bin - pi) scale = 1.002;
+      else if (phi >= 10*bin - pi && phi <= 11*bin - pi) scale = 0.999;
+    }
+
+    smear_val = gSmearer->Gaus(0.0, smear_size);    
+    if (doSmear) smear_scale = (p4.Energy() + smear_val)/p4.Energy();
+      
+    // MC correction divide by scale
+    object.px = p4.Px()*smear_scale/scale;
+    object.py = p4.Py()*smear_scale/scale;
+    object.pz = p4.Pz()*smear_scale/scale;
+    object.energy = p4.Energy()*smear_scale/scale;
+    object.pt = p4.Pt()*smear_scale/scale;
+    
+  } //End loop over objects
+
+} //End apply_SMP_12_011_correction_mu
+
+template <typename collectionType>
+void HelperLeptonCore::apply_SMP_12_011_correction_ele(collectionType& collection, bool doSmear) {
+
+  //Correction factors from SMP-12-011 (AN-12-067)
+  //http://cms.cern.ch/iCMS/analysisadmin/viewanalysis?id=862&field=id&value=862&name=Inclusive%20W/Z%20cross%20section%20at%208%20TeV
+  //http://cds.cern.ch/record/1646590?ln=en
+
+  TLorentzVector p4;
+  double absEta = -99.0;
+  double scale = 1.0;
+  
+  double smear_size = 0.0;
+  double smear_val = 0.0;
+  double smear_scale = 1.0;
+
+  for (auto& object: collection) {
+    p4.SetPxPyPzE(object.px, object.py, object.pz, object.energy);
+    absEta = abs(p4.Eta());
+    if (isData) continue;
+    
+    if      (absEta >= 0.0 && absEta < 0.4) { scale = 1.0024; smear_size = 0.46; }
+    else if (absEta >= 0.4 && absEta < 0.8) { scale = 1.0055; smear_size = 0.01; } 
+    else if (absEta >= 0.8 && absEta < 1.2) { scale = 1.0063; smear_size = 0.82; }
+    else if (absEta >= 1.2 && absEta < 1.4442) { scale = 1.0067; smear_size = 0.71; }
+    else if (absEta >= 1.566 && absEta < 2.0) { scale = 0.9985; smear_size = 1.36; }
+    else if (absEta >= 2.0 && absEta <= 2.5) { scale = 0.9835; smear_size = 1.28; } 
+
+    smear_val = gSmearer->Gaus(0.0, smear_size);    
+    if (doSmear) smear_scale = (p4.Energy() + smear_val)/p4.Energy();
+      
+    // MC correction divide by scale
+    object.px = p4.Px()*smear_scale/scale;
+    object.py = p4.Py()*smear_scale/scale;
+    object.pz = p4.Pz()*smear_scale/scale;
+    object.energy = p4.Energy()*smear_scale/scale;
+    object.pt = p4.Pt()*smear_scale/scale;
+    
+  } //End loop over objects
+
+} //End apply_SMP_12_011_correction_ele
+
+template <typename collectionType>
+void HelperLeptonCore::apply_gsf_Et(collectionType& collection) {
+
+  TLorentzVector p4;
+  double gsf_scale = 1.0;
+  
+  for (auto& object: collection) {
+    p4.SetPxPyPzE(object.px, object.py, object.pz, object.energy);
+
+    gsf_scale = object.gsfEt/object.et;
+      
+    // MC correction divide by scale
+    object.px = p4.Px()*gsf_scale;
+    object.py = p4.Py()*gsf_scale;
+    object.pz = p4.Pz()*gsf_scale;
+    object.energy = p4.Energy()*gsf_scale;
+    object.pt = p4.Pt()*gsf_scale;
+    
+  } //End loop over objects
+
+} //End apply_gsf_Et
+
+template <typename collectionType>
+void HelperLeptonCore::apply_sc_Et(collectionType& collection) {
+
+  TLorentzVector p4;
+  double sc_scale = 1.0;
+  
+  for (auto& object: collection) {
+    p4.SetPxPyPzE(object.px, object.py, object.pz, object.energy);
+
+    sc_scale = object.scEt/object.et;
+      
+    // MC correction divide by scale
+    object.px = p4.Px()*sc_scale;
+    object.py = p4.Py()*sc_scale;
+    object.pz = p4.Pz()*sc_scale;
+    object.energy = p4.Energy()*sc_scale;
+    object.pt = p4.Pt()*sc_scale;
+    
+  } //End loop over objects
+
+} //End apply_sc_Et
+
+template <typename collectionType>
+void HelperLeptonCore::shiftLeptonEnergy(collectionType& collection, double shift_scale_B, double shift_scale_E1, double shift_scale_E2) {
+
+  TLorentzVector p4;
+  double shift_scale = 1.0;
+  
+  for (auto& object: collection) {
+    p4.SetPxPyPzE(object.px, object.py, object.pz, object.energy);
+    if (isData) continue;
+
+    if (abs(p4.Eta()) < 1.5) shift_scale = shift_scale_B;
+    else if (abs(p4.Eta()) < 2.0) shift_scale = shift_scale_E1;
+    else shift_scale = shift_scale_E2;
+
+    object.px = p4.Px()*shift_scale;
+    object.py = p4.Py()*shift_scale;
+    object.pz = p4.Pz()*shift_scale;
+    object.energy = p4.Energy()*shift_scale;
+    object.pt = p4.Pt()*shift_scale;
+
+  } //End loop over objects
+
+} //End shiftLeptonEnergy
+    
+template <typename collectionType>
+void HelperLeptonCore::smearLeptonEnergy(collectionType& collection, double smear_size) {
+
+  TLorentzVector p4;
+  double smear_val = 0.0;
+  double smear_scale = 1.0;
+
+  for (auto& object: collection) {
+    p4.SetPxPyPzE(object.px, object.py, object.pz, object.energy);
+    if (isData) continue;
+
+    smear_val = gSmearer->Gaus(0.0, smear_size);
+    smear_scale = (p4.Energy() + smear_val)/p4.Energy();
+
+    object.px = p4.Px()*smear_scale;
+    object.py = p4.Py()*smear_scale;
+    object.pz = p4.Pz()*smear_scale;
+    object.energy = p4.Energy()*smear_scale;
+    object.pt = p4.Pt()*smear_scale;
+
+  } //End loop over objects
+
+} //End smearLeptonEnergy  
 
 template <typename particleType>
 BNjet HelperLeptonCore::GetClosestJet(const BNjetCollection& jets, const particleType& object, const double maxDeltaR) {

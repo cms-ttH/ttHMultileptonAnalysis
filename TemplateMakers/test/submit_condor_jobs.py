@@ -58,9 +58,17 @@ def createCondorSubFileAndSubmit(executable, sample, label, jetSyst, numJobs, wa
         labelSyst = label
         if not 'NA' in jetSyst:
             labelSyst = label+'_'+jetSyst
+        #echo_executable = '/afs/crc.nd.edu/user/a/abrinke1/CMSSW_5_3_8_patch1/src/ttHMultileptonAnalysis/TemplateMakers/test/echo_'+executable.split('/')[-1]
+        #print echo_executable
         contents = ('universe = vanilla\n'
                     'List = {list}\n'
                     'executable = {executable}\n'
+                    ## Executable to write hostname to log
+                    ##'executable = {echo_executable}\n'
+                    #'executable = /afs/crc.nd.edu/user/a/abrinke1/CMSSW_5_3_8_patch1/src/ttHMultileptonAnalysis/TemplateMakers/test/echo_lepEff.sh\n'
+                    #'executable = /afs/crc.nd.edu/user/a/abrinke1/CMSSW_5_3_8_patch1/src/ttHMultileptonAnalysis/TemplateMakers/test/echo_ttV_OS.sh\n'
+                    #'executable = /afs/crc.nd.edu/user/a/abrinke1/CMSSW_5_3_8_patch1/src/ttHMultileptonAnalysis/TemplateMakers/test/echo_ttV.sh\n'
+                    #'executable = /afs/crc.nd.edu/user/a/abrinke1/CMSSW_5_3_8_patch1/src/ttHMultileptonAnalysis/TemplateMakers/test/echo_ttV_SS.sh\n'
                     'notification = Never\n'
                     'log = batch_trees/multilepton.logfile\n'
                     'getenv = True\n'
@@ -71,8 +79,13 @@ def createCondorSubFileAndSubmit(executable, sample, label, jetSyst, numJobs, wa
                     'arguments = ssCondor.py $(List) $(Label) $(jetSyst) $(Process) $(NJobs)\n'
                     'output = batch_trees/condor_logs/condor_$(List)_$(LabelSyst)_$(Process).stdout\n'
                     'error = batch_trees/condor_logs/condor_$(List)_$(LabelSyst)_$(Process).stderr\n'
+                    ## Requests 2000 MB of memory.  If job exceeds this, it will be killed.
+                    'RequestMemory = 2000\n'
 #                     ## Runs on 32 cores on earth
 #                     '+IsExpressJob = True\n'
+#                     ## Excludes some problematic nodes
+#                     'requirements = (machine != "d6copt309.crc.nd.edu" && machine != "d6copt353.crc.nd.edu")\n'
+#                     'requirements = (machine != "skynet005.crc.nd.edu" && machine != "skynet006.crc.nd.edu" && machine != "skynet008.crc.nd.edu")\n'
                     'queue $(NJobs)')
         condorJobFile.write(contents.format(executable=executable,
                                             list=sample,

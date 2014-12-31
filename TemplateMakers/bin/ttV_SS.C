@@ -29,7 +29,7 @@ void getNumExtraPartons(BEANhelper* beanHelper, BNmcparticleCollection& mcPartic
 void dibosonPlusHFKeepEventFunction(BEANhelper * beanHelper, BNmcparticleCollection& mcParticles,
                                     BNjetCollection& rawJets, bool & dibosonPlusHFKeepEventBool) {
 
-  dibosonPlusHFKeepEventBool = beanHelper->dibosonPlusHFKeepEvent(mcParticles, rawJets);
+  dibosonPlusHFKeepEventBool = beanHelper->dibosonPlusHFKeepEvent(mcParticles, rawJets, 25.0, jetID::jetLoosePU);
 
   return;
 }
@@ -177,7 +177,7 @@ int main (int argc, char** argv) {
   GenericCollectionSizeVariable<BNjetCollection> numJets(&(jets.ptrToItems), "numJets");
   kinVars.push_back(&numJets);
   numJets.setCutMin(2);
-  //cutVars.push_back(&numJets);
+  cutVars.push_back(&numJets);
 
   GenericCollectionSizeVariable<BNjetCollection> numLooseBJets(&(looseCSVJets.ptrToItems), "numLooseBJets");
   kinVars.push_back(&numLooseBJets);
@@ -359,7 +359,7 @@ int main (int argc, char** argv) {
   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myZLikeMassLepLepSFAll("mass", "closest_to", "ZLike_mass_leplep_SF_all",
                                                                                    &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
                                                                                    &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 99,
-                                                                                   91.2, "same_flavour");
+                                                                                   91.0, "same_flavour");
   kinVars.push_back(&myZLikeMassLepLepSFAll);  
   
   TwoObjectKinematic<BNleptonCollection,BNjetCollection> myMHT("pt", "vector_sum", "mht",
@@ -463,9 +463,9 @@ int main (int argc, char** argv) {
 // //                                                                        "IPError", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
 // //   kinVars.push_back(&allLeptonIPError);
   
-//   GenericCollectionMember<double, BNleptonCollection> allLeptonJetBTagCSV(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-//                                                                           "jetBTagCSV", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-//   kinVars.push_back(&allLeptonJetBTagCSV);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonJetBTagCSV(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                          "jetBTagCSV", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonJetBTagCSV);
 
 //   GenericCollectionMember<double, BNleptonCollection> allLeptonJetPtRatio(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
 //                                                                           "jetPtRatio", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
@@ -637,8 +637,13 @@ int main (int argc, char** argv) {
   kinVars.push_back(&myMatchTester_ttbar_fake_SS);
 
   FinalBDT_ttW_SS myFinalBDT_ttW_SS(&myMatchTester_ttW_SS, &myMatchTester_ttbar_fake_SS,
-                                    &myMetLD, &(jetsByCSV.ptrToItems), &myMTOfEverything);
+                                    &(met.ptrToItems), &(jetsByCSV.ptrToItems), &myMTOfEverything,
+                                    &(tightLoosePreselectedLeptons.ptrToItems));
   kinVars.push_back(&myFinalBDT_ttW_SS);
+  
+  FinalBDT_ttW_SS_Oct31 myFinalBDT_ttW_SS_Oct31(&myMatchTester_ttW_SS, &myMatchTester_ttbar_fake_SS,
+                                    &myMetLD, &(jetsByCSV.ptrToItems), &myMTOfEverything);
+  kinVars.push_back(&myFinalBDT_ttW_SS_Oct31);
   
   Char_t *dataset = (Char_t *)lepHelper.dataset.c_str();
   summaryTree->Branch("dataset", (void*)dataset, "dataset/C");
@@ -683,12 +688,12 @@ int main (int argc, char** argv) {
     tightLoosePreselectedElectrons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatElectronsGSF");
 //     tightLoosePreselectedTaus.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatTausPFlow");
 
-    //lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //Apply Rochester for data only
-    bool applyRochester = (lepHelper.isData);
-    if (applyRochester) lepHelper.applyRochesterCorrections(tightLoosePreselectedMuons.rawItems);
-    //bool applySmearing = !(lepHelper.isData);
-    //No smearing
+    //New lepton energy scaling and smearing for MC -AWB 13/11/14
+    bool lepEnergyCorr = !(lepHelper.isData);
+    if (lepEnergyCorr) lepHelper.shiftLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 0.9936, 0.996, 0.988);
+    if (lepEnergyCorr) lepHelper.smearLeptonEnergy(tightLoosePreselectedElectrons.rawItems, 1.0);
+    if (lepEnergyCorr) lepHelper.apply_SMP_12_011_correction_mu(tightLoosePreselectedMuons.rawItems, true);
+    //No smearing of other lepton variables
     bool applySmearing = false;
     if (applySmearing) {
       lepHelper.fillMCMatchAny(tightLoosePreselectedMuons.rawItems, mcParticles.rawItems, 0.3);
@@ -758,14 +763,14 @@ int main (int argc, char** argv) {
     jets.cleanJets(tightLoosePreselectedLeptons.items);
 //     // cleanJets for ttbar_lj or ttbar_ll
 //     jets.cleanJets(tightLeptons.items);
-    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, '-');
+    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, '-');
     jetsByCSV.initializeRawItemsSortedByCSV(jets.items);
     looseCSVJets.initializeRawItems(jets.rawItems);
-    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'L');
+    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'L');
     mediumCSVJets.initializeRawItems(jets.rawItems);
-    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'M');
+    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'M');
     tightCSVJets.initializeRawItems(jets.rawItems);
-    tightCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'T');
+    tightCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'T');
     notLooseCSVJets.initializeRawItems(beanHelper->GetDifference(jets.items, looseCSVJets.items));
 
     met.initializeRawItems(ev, "BNproducer", "patMETsPFlow");

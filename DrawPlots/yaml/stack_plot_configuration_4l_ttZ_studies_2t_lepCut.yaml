@@ -1,7 +1,7 @@
 #input and output file names
-input file location: histos_4l_ttZ_studies_2t_lepCut
-input file label: ttV_Aug11
-output file location: pdf_4l_ttZ_studies_2t_lepCut
+input file location: histos/4l_ttZ_studies_2t_lepCut
+input file label: ttV_Sep10
+output file location: pdf/4l_ttZ_studies_2t_lepCut_blind
 
 #drawing options
 skip systematics: true
@@ -10,7 +10,7 @@ draw legend: true
 log scale: false
 save png: true
 save pdf: true
-blinded: false
+blinded: true
 KS test: false
 selection info : false
 SF info: false
@@ -60,9 +60,8 @@ jet tag categories:
 #     ge2j_Zmask_lowMet_lf: " + #geq2 jets + Z mask + lowMet + lf"
 #     ge2j_Zmask_metLD_1bloose: " + #geq2 jets + Z mask + MetLD + tag"
 
+    ge1j_Zpeak_met30_1bloose: " + #geq1 jets + Z peak + Met30 + tag"
     ge1j_Zmask_met30_1bloose: " + #geq1 jets + Z mask + Met30 + tag"
-    ge1j_Zmask_met40_1bloose: " + #geq1 jets + Z mask + Met40 + tag"
-    ge1j_Zmask_met50_1bloose: " + #geq1 jets + Z mask + Met50 + tag"
 
 #     2lep_pt: " + 2 leps pT cut"
 #     3lep_pt: " + 3 leps pT cut"
@@ -170,61 +169,50 @@ background samples:
 #         color: kMagenta
 #         samples: [zz_lowmll]
         
-#     zz_llll:
-#         draw name: "ZZ"
-#         color: kAzure-9
-#         samples: [zz_llll]
-        
-    zz_lf_llll:
-        draw name: "ZZ_lf"
+    zz_llll:
+        draw name: "ZZ"
         color: kAzure-9
-        samples: [zz_lf_llll]
+        samples: [zz_llll]
         
-    zz_cc_llll:
-        draw name: "ZZ_cc"
-        color: kAzure-8
-        samples: [zz_cc_llll]
+#     zz_lf_llll:
+#         draw name: "ZZ_lf"
+#         color: kAzure-9
+#         samples: [zz_lf_llll]
         
-    zz_b_llll:
-        draw name: "ZZ_b"
-        color: kAzure-7
-        samples: [zz_b_llll]
+#     zz_cc_llll:
+#         draw name: "ZZ_cc"
+#         color: kAzure-8
+#         samples: [zz_cc_llll]
         
-    zz_bb_llll:
-        draw name: "ZZ_bb"
-        color: kAzure-6
-        samples: [zz_bb_llll]
+#     zz_b_llll:
+#         draw name: "ZZ_b"
+#         color: kAzure-7
+#         samples: [zz_b_llll]
         
-    Others:
-        draw name: "Rare SM"
-        color: kSpring+8
-        samples: [tbZ_ll, WpWpqq, WWDPI] #WmWmqq
-
-
-    triboson:
-        draw name: "triboson"
+#     zz_bb_llll:
+#         draw name: "ZZ_bb"
+#         color: kAzure-6
+#         samples: [zz_bb_llll]
+        
+    multiboson:
+        draw name: "multiboson"
         color: kViolet
-        samples: [www, wwz]
-
-    ttbarGStar:
-        draw name: "t#bar{t}G*"
-        color: kCyan-3
-        samples: [ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt]
+        samples: [wwz] #wzz, zzz
+        
+    ttbarX:
+        draw name: "t#bar{t}+X"
+        color: kSpring+8
+        samples: [ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
+                                        
+    ttH125:
+        draw name: "t#bar{t}H"
+        color: kRed
+        samples: [ttH125]
                                         
     ttbarW:
         draw name: "t#bar{t}W"
         color: kGreen-5
         samples: [ttbarW]
-                                        
-    ttbarWW:
-        draw name: "t#bar{t}WW"
-        color: kBlue-9
-        samples: [ttbarWW]
-                                        
-    ttH125:
-        draw name: "t#bar{t}H125"
-        color: kRed
-        samples: [ttH125]
                                         
     #Zjets:
         #draw name: Zjets

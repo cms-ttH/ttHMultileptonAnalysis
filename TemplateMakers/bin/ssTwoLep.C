@@ -779,12 +779,12 @@ int main (int argc, char** argv) {
     jets.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatJetsPFlow");
     jets.cleanJets(tightLoosePreselectedLeptons.items);
     jets.correctRawJets(jetSyst);
-    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, '-');
+    jets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, '-');
     jetsByCSV.initializeRawItemsSortedByCSV(jets.items);
     looseCSVJets.initializeRawItems(jets.rawItems);
-    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'L');
+    looseCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'L');
     mediumCSVJets.initializeRawItems(jets.rawItems);
-    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoose, 'M');
+    mediumCSVJets.keepSelectedJets(25.0, 2.4, jetID::jetLoosePU, 'M');
     notLooseCSVJets.initializeRawItems(beanHelper->GetDifference(jets.items, looseCSVJets.items));
 
     met.initializeRawItems(ev, "BNproducer","patMETsPFlow");

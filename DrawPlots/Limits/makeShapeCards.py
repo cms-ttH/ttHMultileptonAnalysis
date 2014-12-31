@@ -15,6 +15,9 @@ parser.add_argument('systematics_file_names', nargs='*', default='systsEnv_new.t
 parser.add_argument('-jt', '--jet_tag', action='store_true', help='Add jet-tag category to end of datacard name.')
 parser.add_argument('-l', '--label', help='Add label to end of datacard name.')
 parser.add_argument('-s', '--scale_all', help='Scale all samples uniformly.')
+parser.add_argument('-db','--data_bkg', action='store_true', help='Replace data with background.')
+parser.add_argument('-dsb','--data_sig_bkg', action='store_true', help='Replace data with signal+background.')
+parser.add_argument('-st','--stat_uncert', help='Use bin-by-bin statistical uncertainties. Can use "all" or "some" or "ttH".')
 args = parser.parse_args()
 
 with open(args.config_file_name) as config_file:
@@ -80,6 +83,21 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
     for key in all_keys:
         process_number[key] = i - len(signal_keys)
         i += 1
+
+    if args.data_bkg or args.data_sig_bkg:
+        for data_key in data_keys:
+            data_samples[data_key]['samples'] = []
+            for background_key in background_keys:
+                for sample in background_samples[background_key]['samples']:
+                    if not sample in lepton_categories[lepton_category]['excluded samples']:
+                        data_samples[data_key]['samples'].append(sample)
+                    
+    if args.data_sig_bkg:
+        for data_key in data_keys:
+            for signal_key in signal_keys:
+                for sample in signal_samples[signal_key]['samples']:
+                    if not sample in lepton_categories[lepton_category]['excluded samples']:
+                        data_samples[data_key]['samples'].append(sample)
 
     ## config information (datacard name, systematics, sub-samples)
     cfg_data_sig_bkg = copy.copy(data_samples)
@@ -176,6 +194,13 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
                             group_histogram_Down[systematic] = root_files[sample_part].Get("%s_%sDown" % (name_plus_cycle_nominal, systematic)).Clone("x_%s_%sDown" % (sample_d, systematic))
                         else:
                             group_histogram_Down[systematic].Add(root_files[sample_part].Get("%s_%sDown" % (name_plus_cycle_nominal, systematic)))
+            for systematic in systematics:
+                if not group_histogram or not systematic in group_histogram_Up.keys() or not systematic in group_histogram_Down.keys():
+                    continue
+                if not group_histogram_Up[systematic] or not group_histogram_Down[systematic]:
+                    continue
+                if (group_histogram_Down[systematic].Integral() - group_histogram.Integral())*(group_histogram_Up[systematic].Integral() - group_histogram.Integral()) > 0.01:
+                    print 'Error in sample %s, systematic %s: down = %0.2f, nominal = %0.2f, up = %0.2f' % (sample, systematic, group_histogram_Down[systematic].Integral(), group_histogram.Integral(), group_histogram_Up[systematic].Integral())
                                                   
 
         #End "for sample_part in cfg_data_sig_bkg[sample]['samples']" loop
@@ -195,7 +220,7 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
                         histograms[lepton_category][jet_tag_category]["%s_%s0Down" % (sample_d, systematic)] = group_histogram_Down[systematic]
                         histograms[lepton_category][jet_tag_category]["%s_%s0Down" % (sample_d, systematic)].Scale(scale)
                         histograms[lepton_category][jet_tag_category]["%s_%s0Down" % (sample_d, systematic)].SetDirectory(0)
-
+                        
     #End "for sample in all_keys" loop
     histograms_local = histograms[lepton_category][jet_tag_category]
                 
@@ -231,8 +256,79 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
     all_keys_masses = signal_keys_masses+background_keys+data_keys
     all_keys_masses_d = signal_keys_masses_d+background_keys_d+data_keys_d
 
+    ## Find background bins with large statistical uncertainty
+    for key in signal_keys_masses_d:
+        if not 'Signal' in histograms_local.keys():
+            histograms_local['Signal'] = histograms_local[key].Clone('x_Signal')
+        else:
+            histograms_local['Signal'].Add(histograms_local[key])
+    for key in background_keys_d:
+        if not 'Background' in histograms_local.keys():
+            histograms_local['Background'] = histograms_local[key].Clone('x_Background')
+        else:
+            histograms_local['Background'].Add(histograms_local[key])
+    histograms_local['Signal_Background'] = histograms_local['Signal'].Clone('x_Signal_Background')
+    histograms_local['Signal_Background'].Add(histograms_local['Background'])
+
+    bin_syst_names = []
+    for key in signal_background_keys_masses_d:
+        #print 'Looking at sample %s' % key
+        for bin in range(1, histograms_local[key].GetNbinsX()+1):
+            data_yield = histograms_local['Signal_Background'].GetBinContent(bin)
+            data_error = sqrt(data_yield)
+            signal_yield = histograms_local['Signal'].GetBinContent(bin)
+            signal_error = histograms_local['Signal'].GetBinError(bin)
+            background_yield = histograms_local['Background'].GetBinContent(bin)
+            background_error = histograms_local['Background'].GetBinError(bin)
+            this_yield = histograms_local[key].GetBinContent(bin)
+            this_error = histograms_local[key].GetBinError(bin)
+            other_yield = signal_yield + background_yield - this_yield
+            other_error = sqrt( pow(signal_error,2) + pow(background_error,2) - pow(this_error,2) )
+
+            do_stat_uncert = False
+            if 'all' in args.stat_uncert:
+                if this_yield > 0.01:
+                    do_stat_uncert = True	
+            if 'some' in args.stat_uncert:
+                if this_yield > 0.01 and this_yield/background_yield > 0.2 and signal_yield/background_yield > 0.1:
+                    do_stat_uncert = True
+            if 'ttH' in args.stat_uncert:
+                #### Statistical uncertainty bins from OS ttH analysis
+                ### https://github.com/cms-ttH/ttH-Limits/blob/master/python/datacard.py#L93
+                if this_yield > 0.01 and background_error > (data_error/5.) and other_error/background_error < 0.95 and signal_yield/background_yield > 0.01:
+                    do_stat_uncert = True
+
+            if do_stat_uncert:
+#                 print '------- %s bin %d -------' % (key, bin)
+#                 print 'This yield: %0.3f' % this_yield
+#                 print 'This error: %0.3f' % this_error
+#                 print 'Infer %0.1f base events, yield/raw = %0.3f' % ( pow(this_yield/this_error,2), pow(this_error,2)/this_yield )
+#                 print 'Signal yield: %0.3f' % signal_yield
+#                 print 'Signal error: %0.3f' % signal_error
+#                 print 'Other yield: %0.3f' % other_yield
+#                 print 'Other error: %0.3f' % other_error
+#                 print 'Significance of bin is %0.2f' % (signal_yield/sqrt(background_yield))
+
+                bin_syst_name = '%s_%s_Bin%d' % (key, category_name, bin)
+                bin_syst_names.append(bin_syst_name)
+                
+                histograms_local['%s_%s0Up' % (key, bin_syst_name)] = histograms_local[key].Clone('x_%s_%sUp' % (key, bin_syst_name))  
+                histograms_local['%s_%s0Up' % (key, bin_syst_name)].SetBinContent(bin, this_yield + this_error)
+                histograms_local['%s_%s0Up' % (key, bin_syst_name)].SetDirectory(0)
+                
+                histograms_local['%s_%s0Down' % (key, bin_syst_name)] = histograms_local[key].Clone('x_%s_%sDown' % (key, bin_syst_name))
+                histograms_local['%s_%s0Down' % (key, bin_syst_name)].SetBinContent(bin, max(0.01, this_yield - this_error))
+                histograms_local['%s_%s0Down' % (key, bin_syst_name)].SetDirectory(0)
+
+    print 'Total of %d bins need extra statistical uncertainty' % len(bin_syst_names)
+                
     rate_systematics = {}
     shape_systematics = {}
+
+    ## Append the bin-by-bin statistcal uncertainties as template shape uncertainties
+    for bin_syst_name in bin_syst_names:
+        sample_wildcard = bin_syst_name.split('_%s' % category_name)[0]
+        shape_systematics[bin_syst_name] = [(sample_wildcard,bin_syst_name,'templates')]
 
     with open('all_systematics.txt', 'w') as outfile:
         for fname in args.systematics_file_names:
@@ -267,44 +363,56 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
 
     for rate_systematic_name in rate_systematics.keys():
         effect_map = {}
+        null_effect = True
         for sample in signal_background_keys_masses_d:
             effect = "-"
             for (sample_wildcard,amount) in rate_systematics[rate_systematic_name]:
-                if re.match(sample_wildcard, sample): effect = amount
+                if re.match(sample_wildcard, sample):
+                    null_effect = False
+                    effect = amount
 
             effect_map[sample] = effect # effect_map maps effects (floats, or sometimes strings) onto sample key names
 
-        rate_systematics[rate_systematic_name] = effect_map # syst[systematic name][sample name][amount]
+        if null_effect:
+            del rate_systematics[rate_systematic_name]
+        else:
+            rate_systematics[rate_systematic_name] = effect_map # syst[systematic name][sample name][amount]
 
     for shape_systematic_name in shape_systematics.keys():
         effect_map_0  = {} # list with keys of sample names
         effect_map_12 = {}
+        null_effect = True
         for sample in signal_background_keys_masses_d:
             effect = "-"
             effect_0  = "-"
             effect_12 = "-"
             for (sample_wildcard,amount,systematic_type) in shape_systematics[shape_systematic_name]: 
                 if re.match(sample_wildcard, sample):
+                    null_effect = False
                     if systematic_type not in ["templates","alternateShape", "alternateShapeOnly"]:
                         effect = float(amount)
                     else:
                         effect = amount
-            if effect == "-" or effect == "0": 
+            nominal = histograms_local[sample] # nominal histogram, by sample name
+            if effect == "-" or effect == "0" or nominal.Integral() == 0: 
                 effect_map_0[sample]  = "-" 
                 effect_map_12[sample] = "-" 
                 continue
             if systematic_type in ["envelope","shapeOnly"]:
-                nominal = histograms_local[sample] # nominal histogram, by sample name
-                hist_0_up = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"0Up"     ); hist_0_up.Scale(effect) 
-                hist_0_down = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"0Down"); hist_0_down.Scale(1.0/effect)
-                hist_1_up = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"1Up"     );
-                hist_1_down = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"1Down");
-                hist_2_up = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"2Up"     );
-                hist_2_down = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"2Down");
+                hist_0_up = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"0Up")
+                hist_0_up.Scale(effect) 
+                hist_0_down = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"0Down")
+                hist_0_down.Scale(1.0/effect)
+                hist_1_up = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"1Up")
+                hist_1_down = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"1Down")
+                hist_2_up = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"2Up")
+                hist_2_down = nominal.Clone(nominal.GetName()+"_"+shape_systematic_name+"2Down")
                 nbin = nominal.GetNbinsX()
                 xmin = nominal.GetBinCenter(1)
                 xmax = nominal.GetBinCenter(nbin)
                 for b in xrange(1,nbin+1):
+                    if nbin == 1:
+                        continue
                     x = (nominal.GetBinCenter(b)-xmin)/(xmax-xmin)
                     c1 = 2*(x-0.5)           # straight line from (0,-1) to (1,+1)
                     c2 = 1 - 8*(x-0.5)**2  # parabola through (0,-1), (0.5,~1), (1,-1)
@@ -323,17 +431,17 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
                 effect_12 = "1"
                 # useful for plotting
                 for hist in hist_0_up, hist_0_down, hist_1_up, hist_1_down, hist_2_up, hist_2_down: 
-                    hist.SetFillStyle(0); hist.SetLineWidth(2)
+                    hist.SetFillStyle(0)
+                    hist.SetLineWidth(2)
                 for hist in hist_1_up, hist_1_down:
                     hist.SetLineColor(4)
                 for hist in hist_2_up, hist_2_down:
                     hist.SetLineColor(2)
             elif systematic_type in ["templates"]:
-                nominal = histograms_local[sample]
-                hist_0_up = histograms_local["%s_%s0Up" % (sample, shape_systematic_name)] 
-                hist_0_down = histograms_local["%s_%s0Down" % (sample, shape_systematic_name)]
+                hist_0_up = histograms_local["%s_%s0Up" % (sample, amount)] 
+                hist_0_down = histograms_local["%s_%s0Down" % (sample, amount)]
                 if not hist_0_up or not hist_0_down: 
-                    raise RuntimeError, "Missing templates %s_%s_(Up,Dn) for %s" % (sample,effect,shape_systematic_name)
+                    raise RuntimeError, "Missing templates %s_%s_(Up,Dn) for %s" % (sample,effect,amount)
                 hist_0_up.SetName("%s_%sUp"      % (nominal.GetName(),shape_systematic_name))
                 hist_0_down.SetName("%s_%sDown" % (nominal.GetName(),shape_systematic_name))
                 histograms_local[hist_0_up.GetName()] = hist_0_up
@@ -341,12 +449,11 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
                 effect_0  = "1"
                 effect_12 = "-"
             elif systematic_type in ["alternateShape", "alternateShapeOnly"]:
-                nominal = histograms_local[sample]
-                alternate = histograms_local["%s_%s0Up" % (sample, shape_systematic_name)]
+                alternate = histograms_local["%s_%s0Up" % (sample, amount)]
                 alternate.SetName("%s_%s0Up" % (nominal.GetName(),shape_systematic_name))
+                mirror = nominal.Clone("%s_%s0Down" % (nominal.GetName(),shape_systematic_name))
                 if systematic_type == "alternateShapeOnly":
                     alternate.Scale(nominal.Integral()/alternate.Integral())
-                mirror = nominal.Clone("%s_%s0Down" % (nominal.GetName(),shape_systematic_name))
                 for bin in xrange(1,nominal.GetNbinsX()+1):
                     y0 = nominal.GetBinContent(bin)
                     yA = alternate.GetBinContent(bin)
@@ -370,7 +477,11 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
             effect_map_0[sample]  = effect_0
             effect_map_12[sample] = effect_12
             #End of loop over samples
-        shape_systematics[shape_systematic_name] = (effect_map_0,effect_map_12,systematic_type)
+
+        if null_effect:
+            del shape_systematics[shape_systematic_name]
+        else:
+            shape_systematics[shape_systematic_name] = (effect_map_0,effect_map_12,systematic_type)
 
 
     signal_background_keys_one_mass_d = []
@@ -384,12 +495,12 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
             signal_background_keys_one_mass_d.append(sample)
 
     ## Make the datacard for this category
-    outdir = "ND_cards/";
-    subdirRoot = "common/";
+    outdir = "ND_cards/"
+    subdirRoot = "common/"
     ## Version with proper spacing
     if args.label: out_label = '_'+args.label
     else: out_label = ''
-    datacard = open(outdir+category_name+out_label+".card.txt", "w"); 
+    datacard = open(outdir+category_name+out_label+".card.txt", "w")
 #    datacard.write("## Datacard for cut file %s\n"%args[1]) ## What arguments did this take? AWB 03-06-14
     datacard.write("## Datacard for cut file %s (all massess, taking signal normalization from templates)\n")
     datacard.write("shapes *        * %s%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % (subdirRoot, category_name+out_label))
@@ -424,7 +535,7 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
     datacard.close()
     print "Wrote to ",outdir+category_name+out_label+".card.txt"
 
-    datacard_nospaces = open(outdir+"nospaces/"+category_name+out_label+".card.nospaces.txt", "w"); 
+    datacard_nospaces = open(outdir+"nospaces/"+category_name+out_label+".card.nospaces.txt", "w")
     for line in open(outdir+category_name+out_label+".card.txt", 'r'):
         while '  ' in line:
             line = line.replace('  ', ' ')

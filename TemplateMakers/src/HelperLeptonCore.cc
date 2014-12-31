@@ -84,7 +84,7 @@ int HelperLeptonCore::convertSampleNameToNumber(string sampleName) {
   }
   else if (analysisYear == "2012_52x" || analysisYear == "2012_53x") {
     if (isData) sampleNumber = -1;
-    else if (sampleName == "ttbar" || tmpName.Contains("ttbar_part")) { sampleNumber = 2500;
+    else if (sampleName == "ttbar" || tmpName.Contains("ttbar_part") || tmpName.Contains("ttbar_M")) { sampleNumber = 2500;
       nGen = 6912438+1362471; Xsec = 245.8; }
     else if (sampleName == "ttbar_bb" || tmpName.Contains("ttbar_bb_part")) { sampleNumber = 2555;
       nGen = 6912438+1362471; Xsec = 245.8; }
@@ -148,24 +148,96 @@ int HelperLeptonCore::convertSampleNameToNumber(string sampleName) {
       weight_Xsec = ( 214.0 / 13365439 ) / ( 30400.0 / 57536319 ); } 
     else if (sampleName == "zjets_lowmass" || tmpName.Contains("zjets_lowmass_part")) { sampleNumber = 2850;
       nGen = 37828841; Xsec = 14702; }
+    else if (sampleName == "zjets_lf_lowmass") { sampleNumber = 28501;
+      nGen = 37828841; Xsec = 14702; }
+    else if (sampleName == "zjets_cc_lowmass") { sampleNumber = 28502;
+      nGen = 37828841; Xsec = 14702; }
+    else if (sampleName == "zjets_b_lowmass") { sampleNumber = 28503;
+      nGen = 37828841; Xsec = 14702; }
+    else if (sampleName == "zjets_bb_lowmass") { sampleNumber = 28504;
+      nGen = 37828841; Xsec = 14702; }
     else if (sampleName == "zjets_lowmass_1p" || tmpName.Contains("zjets_lowmass_1p_part")) { sampleNumber = 2851;
       weight_Xsec = ( 716.0 / 8039604 ) / ( 11050.0 / 37828841 ); }
     else if (sampleName == "zjets_lowmass_2p" || tmpName.Contains("zjets_lowmass_2p_part")) { sampleNumber = 2852;
       weight_Xsec = ( 309.7 / 30684442 ) / ( 11050.0 / 37828841 ); }
     else if (sampleName == "zjets" || tmpName.Contains("zjets_part")) { sampleNumber = 2800;
       nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_lf") { sampleNumber = 28001;
+      nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_cc") { sampleNumber = 28002;
+      nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_b") { sampleNumber = 28003;
+      nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_bb") { sampleNumber = 28004;
+      nGen =  30072710; Xsec = 3505.7; }
     else if (sampleName == "zjets_0p" || tmpName.Contains("zjets_0p_part")) { sampleNumber = 2800;
       nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_lf_0p") { sampleNumber = 28001;
+      nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_cc_0p") { sampleNumber = 28002;
+      nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_b_0p") { sampleNumber = 28003;
+      nGen =  30072710; Xsec = 3505.7; }
+    else if (sampleName == "zjets_bb_0p") { sampleNumber = 28004;
+      nGen =  30072710; Xsec = 3505.7; }
     else if (sampleName == "zjets_1p" || tmpName.Contains("zjets_1p_part")) { sampleNumber = 2801;
+      nGen = 24032562; Xsec = 666.7;
+      weight_Xsec = ( 561.0 / 24032562 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_lf_1p") { sampleNumber = 28011;
+      nGen = 24032562; Xsec = 666.7;
+      weight_Xsec = ( 561.0 / 24032562 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_cc_1p") { sampleNumber = 28012;
+      nGen = 24032562; Xsec = 666.7;
+      weight_Xsec = ( 561.0 / 24032562 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_b_1p") { sampleNumber = 28013;
+      nGen = 24032562; Xsec = 666.7;
+      weight_Xsec = ( 561.0 / 24032562 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_bb_1p") { sampleNumber = 28014;
       nGen = 24032562; Xsec = 666.7;
       weight_Xsec = ( 561.0 / 24032562 ) / ( 2950.0 /  30072710 ); }
     else if (sampleName == "zjets_2p" || tmpName.Contains("zjets_2p_part")) { sampleNumber = 2802;
       nGen = 2350806; Xsec = 215.1;
       weight_Xsec = ( 181.0 / 2350806 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_lf_2p") { sampleNumber = 28021;
+      nGen = 2350806; Xsec = 215.1;
+      weight_Xsec = ( 181.0 / 2350806 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_cc_2p") { sampleNumber = 28022;
+      nGen = 2350806; Xsec = 215.1;
+      weight_Xsec = ( 181.0 / 2350806 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_b_2p") { sampleNumber = 28023;
+      nGen = 2350806; Xsec = 215.1;
+      weight_Xsec = ( 181.0 / 2350806 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_bb_2p") { sampleNumber = 28024;
+      nGen = 2350806; Xsec = 215.1;
+      weight_Xsec = ( 181.0 / 2350806 ) / ( 2950.0 /  30072710 ); }
     else if (sampleName == "zjets_3p" || tmpName.Contains("zjets_3p_part")) { sampleNumber = 2803;
       nGen = 10753491; Xsec = 66.07;
       weight_Xsec = ( 55.6 / 10753491 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_lf_3p") { sampleNumber = 28031;
+      nGen = 10753491; Xsec = 66.07;
+      weight_Xsec = ( 55.6 / 10753491 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_cc_3p") { sampleNumber = 28032;
+      nGen = 10753491; Xsec = 66.07;
+      weight_Xsec = ( 55.6 / 10753491 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_b_3p") { sampleNumber = 28033;
+      nGen = 10753491; Xsec = 66.07;
+      weight_Xsec = ( 55.6 / 10753491 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_bb_3p") { sampleNumber = 28034;
+      nGen = 10753491; Xsec = 66.07;
+      weight_Xsec = ( 55.6 / 10753491 ) / ( 2950.0 /  30072710 ); }
     else if (sampleName == "zjets_4p" || tmpName.Contains("zjets_4p_part")) { sampleNumber = 2804;
+      nGen = 6370630; Xsec = 27.38;
+      weight_Xsec = ( 23.04 /6370630 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_lf_4p") { sampleNumber = 28041;
+      nGen = 6370630; Xsec = 27.38;
+      weight_Xsec = ( 23.04 /6370630 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_cc_4p") { sampleNumber = 28042;
+      nGen = 6370630; Xsec = 27.38;
+      weight_Xsec = ( 23.04 /6370630 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_b_4p") { sampleNumber = 28043;
+      nGen = 6370630; Xsec = 27.38;
+      weight_Xsec = ( 23.04 /6370630 ) / ( 2950.0 /  30072710 ); }
+    else if (sampleName == "zjets_bb_4p") { sampleNumber = 28044;
       nGen = 6370630; Xsec = 27.38;
       weight_Xsec = ( 23.04 /6370630 ) / ( 2950.0 /  30072710 ); }
     else if (sampleName == "singlet_s") { sampleNumber = 2600;
@@ -220,11 +292,11 @@ int HelperLeptonCore::convertSampleNameToNumber(string sampleName) {
       nGen = 1934806; Xsec = 7.7*2*0.101*0.699; }
     else if (sampleName == "zzz") { sampleNumber = 2722;
       nGen = 224519; Xsec = 0.004587; }
-    else if (sampleName == "ttbarW") { sampleNumber = 2524;
+    else if (sampleName == "ttbarW" || (tmpName.Contains("ttbarW") && tmpName.Contains("ND_gen"))) { sampleNumber = 2524;
       nGen = 195396; Xsec = 0.249; }
     else if (sampleName == "ttbarWW") { sampleNumber = 2534;
       nGen = 216867; Xsec = 0.002037; }
-    else if (sampleName == "ttbarZ") { sampleNumber = 2523;
+    else if (tmpName.Contains("ttbarZ")) { sampleNumber = 2523;
       nGen = 209512; Xsec = 0.206; }
     else if (sampleName == "ttbarG") { sampleNumber = 2560;
       nGen = 71405; Xsec = 1.444*1.8; } 

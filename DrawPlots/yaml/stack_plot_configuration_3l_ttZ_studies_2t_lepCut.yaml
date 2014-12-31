@@ -1,16 +1,16 @@
 #input and output file names
-input file location: histos_3l_ttZ_studies_2t_lepCut
-input file label: ttV_Aug11
-output file location: pdf_3l_ttZ_studies_2t_lepCut_blind
+input file location: histos/3l_ttZ_studies_2t_lepCut
+input file label: ttV_Nov14_noJetScale
+output file location: pdf/3l_ttZ_studies_2t_lepCut_noJetScale
 
 #drawing options
 skip systematics: true
-draw ratio plot: false
+draw ratio plot: true
 draw legend: true
 log scale: false
 save png: true
 save pdf: true
-blinded: true
+blinded: false
 KS test: false
 selection info : false
 SF info: false
@@ -55,8 +55,8 @@ jet tag categories:
 
 #     eq3j_lf: " + #eq3 jets + lf"
 #     ge4j_lf: " + #geq4 jets + lf"
-    eq3j_bloose: " + #eq3 jets + tags"
-    ge4j_bloose: " + #geq4 jets + tags"
+#     eq3j_bloose: " + #eq3 jets + tags"
+#     ge4j_bloose: " + #geq4 jets + tags"
     
 #     eq0j_lowMet: " + #eq0 jets - MetLD"
 #     eq1j_lowMet: " + #eq1 jets - MetLD"
@@ -65,12 +65,13 @@ jet tag categories:
 #     le2j_lowMet: " + #leq2 jets - MetLD"
 #     le2j_hiMet: " + #leq2 jets + MetLD"
 
-#     ge0j_hiMet_lf: " + #geq0 jets + MetLD + lf"
+    ge0j_hiMet_lf: " + #geq0 jets + MetLD + lf"
+    ge3j_hiMet_lf: " + #geq3 jets + MetLD + lf"
+
 # #     eq0j_hiMet: " + #eq0 jets + MetLD"
 # #     eq1j_hiMet: " + #eq1 jets + MetLD"
 # #     eq2j_hiMet: " + #eq2 jets + MetLD"
 # #     eq3j_hiMet_lf: " + #eq3 jets + MetLD + lf"
-#     ge3j_hiMet_lf: " + #geq3 jets + MetLD + lf"
 # #     ge4j_hiMet_lf: " + #geq4 jets + MetLD + lf"
     
 #Systematics used in error bars
@@ -88,13 +89,16 @@ systematics:
 # Samples drawn on top, scaling (1.0, 2.0, "norm" for area-normalized) 
 
 signal samples:
-    ttbarZ:
+    ttZ:
         draw name: "t#bar{t}Z"
         color: kSpring+2
+        #color: kBlue
         samples: [ttbarZ]
         stack or line: stack
+        #stack or line: line
         line width: 2 # must be integer
         scale: 1.0
+        #scale: "norm"
 
 #Samples in each group will be added together and appear as a single entry in the stack plot
 background samples:
@@ -124,45 +128,50 @@ background samples:
             #- ttbar_lj
             #- ttbar_ll
 
-#     wz_lll:
-#         draw name: "WZ"
-#         color: kViolet-4
-#         samples: [wz_lll]
-        
-    wz_lf_lll:
-        draw name: "WZ_lf"
-        color: kViolet-5
-        samples: [wz_lf_lll]
-        
-    wz_cc_lll:
-        draw name: "WZ_cc"
+    #Zjets:
+        #draw name: Zjets
+        #color: kBlue
+        #systematics: all
+        #samples:
+            #- zjets_0p
+            #- zjets_1p
+            #- zjets_2p
+            #- zjets_3p
+            #- zjets_4p
+    wz_lll:
+        draw name: "WZ"
         color: kViolet-4
-        samples: [wz_cc_lll]
+        samples: [wz_lll]
         
-    wz_b_lll:
-        draw name: "WZ_b"
-        color: kViolet-3
-        samples: [wz_b_lll]
+#     wz_lf_lll:
+#         draw name: "WZ_lf"
+#         color: kViolet-5
+#         samples: [wz_lf_lll]
         
-    wz_bb_lll:
-        draw name: "WZ_bb"
-        color: kViolet-2
-        samples: [wz_bb_lll]
+#     wz_cc_lll:
+#         draw name: "WZ_cc"
+#         color: kViolet-4
+#         samples: [wz_cc_lll]
+        
+#     wz_b_lll:
+#         draw name: "WZ_b"
+#         color: kViolet-3
+#         samples: [wz_b_lll]
+        
+#     wz_bb_lll:
+#         draw name: "WZ_bb"
+#         color: kViolet-2
+#         samples: [wz_bb_lll]
         
 #     zz_lowmll:
 #         draw name: "ZZ/ZZ*"
 #         color: kAzure-8
 #         samples: [zz_lowmll]
         
-# #     zz_llll:
-# #         draw name: "ZZ"
-# #         color: kAzure-9
-# #         samples: [zz_llll]
-        
     zz_llll:
         draw name: "ZZ"
         color: kAzure-9
-        samples: [zz_lf_llll, zz_cc_llll, zz_b_llll, zz_bb_llll]
+        samples: [zz_llll]
 
 #     zz_lf_llll:
 #         draw name: "ZZ_lf"
@@ -184,47 +193,31 @@ background samples:
 #         color: kAzure-6
 #         samples: [zz_bb_llll]
         
-    Others:
-        draw name: "Rare SM"
-        color: kSpring+8
-        samples: [tbZ_ll, WpWpqq, WWDPI] #WmWmqq
-
-
-    triboson:
-        draw name: "triboson"
+    multiboson:
+        draw name: "multiboson"
         color: kViolet
-        samples: [www, wwz]
-
-    ttbarGStar:
-        draw name: "t#bar{t}G*"
-        color: kCyan-3
-        samples: [ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt]
+        samples: [www, wwz] #wzz, zzz
+        
+    ttbarX:
+        draw name: "t#bar{t}+X"
+        color: kSpring+8
+        samples: [tbZ_ll, ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
+                                        
+    ttH125:
+        draw name: "t#bar{t}H"
+        color: kRed
+        samples: [ttH125]
                                         
     ttbarW:
         draw name: "t#bar{t}W"
         color: kGreen-5
         samples: [ttbarW]
                                         
-    ttbarWW:
-        draw name: "t#bar{t}WW"
-        color: kBlue-9
-        samples: [ttbarWW]
+#     ttbarZ:
+#         draw name: "t#bar{t}Z"
+#         color: kSpring+2
+#         samples: [ttbarZ]
                                         
-    ttH125:
-        draw name: "t#bar{t}H125"
-        color: kRed
-        samples: [ttH125]
-                                        
-    #Zjets:
-        #draw name: Zjets
-        #color: kBlue
-        #systematics: all
-        #samples:
-            #- zjets_0p
-            #- zjets_1p
-            #- zjets_2p
-            #- zjets_3p
-            #- zjets_4p
 
 #distribution: [title, underflow, overflow]
 distributions:
@@ -250,10 +243,10 @@ distributions:
     ZLike_pt_leplep_SFOS_all: ['Z pT', true, true]
     met_ld: ['MetLD', true, true]
     WLike_MT_met_lep: ['MT(met, lep)', true, true]
-    WLike_deltaPhi_met_lep: ['cos(deltaPhi(met, lep))', true, true]
-    min_mass_Z_nonZ_lep: ['min Z non-Z mass', true, true]
-    min_deltaR_Z_nonZ_lep: ['min Z non-Z deltaR', true, true]
-    met_minus_all_nonZ_leptons_by_pt_1_pt: ['met - Non-Z lepton pT', true, true]
+    #WLike_deltaPhi_met_lep: ['cos(deltaPhi(met, lep))', true, true]
+    #min_mass_Z_nonZ_lep: ['min Z non-Z mass', true, true]
+    #min_deltaR_Z_nonZ_lep: ['min Z non-Z deltaR', true, true]
+    #met_minus_all_nonZ_leptons_by_pt_1_pt: ['met - Non-Z lepton pT', true, true]
     ## ttZ
     #all_Z_leptons_by_pt_1_pt: ['First Z lepton pT', true, true]
     #all_Z_leptons_by_pt_2_pt: ['Second Z lepton pT', true, true]
@@ -290,6 +283,9 @@ distributions:
 #     ttZ_3l_top_mass_b_q: ['matched top mass bq', true, true]
 #     ttZ_3l_top_mass_b_qq: ['matched top mass bqq', true, true]
     FinalBDT: ['final BDT', false, false]
+    FinalBDT_Oct31: ['final BDT Oct 31', false, false]
+    #FinalBDT_blind: ['final BDT', false, false]
+    #FinalBDT_Oct31_blind: ['final BDT Oct 31', false, false]
 
 # #     WLike_dijet_mass_X1b: ['W mass (exclude one b-jet)', true, true]
 # #     WLike_dijet_mass_X2b: ['W mass (exclude two b-jets)', true, true]
