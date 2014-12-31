@@ -1,0 +1,11 @@
+zz_llll:
+
+output_1_1_ebX_13.root
+Has an event with two leptons having the same eta/phi, but different pT
+Has been deleted from the list
+Eta1: 1.392786  Phi1: 0.6105152 pT1: 20.51664
+Eta2: 1.392796  Phi2: 0.6105151 pT2: 76.20502
+
+output_4_1_wz3_12.root
+Has been made a zombie
+Has been deleted from the list
