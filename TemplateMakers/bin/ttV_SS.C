@@ -96,7 +96,9 @@ int main (int argc, char** argv) {
   if (myConfig.jetSyst == "NA") jetSyst = sysType::NA;
   else if (myConfig.jetSyst == "JESUp") jetSyst = sysType::JESup;
   else if (myConfig.jetSyst == "JESDown") jetSyst = sysType::JESdown;
-  else std::cout << "No valid JES corrections specified - using nominal" << std::endl;
+  else if (myConfig.jetSyst == "JERUp") jetSyst = sysType::JERup;
+  else if (myConfig.jetSyst == "JERDown") jetSyst = sysType::JERdown;
+  else std::cout << "No valid JES or JER corrections specified - using nominal" << std::endl;
 
   // ---------------------------------------------
   // Note for future development: should these be

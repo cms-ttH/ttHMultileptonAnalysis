@@ -152,4 +152,4 @@ process.outputs.fileName = outputFileName
 
 print "CONFIG: Output dir = ", outputDir, "\nFile name = ", outputFileName
 
-print "CONFIG: JES systematic = ", process.inputs.jetSyst, "\njetSyst = ", jetSyst
+print "CONFIG: Jet energy systematic = ", process.inputs.jetSyst, "\njetSyst = ", jetSyst
