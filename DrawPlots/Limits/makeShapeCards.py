@@ -286,13 +286,15 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
             other_error = sqrt( pow(signal_error,2) + pow(background_error,2) - pow(this_error,2) )
 
             do_stat_uncert = False
-            if 'all' in args.stat_uncert:
+            if not args.stat_uncert:
+                do_stat_uncert = False
+            elif 'all' in args.stat_uncert:
                 if this_yield > 0.01:
                     do_stat_uncert = True	
-            if 'some' in args.stat_uncert:
+            elif 'some' in args.stat_uncert:
                 if this_yield > 0.01 and this_yield/background_yield > 0.2 and signal_yield/background_yield > 0.1:
                     do_stat_uncert = True
-            if 'ttH' in args.stat_uncert:
+            elif 'ttH' in args.stat_uncert:
                 #### Statistical uncertainty bins from OS ttH analysis
                 ### https://github.com/cms-ttH/ttH-Limits/blob/master/python/datacard.py#L93
                 if this_yield > 0.01 and background_error > (data_error/5.) and other_error/background_error < 0.95 and signal_yield/background_yield > 0.01:
