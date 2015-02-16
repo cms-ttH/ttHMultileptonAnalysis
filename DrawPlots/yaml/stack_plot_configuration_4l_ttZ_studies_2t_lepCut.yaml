@@ -79,21 +79,21 @@ jet tag categories:
 #     3lep_pt_Zmask1: " + 3 leps pT cut + 0 Z"
 #     4lep_pt_Zmask1: " + 4 leps pT cut + 0 Z"
 
-#     eq0j_2lep_pt: " + #eq0 jets + 2 leps pT cut"
-#     eq0j_3lep_pt: " + #eq0 jets + 3 leps pT cut"
-#     eq0j_4lep_pt: " + #eq0 jets + 4 leps pT cut"
+#     eq0j_2lep_pt: " + 0 jets + 2 leps pT cut"
+#     eq0j_3lep_pt: " + 0 jets + 3 leps pT cut"
+#     eq0j_4lep_pt: " + 0 jets + 4 leps pT cut"
 
-#     eq0j_2lep_pt_Zpeak1_Zpeak2: " + #eq0 jets + 2 leps pT cut + 2 Z"
-#     eq0j_3lep_pt_Zpeak1_Zpeak2: " + #eq0 jets + 3 leps pT cut + 2 Z"
-#     eq0j_4lep_pt_Zpeak1_Zpeak2: " + #eq0 jets + 4 leps pT cut + 2 Z"
+#     eq0j_2lep_pt_Zpeak1_Zpeak2: " + 0 jets + 2 leps pT cut + 2 Z"
+#     eq0j_3lep_pt_Zpeak1_Zpeak2: " + 0 jets + 3 leps pT cut + 2 Z"
+#     eq0j_4lep_pt_Zpeak1_Zpeak2: " + 0 jets + 4 leps pT cut + 2 Z"
 
-#     eq0j_2lep_pt_Zpeak1_Zmask2: " + #eq0 jets + 2 leps pT cut + 1 Z"
-#     eq0j_3lep_pt_Zpeak1_Zmask2: " + #eq0 jets + 3 leps pT cut + 1 Z"
-#     eq0j_4lep_pt_Zpeak1_Zmask2: " + #eq0 jets + 4 leps pT cut + 1 Z"
+#     eq0j_2lep_pt_Zpeak1_Zmask2: " + 0 jets + 2 leps pT cut + 1 Z"
+#     eq0j_3lep_pt_Zpeak1_Zmask2: " + 0 jets + 3 leps pT cut + 1 Z"
+#     eq0j_4lep_pt_Zpeak1_Zmask2: " + 0 jets + 4 leps pT cut + 1 Z"
 
-#     eq0j_2lep_pt_Zmask1: " + #eq0 jets + 2 leps pT cut + 0 Z"
-#     eq0j_3lep_pt_Zmask1: " + #eq0 jets + 3 leps pT cut + 0 Z"
-#     eq0j_4lep_pt_Zmask1: " + #eq0 jets + 4 leps pT cut + 0 Z"
+#     eq0j_2lep_pt_Zmask1: " + 0 jets + 2 leps pT cut + 0 Z"
+#     eq0j_3lep_pt_Zmask1: " + 0 jets + 3 leps pT cut + 0 Z"
+#     eq0j_4lep_pt_Zmask1: " + 0 jets + 4 leps pT cut + 0 Z"
 
 #Systematics used in error bars
 systematics:

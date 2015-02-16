@@ -84,8 +84,7 @@ def createCondorSubFileAndSubmit(executable, sample, label, jetSyst, numJobs, wa
 #                     ## Runs on 32 cores on earth
 #                     '+IsExpressJob = True\n'
 #                     ## Excludes some problematic nodes
-#                     'requirements = (machine != "d6copt309.crc.nd.edu" && machine != "d6copt353.crc.nd.edu")\n'
-#                     'requirements = (machine != "skynet005.crc.nd.edu" && machine != "skynet006.crc.nd.edu" && machine != "skynet008.crc.nd.edu")\n'
+#                     'requirements = (machine != "d6copt306.crc.nd.edu" && machine != "d6copt334.crc.nd.edu" && machine != "d6copt343.crc.nd.edu" && machine != "d6copt348.crc.nd.edu" && machine != "d6copt351.crc.nd.edu" && machine != "d6copt360.crc.nd.edu")\n'
                     'queue $(NJobs)')
         condorJobFile.write(contents.format(executable=executable,
                                             list=sample,

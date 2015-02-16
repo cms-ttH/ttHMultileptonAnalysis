@@ -2,7 +2,7 @@ import os
 
 def main ():
 
-    for errFile in os.popen("find batch_trees/condor_logs/*ttV_Nov14_JESDown*.stderr -size +0k -print"):
+    for errFile in os.popen("find batch_trees/condor_logs/*ttV_Jan23*.stderr -size +0k -print"):
         sampleLines = open(errFile.split('.',1)[0] + '.stdout').read().splitlines()
         if len(sampleLines) < 3:
             print "echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'"
@@ -29,19 +29,19 @@ def main ():
         fileNameLine = sampleLines[3+index]
         fileName = fileNameLine.split('file:',1)[1]
         #print fileName
-        jobNumber_1 = errFile.split('ttV_Nov14_JESDown_',1)[1]
+        jobNumber_1 = errFile.split('ttV_Jan23_',1)[1]
         jobNumber = jobNumber_1.split('.std',1)[0]
         #print jobNumber
 
         rm_command = "rm %s.std*" % ( errFile.split('.',1)[0] )
         #print rm_command
         print sampleLines[0]
-        if "ttV_Nov14_JESDown" in errFile:
-            command = "ttV ssCondor.py %s ttV_Nov14 JESDown %s 1 %s !>& ttV_%s_%s.log &" % ( sampleName, jobNumber, fileName, sampleName, jobNumber )
+        if "ttV_Jan23" in errFile:
+            command = "ttV ssCondor.py %s ttV_Jan23 NA %s 1 %s !>& ttV_%s_%s.log &" % ( sampleName, jobNumber, fileName, sampleName, jobNumber )
             #print command
         
 
-    for outFile in os.popen("find batch_trees/condor_logs/*ttV_Nov14_JESDown*.stdout -print"):
+    for outFile in os.popen("find batch_trees/condor_logs/*ttV_Jan23*.stdout -print"):
         sampleLines = open(outFile.strip('\n')).read().splitlines()
         if len(sampleLines) < 3:
             print "echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'"
@@ -68,15 +68,15 @@ def main ():
         fileNameLine = sampleLines[3+index]
         fileName = fileNameLine.split('file:',1)[1]
         #print fileName
-        jobNumber_1 = outFile.split('ttV_Nov14_JESDown_',1)[1]
+        jobNumber_1 = outFile.split('ttV_Jan23_',1)[1]
         jobNumber = jobNumber_1.split('.std',1)[0]
         #print jobNumber
 
         rm_command = "rm %s.std*" % ( outFile.split('.',1)[0] )
         print rm_command
         #print sampleLines[0]
-        if "ttV_Nov14_JESDown" in outFile:
-            command = "ttV ssCondor.py %s ttV_Nov14 JESDown %s 1 %s !>& ttV_%s_%s.log &" % ( sampleName, jobNumber, fileName, sampleName, jobNumber )
+        if "ttV_Jan23" in outFile:
+            command = "ttV ssCondor.py %s ttV_Jan23 NA %s 1 %s !>& ttV_%s_%s.log &" % ( sampleName, jobNumber, fileName, sampleName, jobNumber )
             print command
 
         

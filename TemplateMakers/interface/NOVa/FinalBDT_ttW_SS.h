@@ -112,11 +112,27 @@ FinalBDT_ttW_SS::FinalBDT_ttW_SS(MatchTester_ttW_SS * _myMatchTester_ttW_SS,
 
 void FinalBDT_ttW_SS::evaluate() {
   if (this->evaluatedThisEvent) return;
-  if ((*jetsByCSV)->size() < 2) return;
-  if ((*tightLoosePreselectedLeptons)->size() < 2) return;
+  //if ((*jetsByCSV)->size() < 2) return;
+  if ((*jetsByCSV)->size() < 3) return; //No longer do BDT for 2 jets -AWB 21/01/15
+  if ((*tightLoosePreselectedLeptons)->size() != 2) return;
   evaluatedThisEvent = true;
 
   //std::cout << "Inside FinalBDT_ttW_SS::evaluate()" << std::endl;
+  
+  varMatch_ttW_SS_Bb = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttW_SS_Bq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttW_SS_bq = KinematicVariableConstants::FLOAT_INIT;
+  varttbar_fake_SS_top_MT_met_lep_B = KinematicVariableConstants::FLOAT_INIT;
+  varttbar_fake_SS_top_mass_blep_qq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttW_SS_Bbq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttW_SS_Bbqq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_fake_SS_Bq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_fake_SS_Bqq = KinematicVariableConstants::FLOAT_INIT;
+  varmet_pt = KinematicVariableConstants::FLOAT_INIT;
+  varjets_by_CSV_2_btagCombinedSecVertex = KinematicVariableConstants::FLOAT_INIT;
+  varMT_of_everything = KinematicVariableConstants::FLOAT_INIT;
+  varall_leptons_by_pt_1_pt = KinematicVariableConstants::FLOAT_INIT;
+  varall_leptons_by_pt_2_pt = KinematicVariableConstants::FLOAT_INIT;
   
   myMatchTester_ttW_SS->evaluate();
   myMatchTester_ttbar_fake_SS->evaluate();
@@ -134,7 +150,7 @@ void FinalBDT_ttW_SS::evaluate() {
     if (branchName == "Match_ttW_SS_Bb") varMatch_ttW_SS_Bb = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttW_SS_Bq") varMatch_ttW_SS_Bq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttW_SS_bq") varMatch_ttW_SS_bq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
-    if (branchName == "Match_ttW_Bbq") varMatch_ttW_SS_Bbq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
+    if (branchName == "Match_ttW_SS_Bbq") varMatch_ttW_SS_Bbq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttW_SS_Bbqq") varMatch_ttW_SS_Bbqq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
   }
   for (unsigned int ii = 0; ii < (*myMatchTester_ttbar_fake_SS).myVars.size(); ii++) {
@@ -144,6 +160,35 @@ void FinalBDT_ttW_SS::evaluate() {
     if (branchName == "Match_ttbar_fake_SS_Bq") varMatch_ttbar_fake_SS_Bq = (*myMatchTester_ttbar_fake_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttbar_fake_SS_Bqq") varMatch_ttbar_fake_SS_Bqq = (*myMatchTester_ttbar_fake_SS).myVars[ii].branchVal;
   }
+
+  if (varMatch_ttW_SS_Bb < -99) {
+  	std::cout << "Error! varMatch_ttW_SS_Bb = " << varMatch_ttW_SS_Bb << std::endl; }
+  if (varMatch_ttW_SS_Bq < -99) {
+  	std::cout << "Error! varMatch_ttW_SS_Bq = " << varMatch_ttW_SS_Bq << std::endl; }
+  if (varMatch_ttW_SS_bq < -99) {
+  	std::cout << "Error! varMatch_ttW_SS_bq = " << varMatch_ttW_SS_bq << std::endl; }
+  if (varttbar_fake_SS_top_MT_met_lep_B < -99) {
+  	std::cout << "Error! varttbar_fake_SS_top_MT_met_lep_B = " << varttbar_fake_SS_top_MT_met_lep_B << std::endl; }
+  if (varttbar_fake_SS_top_mass_blep_qq < -99) {
+  	std::cout << "Error! varttbar_fake_SS_top_mass_blep_qq = " << varttbar_fake_SS_top_mass_blep_qq << std::endl; }
+  if (varMatch_ttW_SS_Bbq < -99) {
+  	std::cout << "Error! varMatch_ttW_SS_Bbq = " << varMatch_ttW_SS_Bbq << std::endl; }
+  if (varMatch_ttW_SS_Bbqq < -99 && (*jetsByCSV)->size() >= 4) {
+  	std::cout << "Error! varMatch_ttW_SS_Bbqq = " << varMatch_ttW_SS_Bbqq << std::endl; }
+  if (varMatch_ttbar_fake_SS_Bq < -99) {
+  	std::cout << "Error! varMatch_ttbar_fake_SS_Bq = " << varMatch_ttbar_fake_SS_Bq << std::endl; }
+  if (varMatch_ttbar_fake_SS_Bqq < -99) {
+  	std::cout << "Error! varMatch_ttbar_fake_SS_Bqq = " << varMatch_ttbar_fake_SS_Bqq << std::endl; }
+  if (varmet_pt < -99) {
+  	std::cout << "Error! varmet_pt = " << varMatch_ttbar_fake_SS_Bqq << std::endl; }
+  if (varjets_by_CSV_2_btagCombinedSecVertex < -99) {
+  	std::cout << "Error! varjets_by_CSV_2_btagCombinedSecVertex = " << varjets_by_CSV_2_btagCombinedSecVertex << std::endl; }
+  if (varMT_of_everything < -99) {
+  	std::cout << "Error! varMT_of_everything = " << varMT_of_everything << std::endl; }
+  if (varall_leptons_by_pt_1_pt < -99) {
+  	std::cout << "Error! varall_leptons_by_pt_1_pt = " << varall_leptons_by_pt_1_pt << std::endl; }
+  if (varall_leptons_by_pt_2_pt < -99) {
+  	std::cout << "Error! varall_leptons_by_pt_2_pt = " << varall_leptons_by_pt_2_pt << std::endl; }
 
   for( unsigned int jj = 0 ; jj < 2 ; ++jj ) {
     

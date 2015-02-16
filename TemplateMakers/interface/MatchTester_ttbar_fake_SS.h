@@ -248,6 +248,12 @@ void MatchTester_ttbar_fake_SS::evaluate() {
 
   //std::cout << "Finished jet loop" << std::endl;
 
+  if (branches["Match_ttbar_fake_SS_Bq"].branchVal < -99) {
+    std::cout << "Error! Match_ttbar_fake_SS_Bq = " << branches["Match_ttbar_fake_SS_Bq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttbar_fake_SS_Bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttbar_fake_SS_Bqq = " << branches["Match_ttbar_fake_SS_Bqq"].branchVal << std::endl; }
+
+  
   myVars.clear();
 
   for (typename map<TString, BranchInfo<double>>::iterator iBranch = branches.begin();

@@ -1,6 +1,6 @@
 #input and output file names
 input file location: ../histos/SS_ttW_studies_2t_lepCut_forLimits
-input file label: ttV_SS_Nov14
+input file label: ttV_SS_Jan23
 
 lepton categories:
     mu_mu:

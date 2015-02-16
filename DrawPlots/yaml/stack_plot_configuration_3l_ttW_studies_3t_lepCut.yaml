@@ -44,13 +44,13 @@ jet tag categories:
 #     ge0j_metLD: " + #geq0 jets + met_ld"
 #     ge1j_metLD: " + #geq1 jet + met_ld"
 #     ge2j_metLD: " + #geq2 jets + met_ld"
-    eq1j_lf: " + #eq1 jet + lf"
+    eq1j_lf: " + 1 jet + lf"
     ge2j_lf: " + #geq2 jets + lf"
-    eq1j_bloose: " + #eq1 jet + tags"
+    eq1j_bloose: " + 1 jet + tags"
     ge2j_bloose: " + #geq2 jets + tags"
 
-#     eq1j_bloose: " + #eq1 jet + tags"
-#     eq2j_bloose: " + #eq2 jets + tags"
+#     eq1j_bloose: " + 1 jet + tags"
+#     eq2j_bloose: " + 2 jets + tags"
 #     ge3j_bloose: " + #geq3 jets + tags"
 
 #     ttbar: "ttbar"

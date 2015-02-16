@@ -1,6 +1,6 @@
 #input and output file names
 input file location: histos/3l_ttW_studies_2t_lepCut
-input file label: ttV_Nov14
+input file label: ttV_Jan23
 output file location: pdf/3l_ttW_studies_2t_lepCut
 
 #drawing options
@@ -19,22 +19,22 @@ SF info: false
 luminosity: 19.5
 luminosity error: 0.044
 trigger SF error: 0.02
-lumi era string: "                #sqrt{s} = 8 TeV, L = 19.5 fb^{-1}"
+lumi era string: "        #sqrt{s} = 8 TeV, L = 19.5 fb^{-1}"
 
 #Lepton categories: "draw name"
 lepton categories:
 #     mu_mu:
 #         data samples: [inclusive_data]
 #         excluded samples: []
-#         tex name: " #mu #mu "
+#         tex name: "#mu #mu"
 #     ele_ele:
 #         data samples: [inclusive_data]
 #         excluded samples: []
-#         tex name: " e e "
+#         tex name: "e e"
     3l:
         data samples: [inclusive_data]
         excluded samples: []
-        tex name: " 3 lepton "
+        tex name: "3 leptons"
 
 #Jet-tag categories: "draw name"
 jet tag categories:
@@ -44,14 +44,14 @@ jet tag categories:
 #     ge0j_metLD: " + #geq0 jets + met_ld"
 #     ge1j_metLD: " + #geq1 jet + met_ld"
 #     ge2j_metLD: " + #geq2 jets + met_ld"
-#     eq0j: " + #eq0 jets"
-#     eq1j_lf: " + #eq1 jet + lf"
+#     eq0j: " + 0 jets"
+#     eq1j_lf: " + 1 jet + lf"
 #     ge2j_lf: " + #geq2 jets + lf"
-    eq1j_bloose: " + #eq1 jet + tags"
+    eq1j_bloose: " + 1 jet + tags"
     ge2j_bloose: " + #geq2 jets + tags"
 
-#     eq1j_bloose: " + #eq1 jet + tags"
-#     eq2j_bloose: " + #eq2 jets + tags"
+#     eq1j_bloose: " + 1 jet + tags"
+#     eq2j_bloose: " + 2 jets + tags"
 #     ge3j_bloose: " + #geq3 jets + tags"
 
 #     ttbar: "ttbar"
@@ -86,7 +86,7 @@ signal samples:
 #Samples in each group will be added together and appear as a single entry in the stack plot
 background samples:
     inclusive_data_NP_sideband:
-        draw name: "Fakes"
+        draw name: "Fakes "
         color: kGray
         systematics: [40PercentRateUp, 40PercentRateDown]
         samples: [inclusive_data_NP_sideband]
@@ -100,42 +100,42 @@ background samples:
             #- ttbar_ll
 
     wz_lll:
-        draw name: "WZ"
+        draw name: "WZ "
         color: kViolet-4
         samples: [wz_lll]
 
 #     zz_lowmll:
-#         draw name: "ZZ/ZZ*"
+#         draw name: "ZZ/ZZ* "
 #         color: kAzure-8
 #         samples: [zz_lowmll]
                                 
     zz_llll:
-        draw name: "ZZ"
+        draw name: "ZZ "
         color: kAzure-9
         samples: [zz_llll]
         
     multiboson:
-        draw name: "multiboson"
+        draw name: "multiboson "
         color: kViolet
         samples: [www, wwz] #wzz, zzz
         
     ttbarX:
-        draw name: "t#bar{t}+X"
+        draw name: "t#bar{t}+X "
         color: kSpring+8
         samples: [tbZ_ll, ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
 
 #     ttH125:
-#         draw name: "t#bar{t}H"
+#         draw name: "t#bar{t}H "
 #         color: kRed
 #         samples: [ttH125]
 
     ttbarZ:
-        draw name: "t#bar{t}Z"
+        draw name: "t#bar{t}Z "
         color: kSpring+2
         samples: [ttbarZ]
                                         
     ttbarW:
-        draw name: "t#bar{t}W"
+        draw name: "t#bar{t}W "
         color: kGreen-5
         samples: [ttbarW]
         
@@ -165,8 +165,8 @@ distributions:
 #     everything_MT_mass_ratio: ['MT/mass of everything', true, true]
 
 #     Match_ttW_3l_Bb: ['match score Bb', true, true]
-    FinalBDT: ['final BDT', false, false]
-    FinalBDT_Oct31: ['final BDT Oct31', false, false]
-    #FinalBDT_blind: ['final BDT', false, false]
-    #FinalBDT_Oct31_blind: ['final BDT Oct31', false, false]
+    FinalBDT: ['t#bar{t}W BDT', false, false]
+    #FinalBDT_blind: ['t#bar{t}W BDT', false, false]
+#     FinalBDT_Oct31: ['final BDT Oct31', false, false]
+#     FinalBDT_Oct31_blind: ['final BDT Oct31', false, false]
 

@@ -11,7 +11,7 @@ from ttHMultileptonAnalysis.DrawPlots.utilities.pie import make_yield_pie_charts
 
 parser = ArgumentParser(description='Make stack plots from histogram files.')
 parser.add_argument('config_file_name', nargs='?', default='stack_plot_configuration.yaml', help='Configuration file to process.')
-parser.add_argument('cosmetics_config_file_name', nargs='?', default='stack_plot_cosmetics.yaml', help='Cosmetics configuration file to process.')
+parser.add_argument('cosmetics_file_name', nargs='?', default='stack_plot_cosmetics.yaml', help='Cosmetics configuration file to process.')
 parser.add_argument('-w', '--web', action='store_true', help='post each plot to the user\'s AFS space')
 parser.add_argument('--label', help='Override the label designated in the configuration file with LABEL')
 parser.add_argument('-p', '--pie', action='store_true', help='Post pie plots of background composition and print signal/bg table')
@@ -22,7 +22,7 @@ args = parser.parse_args()
 with open(args.config_file_name) as config_file:
     config = yaml.load(config_file, Loader=ttHMultileptonYAMLLoader)
 
-with open(args.cosmetics_config_file_name) as cosmetics_file:
+with open(args.cosmetics_file_name) as cosmetics_file:
     cosmetics = yaml.load(cosmetics_file, Loader=ttHMultileptonYAMLLoader)
 
 lepton_categories = config['lepton categories']
@@ -45,7 +45,9 @@ def main():
 
     out_location = config['output file location']
     if config['blinded']:
-        out_location = config['output file location']+'_blind'
+        out_location += '_blind'
+    if args.cosmetics_file_name.startswith('cosmetics_'):
+        out_location += (args.cosmetics_file_name.replace('cosmetics','')).replace('.yaml','')
 
     if args.web:
         www_plot_directories = []
@@ -53,7 +55,7 @@ def main():
             for jet_tag_category in jet_tag_categories:
                 www_plot_directories.append(os.path.join(out_location, lepton_category, jet_tag_category))
 
-        plot_helper.setup_web_posting(www_plot_directories, 4, args.config_file_name, args.cosmetics_config_file_name)
+        plot_helper.setup_web_posting(www_plot_directories, 4, args.config_file_name, args.cosmetics_file_name)
 
     for lepton_category in lepton_categories:
         print '\n\nStarting lepton category %s...\n' % lepton_category
@@ -101,6 +103,8 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
     out_location = config['output file location']
     if config['blinded']:
         out_location = config['output file location']+'_blind'
+    if args.cosmetics_file_name.startswith('cosmetics_'):
+        out_location += (args.cosmetics_file_name.replace('cosmetics','')).replace('.yaml','')
         
     histogram_dictionary = {}
     mc_sum = 0.0
@@ -133,7 +137,13 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
                 histogram = group_histogram.Clone('stack')
                 mc_sum += histogram.Integral()
                 stack_plot.Add(histogram, 'hist')
-                stack_plot_legend.AddEntry(histogram, '%s (%0.1f)' % (background_samples[sample_group]['draw name'], histogram.Integral()), 'f')
+                if cosmetics['legend precision'] == -1:
+                    stack_plot_legend.AddEntry(histogram, '%s' % (background_samples[sample_group]['draw name']) )
+                elif cosmetics['legend precision'] == 0 or histogram.Integral() >= 19.95:
+                    stack_plot_legend.AddEntry(histogram, '%s (%.0f)' % (background_samples[sample_group]['draw name'], histogram.Integral()), 'f')
+                else:
+                    stack_plot_legend.AddEntry(histogram, '%s (%0.1f)' % (background_samples[sample_group]['draw name'], histogram.Integral()), 'f')
+
                 yields[jet_tag_category][background_samples[sample_group]['draw name']][lepton_category] = histogram.Integral()
                 raw_yields[jet_tag_category][background_samples[sample_group]['draw name']][lepton_category] = histogram.GetEntries()
 
@@ -168,14 +178,33 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
                 if signal_sum > 0:
                     if signal_samples[sample_group]['scale'] == 'norm':
                         signal_scaling = mc_sum / signal_sum
-                        signal_histograms[sample_group].Scale(signal_scaling)
-                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.2f x %0.2f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
                     else:
                         signal_scaling = signal_samples[sample_group]['scale']
-                        signal_histograms[sample_group].Scale(signal_scaling)
-                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.2f x %0.2f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
+                        
+                    signal_histograms[sample_group].Scale(signal_scaling)
+                    if signal_scaling == 1.0:
+                        if cosmetics['legend precision'] == -1:
+                            stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s' % (signal_samples[sample_group]['draw name']), legend_option)
+                        elif cosmetics['legend precision'] == 0 or signal_sum >= 19.95:
+                            stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%.0f)' % (signal_samples[sample_group]['draw name'], signal_sum), legend_option)
+                        else:
+                            stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.1f)' % (signal_samples[sample_group]['draw name'], signal_sum), legend_option)
+                    elif cosmetics['legend precision'] == -1:
+                        if signal_scaling < 19.95:
+                            stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s x %0.1f' % (signal_samples[sample_group]['draw name'], signal_scaling), legend_option)
+                        else:
+                            stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s x %.0f' % (signal_samples[sample_group]['draw name'], signal_scaling), legend_option)
+                    elif cosmetics['legend precision'] == 0 or (signal_sum >= 19.95 and signal_scaling >= 19.95):
+                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%.0f x %.0f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
+                    elif signal_sum >= 19.95:
+                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%.0f x %0.1f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
+                    elif signal_scaling >= 19.95:
+                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.1f x %.0f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
+                    else:
+                        stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (%0.1f x %0.1f)' % (signal_samples[sample_group]['draw name'], signal_sum, signal_scaling), legend_option)
+
                 else:
-                    stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (0.0x1.0)' % signal_samples[sample_group]['draw name'], legend_option)
+                    stack_plot_legend.AddEntry(signal_histograms[sample_group], '%s (0.0)' % signal_samples[sample_group]['draw name'], legend_option)
 
                 yields[jet_tag_category][signal_samples[sample_group]['draw name']][lepton_category] = histogram_dictionary[sample_group+'_nominal'].Integral()
                 raw_yields[jet_tag_category][signal_samples[sample_group]['draw name']][lepton_category] = histogram_dictionary[sample_group+'_nominal'].GetEntries()
@@ -196,7 +225,10 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
             histogram_dictionary['data'] = group_histogram.Clone()
             data_histogram = group_histogram.Clone('data')
             data_sum = data_histogram.Integral()
-            stack_plot_legend.AddEntry(data_histogram, 'Data (%.0f) ' % data_sum, 'lpe')
+            if cosmetics['legend precision'] == -1:
+                stack_plot_legend.AddEntry(data_histogram, 'Data', 'lpe')
+            else:
+                stack_plot_legend.AddEntry(data_histogram, 'Data (%.0f)' % data_sum, 'lpe')
             yields[jet_tag_category]['data'][lepton_category] = data_histogram.Integral()
             raw_yields[jet_tag_category]['data'][lepton_category] = data_histogram.GetEntries()
 
@@ -236,7 +268,13 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
 
         mc_error_histogram.SetFillStyle(cosmetics['mc error fill style'])
         mc_error_histogram.SetFillColor(cosmetics['mc error fill color'])
-        stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%0.1f) ' % (mc_sum + signal_sum), 'f')
+
+        if cosmetics['legend precision'] == -1:
+            True
+        elif cosmetics['legend precision'] == 0 or mc_sum + signal_sum >= 19.95:
+            stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%.0f)' % (mc_sum + signal_sum), 'f')
+        else:
+            stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%0.1f)' % (mc_sum + signal_sum), 'f')
 
     yields[jet_tag_category]['all backgrounds'][lepton_category] = mc_sum
     yields[jet_tag_category]['all signals'][lepton_category] = all_signals
@@ -245,7 +283,7 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
     if len(signal_histograms.keys()) > 0:
         plot_max = max(plot_max, max([hist.GetMaximum() for hist in signal_histograms.values()]))
     if not skip_data:
-        plot_max = max(plot_max, data_histogram.GetMaximum())
+        plot_max = max( plot_max, data_histogram.GetMaximum() + math.sqrt(data_histogram.GetMaximum()) )
 
     stack_plot = configure_stack(stack_plot, plot_max)
     canvas = TCanvas(distribution+'Lin', distribution, cosmetics['canvas min'], cosmetics['canvas max'])
@@ -478,11 +516,13 @@ def move_overflow_into_hist(histogram):
 
 def configure_stack(stack_plot, plot_max):
     stack_plot.SetTitle(';;Events')
+    legend_factor = (cosmetics['legend y2'] - cosmetics['top canvas y1']) / (cosmetics['legend y1'] - cosmetics['top canvas y1'])
     stack_plot.SetMinimum(cosmetics['stack minimum'])
-    stack_plot.SetMaximum(max(cosmetics['stack lowest maximum'], plot_max * cosmetics['stack maximum factor']))
+    stack_plot.SetMaximum( max(cosmetics['stack lowest maximum'], plot_max*legend_factor) )
     if (config['log scale']):
+        #legend_factor = (cosmetics['legend y2'] - cosmetics['top canvas y1']) / (cosmetics['legend y1'] - cosmetics['top canvas y1'])
         stack_plot.SetMinimum(cosmetics['stack minimum log scale'])
-        stack_plot.SetMaximum(max(cosmetics['stack lowest maximum log scale'], plot_max * cosmetics['stack maximum factor log scale']))
+        stack_plot.SetMaximum( max(cosmetics['stack lowest maximum log scale'], plot_max*legend_factor) )
 
     return stack_plot
 ## end configure_stack

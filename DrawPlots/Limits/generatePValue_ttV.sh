@@ -1,15 +1,43 @@
 #!/bin/bash
 
-## November 14 parameters
-systFile=systsEnv_Nov14.txt
-labelOrig_=Nov14_
+# systFile=systsEnv_Jan23.txt
+systFile=systsEnv_Jan23_Xsec.txt
+# systFile=systsEnv_Nov14.txt
+# systFile=systsEnv_Nov14_Xsec.txt
+# systFile=systsEnv_Nov14_minus_NP.txt
+# systFile=systsEnv_Nov14_minus_csvWgt.txt
+# systFile=systsEnv_Nov14_minus_extra_jets.txt
+# systFile=systsEnv_Nov14_minus_extra_HF.txt
+# systFile=systsEnv_Nov14_minus_JES.txt
+# systFile=systsEnv_Nov14_minus_lepton.txt
+# systFile=systsEnv_Nov14_minus_prompt_bkg.txt
+# systFile=systsEnv_Nov14_minus_lumi_PU.txt
+# systFile=systsEnv_Nov14_minus_signal.txt
+# systFile=systsEnv_Nov14_minus_all.txt
+# systFile=systsEnv_Nov14_minus_top_pt.txt
 
-SSttWvar=FinalBDT
-threeLttWvar=FinalBDT
-ttWvar=FinalBDT
-threeLttZvar=FinalBDT
-fourLttZvar=numMediumBJets
-OSttZvar=BDT_zjets_ttbar
+# labelOrig_=Jan23_
+labelOrig_=Jan23_Xsec_
+# labelOrig_=Nov14_
+# labelOrig_=Nov14_Xsec_
+# labelOrig_=Nov14_minus_NP_
+# labelOrig_=Nov14_minus_csvWgt_
+# labelOrig_=Nov14_minus_extra_jets_
+# labelOrig_=Nov14_minus_extra_HF_
+# labelOrig_=Nov14_minus_JES_
+# labelOrig_=Nov14_minus_lepton_
+# labelOrig_=Nov14_minus_prompt_bkg_
+# labelOrig_=Nov14_minus_lumi_PU_
+# labelOrig_=Nov14_minus_signal_
+# labelOrig_=Nov14_minus_all_
+# labelOrig_=Nov14_minus_top_pt_
+
+SSttWvarOrig=FinalBDT
+threeLttWvarOrig=FinalBDT
+ttWvarOrig=FinalBDT
+threeLttZvarOrig=FinalBDT
+fourLttZvarOrig=numMediumBJets
+OSttZvarOrig=BDT_zjets_ttbar
 
 ## Command line options
 dimensionOpt=$1
@@ -41,11 +69,13 @@ then
 	echo "statOpt        takes values of 'noStat', 'someStat', 'ttHStat', or 'allStat' for bin-by-bin statistical uncertainties"
 	echo "computeOpt     takes values of 'cardOnly' to only create the datacard, 'pVal' to compute the p-value,"
 	echo "               'pValVerbose' to compute the p-value and include information on pulls, 'maxLike' to compute"
-	echo "               the maximum likelihood signal strength, and 'maxLikeVerbose' to add pull information"
+	echo "               the maximum likelihood signal strength, 'maxLikeVerbose' to add pull information, and"
+	echo "               'maxLikeWorkspace' to save the normalizations and workspace"
 	echo "               'pVal' uses '-M HybridNew --testStat=PL --singlePoint 0 --onlyTestStat' as the combine command prefix"
 	echo "               'maxLike' uses '-M MaxLikelihoodFit --minos all' as the combine command prefix"
-	echo "blindOpt       takes values of 'blind' or 'unblind'"
-	echo "               'blind' adds '-t -1 --expectSignal=1' to the combine command suffix"
+	echo "blindOpt       takes values of 'blind', 'unblind', or 'sigBlind'"
+	echo "               'blind' and 'sigBlind' add '-t -1 --expectSignal=1' to the combine command suffix"
+	echo "               'sigBlind' adds '_blind' to the end of the final variable names, to exclude signal-rich bins"
 	echo "toysOpt        takes values of 'toys' or 'noToys', to use or not use data to constrain systematics"
 	echo "               'toys' adds '--toysFreq' to the combine command prefix"            
     echo ""
@@ -119,6 +149,24 @@ else
 	exit
 fi
 
+## blindOpt
+if [ "$blindOpt" = "sigBlind" ]
+then
+	SSttWvar=$SSttWvarOrig'_blind'
+	threeLttWvar=$threeLttWvarOrig'_blind'
+	ttWvar=$ttWvarOrig'_blind'
+	threeLttZvar=$threeLttZvarOrig'_blind'
+	fourLttZvar=$fourLttZvarOrig'_blind'
+	OSttZvar=$OSttZvarOrig'_blind'
+else
+	SSttWvar=$SSttWvarOrig
+	threeLttWvar=$threeLttWvarOrig
+	ttWvar=$ttWvarOrig
+	threeLttZvar=$threeLttZvarOrig
+	fourLttZvar=$fourLttZvarOrig
+	OSttZvar=$OSttZvarOrig
+fi
+
 makeCardParams=$makeCardParamsStat
 
 echo ""
@@ -185,17 +233,22 @@ then
 	combinePrefixCompute='-M HybridNew --testStat=PL --singlePoint 0 --onlyTestStat -v 2'
 elif [ "$computeOpt" = "maxLike" ]
 then
-	combinePrefixCompute='-M MaxLikelihoodFit --minos all'
+	combinePrefixCompute='-M MaxLikelihoodFit'
+	## '--minos all': With all the bin-by-bin uncertainties, fit takes infinite time
+	## '--rMin -2 --rMax 4': Does not appear to change xSec uncertainties or fit time significantly
 elif [ "$computeOpt" = "maxLikeVerbose" ]
 then
-	combinePrefixCompute='-M MaxLikelihoodFit --minos all -v 2'
+	combinePrefixCompute='-M MaxLikelihoodFit -v 2'
+elif [ "$computeOpt" = "maxLikeWorkspace" ]
+then
+	combinePrefixCompute='-M MaxLikelihoodFit --minos all --rMin -2 --rMax 4 --saveNormalizations --saveWorkspace'
 else
 	echo "Invalid computeOpt! $computeOpt Exiting."
 	exit
 fi
 
 ## blindOpt
-if [ "$blindOpt" = "blind" ]
+if [ "$blindOpt" = "blind" ] || [ "$blindOpt" = "sigBlind" ]
 then
 	combineSuffix='-t -1 --expectSignal=1'
 elif [ "$blindOpt" = "unblind" ]
@@ -252,6 +305,13 @@ echo "-----------------"
 echo "SS and 3l ttW limits - "$ttWvar
 echo "-----------------"
 combine $combinePrefix ND_cards/cardComb/ttW_23l_2t_$label_$ttWvar.card.txt $combineSuffix
+if [ "$computeOpt" = "maxLikeWorkspace" ]
+then
+	mv mlfit.root mlfit_$label_$ttWvar.root
+	mv higgsCombineTest.MaxLikelihoodFit.mH120.root higgsCombineTest.MaxLikelihoodFit.$label_$ttWvar.root
+	mv MaxLikelihoodFitResult.root MaxLikelihoodFitResult_$label_$ttWvar.root
+	python ../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a --vtol 999 --stol 999 --vtol2 999 --stol2 999 mlfit_$label_$ttWvar.root
+fi
 echo "-----------------"
 echo "3l and 4l ttZ limits - "$threeLttZvar
 echo "-----------------"
@@ -260,6 +320,13 @@ echo "-----------------"
 echo "3l, 4l, and OS ttZ limits - "$threeLttZvar
 echo "-----------------"
 combine $combinePrefix ND_cards/cardComb/ttZ_234l_$label_$threeLttZvar.card.txt $combineSuffix
+if [ "$computeOpt" = "maxLikeWorkspace" ]
+then
+	mv mlfit.root mlfit_$label_$threeLttZvar.root
+	mv higgsCombineTest.MaxLikelihoodFit.mH120.root higgsCombineTest.MaxLikelihoodFit.$label_$threeLttZvar.root
+	mv MaxLikelihoodFitResult.root MaxLikelihoodFitResult_$label_$threeLttZvar.root
+	python ../../../HiggsAnalysis/CombinedLimit/test/diffNuisances.py -a --vtol 999 --stol 999 --vtol2 999 --stol2 999 mlfit_$label_$threeLttZvar.root
+fi
 
 if [ "$dimensionOpt" = "2D" ]
 then

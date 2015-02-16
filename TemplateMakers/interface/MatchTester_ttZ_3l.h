@@ -238,7 +238,7 @@ void MatchTester_ttZ_3l::evaluate() {
 
   //std::cout << "Evaluating MatchTester_ttZ_3l with " << (*leptons)->size() << " and " << (*jets)->size() << " jets" << std::endl;
   
-  if ( (*leptons)->size() != 1) return;
+  if ( (*leptons)->size() < 1) return;
   if ( (*jets)->size() < 2) return;
 
   TH1 * ratio_top_jet_CSV;
@@ -662,6 +662,22 @@ void MatchTester_ttZ_3l::evaluate() {
 
   //std::cout << "Finished jet loop" << std::endl;
 
+  if (branches["Match_ttZ_3l_Bb"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_Bb = " << branches["Match_ttZ_3l_Bb"].branchVal << std::endl; }
+  if (branches["Match_ttZ_3l_Bq"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_Bq = " << branches["Match_ttZ_3l_Bq"].branchVal << std::endl; }
+  if (branches["Match_ttZ_3l_bq"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_bq = " << branches["Match_ttZ_3l_bq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttZ_3l_Bbq"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_Bbq = " << branches["Match_ttZ_3l_Bbq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttZ_3l_Bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_Bqq = " << branches["Match_ttZ_3l_Bqq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttZ_3l_bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_bqq = " << branches["Match_ttZ_3l_bqq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 4 && branches["Match_ttZ_3l_Bbqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttZ_3l_Bbqq = " << branches["Match_ttZ_3l_Bbqq"].branchVal << std::endl; }
+
+  
   myVars.clear();
 
   for (typename map<TString, BranchInfo<double>>::iterator iBranch = branches.begin();

@@ -1,5 +1,5 @@
-label: ttV_Nov14
-output label: ttV_Nov14_noJetScale
+label: ttV_Jan23
+output label: ttV_Jan23
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/3l_ttZ_studies_2t_lepCut
@@ -28,14 +28,14 @@ jet tag categories:
 
 #     eq3j_lf: ['numJets == 3 && numLooseBJets < 2 && numMediumBJets == 0']
 #     ge4j_lf: ['numJets >= 4 && numLooseBJets < 2 && numMediumBJets == 0']
-#     eq3j_bloose: ['numJets == 3 && (numLooseBJets >= 2 || numMediumBJets >= 1)']
-#     ge4j_bloose: ['numJets >= 4 && (numLooseBJets >= 2 || numMediumBJets >= 1)']
+    eq3j_bloose: ['numJets == 3 && (numLooseBJets >= 2 || numMediumBJets >= 1)']
+    ge4j_bloose: ['numJets >= 4 && (numLooseBJets >= 2 || numMediumBJets >= 1)']
 
 # #     le2j_lowMet: ['numJets <= 2 && met_pt*0.6 + mht*0.4 < 30 && WLike_MT_met_lep < 40']
 # #     le2j_hiMet: ['numJets <= 2 && met_pt*0.6 + mht*0.4 > 40']
 
-    ge0j_hiMet_lf: ['numJets >= 0 && met_pt*0.6 + mht*0.4 > 40 && ( (numJets < 3) || (numLooseBJets < 2 && numMediumBJets == 0) )']
-    ge3j_hiMet_lf: ['numJets >= 3 && met_pt*0.6 + mht*0.4 > 40 && numLooseBJets < 2 && numMediumBJets == 0']
+#     ge0j_hiMet_lf: ['numJets >= 0 && met_pt*0.6 + mht*0.4 > 40 && ( (numJets < 3) || (numLooseBJets < 2 && numMediumBJets == 0) )']
+#     ge3j_hiMet_lf: ['numJets >= 3 && met_pt*0.6 + mht*0.4 > 40 && numLooseBJets < 2 && numMediumBJets == 0']
 
 #     #eq0j_hiMet: ['numJets == 0 && met_pt*0.6 + mht*0.4 > 40']
 #     #eq1j_hiMet: ['numJets == 1 && met_pt*0.6 + mht*0.4 > 40']
@@ -85,6 +85,8 @@ weights:
 
 systematics:
     - nominal
+    #- JERUp
+    #- JERDown
     - JESUp
     - JESDown
     - weight_PUUp
@@ -117,29 +119,29 @@ samples:
     #VH_TauMu:
     ttH125:
     wz_lll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     wz_lf_lll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     wz_cc_lll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     wz_b_lll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     wz_bb_lll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     zz_llll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     zz_lowmll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     zz_lf_llll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     zz_cc_llll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     zz_b_llll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     zz_bb_llll:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     www:
-        #weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
+        weights: ['common', '( 1.0+ 0.4*(numJets == 3) + 0.6*(numJets >= 4) )']
     wwz:
 #     zjets_0p:
 #         tree sample: zjets
@@ -534,20 +536,20 @@ distributions:
         axis labels: ['final BDT', Events]
         binning: [4, [-1, -0.6, -0.2, 0.3, 1]]
 
-    FinalBDT_Oct31:
-        expression: FinalBDT_ttZ_3l_Oct31
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [4, [-1, -0.7, -0.4, 0, 1]]
+#     FinalBDT_Oct31:
+#         expression: FinalBDT_ttZ_3l_Oct31
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [4, [-1, -0.7, -0.4, 0, 1]]
 
     FinalBDT_blind:
         expression: FinalBDT_ttZ_3l
         axis labels: ['final BDT', Events]
         binning: [2, [-1, -0.6, -0.2]]
 
-    FinalBDT_Oct31_blind:
-        expression: FinalBDT_ttZ_3l_Oct31
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [2, [-1, -0.7, -0.4]]
+#     FinalBDT_Oct31_blind:
+#         expression: FinalBDT_ttZ_3l_Oct31
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [2, [-1, -0.7, -0.4]]
 
 # #     WLike_dijet_mass_X1b:
 # #         expression: WLike_dijet_mass_X1b
@@ -1052,19 +1054,19 @@ limits distributions:
         axis labels: ['final BDT', Events]
         binning: [4, [-1, -0.6, -0.2, 0.3, 1]]
 
-    FinalBDT_Oct31:
-        expression: FinalBDT_ttZ_3l_Oct31
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [4, [-1, -0.7, -0.4, 0, 1]]
+#     FinalBDT_Oct31:
+#         expression: FinalBDT_ttZ_3l_Oct31
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [4, [-1, -0.7, -0.4, 0, 1]]
 
     FinalBDT_blind:
         expression: FinalBDT_ttZ_3l
         axis labels: ['final BDT', Events]
         binning: [2, [-1, -0.6, -0.2]]
 
-    FinalBDT_Oct31_blind:
-        expression: FinalBDT_ttZ_3l_Oct31
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [2, [-1, -0.7, -0.4]]
+#     FinalBDT_Oct31_blind:
+#         expression: FinalBDT_ttZ_3l_Oct31
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [2, [-1, -0.7, -0.4]]
 
 

@@ -1,5 +1,5 @@
-label: ttV_Nov14
-output label: ttV_Nov14
+label: ttV_Jan23
+output label: ttV_Jan23
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/4l_ttZ_studies_4l_lepCut
@@ -26,10 +26,10 @@ jet tag categories:
 #     ge0j: ['numJets >= 0']
 #     ge0j_Zmask_Zmask: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) > 10']
 #     ge0j_Zpeak_Zmask: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10']
-    ge0j_Zpeak_Zpeak: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10']
+#     ge0j_Zpeak_Zpeak: ['numJets >= 0 && abs(ZLike_mass_leplep_SFOS_all-91.0) < 10 && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10']
     
-#     ge1j_Zpeak_mht30_1bloose: ['numJets >= 1  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && mht > 30 && numLooseBJets >= 1']
-#     ge1j_Zmask_mht30_1bloose: ['numJets >= 1  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10 && mht > 30 && numLooseBJets >= 1']
+    ge1j_Zpeak_mht30_1bloose: ['numJets >= 1  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && mht > 30 && numLooseBJets >= 1']
+    ge1j_Zmask_mht30_1bloose: ['numJets >= 1  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10 && mht > 30 && numLooseBJets >= 1']
 
 #     ge1j_Zpeak_mht30_ge1t: ['numJets >= 1  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) < 10 && mht > 30 && numMediumBJets >= 1']
 #     ge1j_Zmask_mht30_ge1t: ['numJets >= 1  && abs(ZLike_mass_leplep_SFOS_all_2-91.0) > 10 && mht > 30 && numMediumBJets >= 1']
@@ -434,13 +434,13 @@ limits distributions:
         axis labels: ['number of medium b-tagged jets', Events]
         binning: [1, -0.5, 0.5]
         
-    numLooseBJets:
-        expression: min(2, numLooseBJets)
-        axis labels: ['number of loose b-tagged jets', Events]
-        binning: [2, 0.5, 2.5]
+#     numLooseBJets:
+#         expression: min(2, numLooseBJets)
+#         axis labels: ['number of loose b-tagged jets', Events]
+#         binning: [2, 0.5, 2.5]
         
-    numLooseBJets_blind:
-        expression: min(2, numLooseBJets)
-        axis labels: ['number of loose b-tagged jets', Events]
-        binning: [1, 0.5, 1.5]
+#     numLooseBJets_blind:
+#         expression: min(2, numLooseBJets)
+#         axis labels: ['number of loose b-tagged jets', Events]
+#         binning: [1, 0.5, 1.5]
         

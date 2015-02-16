@@ -244,6 +244,16 @@ void MatchTester_ttbar_ll::evaluate() {
   } //end for iLep1
 
   //std::cout << "Finished jet loop" << std::endl;
+
+  if ( lep1_charge + lep2_charge == 0 ) {
+    if (branches["Match_ttbar_ll_B"].branchVal < -99) {
+      std::cout << "Error! Match_ttbar_ll_B = " << branches["Match_ttbar_ll_B"].branchVal << std::endl; }
+    if (branches["Match_ttbar_ll_b"].branchVal < -99) {
+      std::cout << "Error! Match_ttbar_ll_b = " << branches["Match_ttbar_ll_b"].branchVal << std::endl; }
+    if ((*jets)->size() >= 2 && branches["Match_ttbar_ll_Bb"].branchVal < -99) {
+      std::cout << "Error! Match_ttbar_ll_Bb = " << branches["Match_ttbar_ll_Bb"].branchVal << std::endl; }
+  }
+
   
   myVars.clear();
   

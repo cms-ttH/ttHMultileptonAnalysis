@@ -1,6 +1,6 @@
 #input and output file names
 input file location: histos/SS_ttW_studies_2t_lepCut
-input file label: ttV_SS_Nov14
+input file label: ttV_SS_Jan23
 output file location: pdf/SS_ttW_studies_2t_lepCut
 
 #drawing options
@@ -19,22 +19,22 @@ SF info: false
 luminosity: 19.5
 luminosity error: 0.044
 trigger SF error: 0.02
-lumi era string: "                #sqrt{s} = 8 TeV, L = 19.5 fb^{-1}"
+lumi era string: "        #sqrt{s} = 8 TeV, L = 19.5 fb^{-1}"
 
 #Lepton categories: "draw name"
 lepton categories:
     mu_mu:
         data samples: [DoubleMu]
         excluded samples: []
-        tex name: " #mu #mu "
+        tex name: "#mu #mu"
     mu_ele:
         data samples: [MuEG]
         excluded samples: []
-        tex name: " #mu e "
+        tex name: "#mu e"
     ele_ele:
         data samples: [DoubleElectron]
         excluded samples: []
-        tex name: " e e "
+        tex name: "e e"
 
 
 #Jet-tag categories: "draw name"
@@ -62,8 +62,8 @@ jet tag categories:
 #     eq2j: " + 2 jets"
 #     eq3j_lf: " + 3 jets + lf"
 #     ge4j_lf: " + #geq4 jets + lf"
-    eq3j_bloose: " + 3 jets + bloose"
-    ge4j_bloose: " + #geq4 jets + bloose"
+    eq3j_bloose: " + 3 jets + tags"
+    ge4j_bloose: " + #geq4 jets + tags"
     
 #     ge0j_Zpeak: " + #geq0 jets"
 # #     eq0j_Zpeak: " + 0 jets"
@@ -231,8 +231,8 @@ distributions:
     Match_ttW_SS_Bqq: ['match score ttW Bqq', true, true]
     Match_ttW_SS_Bbqq: ['match score ttW Bbqq', true, true]
     FinalBDT_QCD: ['final BDT vs. QCD', false, false]
-    FinalBDT: ['final BDT', false, false]
-    FinalBDT_Oct31: ['final BDT Oct 31', false, false]
-    #FinalBDT_blind: ['final BDT', false, false]
-    #FinalBDT_Oct31_blind: ['final BDT Oct 31', false, false]
+    FinalBDT: ['t#bar{t}W BDT', false, false]
+    #FinalBDT_blind: ['t#bar{t}W BDT', false, false]
+#     FinalBDT_Oct31: ['final BDT Oct 31', false, false]
+#     FinalBDT_Oct31_blind: ['final BDT Oct 31', false, false]
     

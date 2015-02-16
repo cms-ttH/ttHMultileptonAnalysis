@@ -1,5 +1,5 @@
-label: ttV_SS_Nov14
-output label: ttV_SS_Nov14
+label: ttV_SS_Jan23
+output label: ttV_SS_Jan23
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/SS_ttW_studies_2t_lepCut
@@ -77,6 +77,8 @@ weights:
 
 systematics:
     - nominal
+    #- JERUp
+    #- JERDown
     - JESUp
     - JESDown
     - weight_PUUp
@@ -464,7 +466,7 @@ distributions:
         binning: [*default_num_bins, -1, 1]
 
     FinalBDT:
-        expression: max(-0.7,min(0.7,FinalBDT_ttW_SS))
+        expression: max(-0.69,min(0.69,FinalBDT_ttW_SS))
         axis labels: ['final BDT', Events]
         binning: [7, -0.7, 0.7]
 
@@ -474,7 +476,7 @@ distributions:
         binning: [8, -1, 1]
 
     FinalBDT_blind:
-        expression: max(-0.7,min(0.7,FinalBDT_ttW_SS))
+        expression: max(-0.69,min(0.69,FinalBDT_ttW_SS))
         axis labels: ['final BDT', Events]
         binning: [5, -0.7, 0.3]
 
@@ -500,23 +502,23 @@ limits distributions:
 #         binning: [3, -0.5, 2.5]
 
     FinalBDT:
-        expression: max(-0.7,min(0.7,FinalBDT_ttW_SS))
+        expression: max(-0.69,min(0.69,FinalBDT_ttW_SS))
         axis labels: ['final BDT', Events]
         binning: [7, -0.7, 0.7]
 
-    FinalBDT_Oct31:
-        expression: FinalBDT_ttW_SS_Oct31
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [8, -1, 1]
+#     FinalBDT_Oct31:
+#         expression: FinalBDT_ttW_SS_Oct31
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [8, -1, 1]
 
     FinalBDT_blind:
-        expression: max(-0.7,min(0.7,FinalBDT_ttW_SS))
+        expression: max(-0.69,min(0.69,FinalBDT_ttW_SS))
         axis labels: ['final BDT', Events]
         binning: [5, -0.7, 0.3]
 
-    FinalBDT_Oct31_blind:
-        expression: FinalBDT_ttW_SS_Oct31
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [6, -1, 0.5]
+#     FinalBDT_Oct31_blind:
+#         expression: FinalBDT_ttW_SS_Oct31
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [6, -1, 0.5]
 
 

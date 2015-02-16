@@ -666,7 +666,7 @@ int main (int argc, char** argv) {
   FinalBDT_ttZ_vs_ttbar_OS
     myFinalBDT_ttZ_vs_ttbar_OS(&(jets.ptrToItems), &(jets_40.ptrToItems), &myMHT, &myMassLepLep,
                                &myVectPtLepLep, &myDeltaRLepLep, &myMTOfJets, &myMassOfJets,
-                               &myMatchTester_ttbar_jj, &myMatchTester_ttbar_ll);
+                               &myMatchTester_ttbar_jj, &myMatchTester_ttbar_ll, &(tightLoosePreselectedLeptons.ptrToItems));
   kinVars.push_back(&myFinalBDT_ttZ_vs_ttbar_OS);
   
   FinalBDT_ttZ_vs_ttbar_OS_Oct31
