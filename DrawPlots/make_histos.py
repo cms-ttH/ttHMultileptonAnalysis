@@ -98,7 +98,7 @@ def make_histos(args, config, samples, lepton_categories, jet_tag_categories):
 
                     systematic_weight_string, systematic_label = plot_helper.get_systematic_info(systematic)
                     source_file_name = '%s/%s_%s_all.root' % (config['input_trees_directory'], tree_sample, config['label'])
-                    if 'JES' in systematic:
+                    if 'JES' in systematic or 'JER' in systematic:
                         source_file_name = '%s/%s_%s_%s_all.root' % (config['input_trees_directory'], tree_sample, config['label'], systematic)
                     if args.file:
                         source_file_name = args.file
@@ -153,8 +153,8 @@ def submit_batch_jobs(config, samples, lepton_categories, jet_tag_categories):
     argument_string = ' '.join([a for a in sys.argv[1:] if a != '-b' and a != '-batch'])
 
     condor_header = 'universe = vanilla \nexecutable = make_histos.py \nnotification = Never \ngetenv = True \n+IsExpressJob = False'
-    ### Setting to run on 32 open cores on earth
-    #condor_header = 'universe = vanilla \nexecutable = make_histos.py \nnotification = Never \ngetenv = True \n+IsExpressJob = True'
+#     ## Setting to run on 32 open cores on earth
+#     condor_header = 'universe = vanilla \nexecutable = make_histos.py \nnotification = Never \ngetenv = True \n+IsExpressJob = True'
     for sample in samples:
         for lepton_category in lepton_categories:
             for jet_tag_category in jet_tag_categories:

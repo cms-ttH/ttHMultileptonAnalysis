@@ -112,6 +112,17 @@ void FinalBDT_ttZ_vs_zjets_ttbar_OS::evaluate() {
 
   //std::cout << "Inside FinalBDT_ttZ_vs_zjets_ttbar_OS::evaluate()" << std::endl;
 
+  varnumJets_40 = KinematicVariableConstants::FLOAT_INIT;
+  varMT_of_leps_jets_mass_of_leps_jets = KinematicVariableConstants::FLOAT_INIT;
+  varjets_by_pt_5_pt = KinematicVariableConstants::FLOAT_INIT;
+  varjets_by_CSV_1_btagCombinedSecVertex = KinematicVariableConstants::FLOAT_INIT;
+  varjets_by_CSV_2_btagCombinedSecVertex = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_jj_Bq_bqq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_jj_Bqq_bq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_jj_Bqq_bqq = KinematicVariableConstants::FLOAT_INIT;
+  varlog_chiSquared_ = KinematicVariableConstants::FLOAT_INIT;
+  varFinalBDT_ttZ_vs_ttbar_OS = KinematicVariableConstants::FLOAT_INIT;  
+
   myMTOfLepsJets->evaluate();
   myMassOfLepsJets->evaluate();
   myMatchTester_ttbar_jj->evaluate();
@@ -144,6 +155,27 @@ void FinalBDT_ttZ_vs_zjets_ttbar_OS::evaluate() {
   //std::cout << "Here" << std::endl;
 
   //   std::cout << "varnumJets_40: " << varnumJets_40 << std::endl;
+
+  if (varnumJets_40 < -99) {
+  	std::cout << "Error! varnumJets_40 = " << varnumJets_40 << std::endl; }
+  if (varMT_of_leps_jets_mass_of_leps_jets < -99) {
+    std::cout << "Error! varMT_of_leps_jets_mass_of_leps_jets = " << varMT_of_leps_jets_mass_of_leps_jets << std::endl; }
+  if (varjets_by_pt_5_pt < -99) {
+  	std::cout << "Error! varjets_by_pt_5_pt = " << varjets_by_pt_5_pt << std::endl; }
+  if (varjets_by_CSV_1_btagCombinedSecVertex < -99) {
+  	std::cout << "Error! varjets_by_CSV_1_btagCombinedSecVertex = " << varjets_by_CSV_1_btagCombinedSecVertex << std::endl; }
+  if (varjets_by_CSV_2_btagCombinedSecVertex < -99) {
+  	std::cout << "Error! varjets_by_CSV_2_btagCombinedSecVertex = " << varjets_by_CSV_2_btagCombinedSecVertex << std::endl; }
+  if (varMatch_ttbar_jj_Bq_bqq < -99) {
+  	std::cout << "Error! varMatch_ttbar_jj_Bq_bqq = " << varMatch_ttbar_jj_Bq_bqq << std::endl; }
+  if (varMatch_ttbar_jj_Bqq_bq < -99) {
+  	std::cout << "Error! varMatch_ttbar_jj_Bqq_bq = " << varMatch_ttbar_jj_Bqq_bq << std::endl; }
+  if (varMatch_ttbar_jj_Bqq_bqq < -99 && (*jets)->size() >= 6) {
+  	std::cout << "Error! varMatch_ttbar_jj_Bqq_bqq = " << varMatch_ttbar_jj_Bqq_bqq << std::endl; }
+  if (varlog_chiSquared_ < -99 && (*jets)->size() >= 6) {
+  	std::cout << "Error! varlog_chiSquared_ = " << varlog_chiSquared_ << std::endl; }
+  if (varFinalBDT_ttZ_vs_ttbar_OS < -99) {  
+  	std::cout << "Error! varFinalBDT_ttZ_vs_ttbar_OS = " << varFinalBDT_ttZ_vs_ttbar_OS << std::endl; }  
 
   for( unsigned int jj = 0 ; jj < 2 ; ++jj ) {
     

@@ -125,7 +125,7 @@ void FinalBDT_ttW_SS_Oct31::evaluate() {
     if (branchName == "Match_ttW_SS_Bb") varMatch_ttW_SS_Bb = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttW_SS_Bq") varMatch_ttW_SS_Bq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttW_SS_bq") varMatch_ttW_SS_bq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
-    if (branchName == "Match_ttW_Bbq") varMatch_ttW_SS_Bbq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
+    if (branchName == "Match_ttW_SS_Bbq") varMatch_ttW_SS_Bbq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
     if (branchName == "Match_ttW_SS_Bbqq") varMatch_ttW_SS_Bbqq = (*myMatchTester_ttW_SS).myVars[ii].branchVal;
   }
   for (unsigned int ii = 0; ii < (*myMatchTester_ttbar_fake_SS).myVars.size(); ii++) {

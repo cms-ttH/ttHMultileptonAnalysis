@@ -97,13 +97,25 @@ FinalBDT_ttZ_3l::FinalBDT_ttZ_3l(BNjetCollection **_jets,
 void FinalBDT_ttZ_3l::evaluate() {
   if (this->evaluatedThisEvent) return;
   if ((*jets)->size() < 3) return;
+  myZLikeMassLepLepSFOSAll->evaluate();
+  if ((*myZLikeMassLepLepSFOSAll).myVars[0].branchVal < 0) return;
   evaluatedThisEvent = true;
 
   //std::cout << "Inside FinalBDT_ttZ_3l::evaluate()" << std::endl;
+
+  varMT_of_everything = KinematicVariableConstants::FLOAT_INIT;
+  varnumMediumBJets = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_Bb = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_Bq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_bq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_Bbq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_Bqq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_bqq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttZ_3l_Bbqq = KinematicVariableConstants::FLOAT_INIT;
+  varZLike_mass_leplep_SFOS_all = KinematicVariableConstants::FLOAT_INIT;
   
   myMTOfEverything->evaluate();
   myMatchTester_ttZ_3l->evaluate();
-  myZLikeMassLepLepSFOSAll->evaluate();
 
   varMT_of_everything = (*myMTOfEverything).myVars[0].branchVal;
   varnumMediumBJets = (*mediumCSVJets)->size()*1.0;
@@ -123,18 +135,28 @@ void FinalBDT_ttZ_3l::evaluate() {
   //std::cout << "Here" << std::endl;
   varZLike_mass_leplep_SFOS_all = (*myZLikeMassLepLepSFOSAll).myVars[0].branchVal;
 
-//   std::cout << "                               " << std::endl;
-//   std::cout << "------- FinalBDT_ttZ_3l -------" << std::endl;
-//   std::cout << "varMT_of_everything: " << varMT_of_everything << std::endl;
-//   std::cout << "varnumMediumBJets: " << varnumMediumBJets << std::endl;
-//   std::cout << "varMatch_ttZ_3l_Bb: " << varMatch_ttZ_3l_Bb << std::endl;
-//   std::cout << "varMatch_ttZ_3l_Bq: " << varMatch_ttZ_3l_Bq << std::endl;
-//   std::cout << "varMatch_ttZ_3l_bq: " << varMatch_ttZ_3l_bq << std::endl;
-//   std::cout << "varMatch_ttZ_3l_Bbq: " << varMatch_ttZ_3l_Bbq << std::endl;
-//   std::cout << "varMatch_ttZ_3l_Bqq: " << varMatch_ttZ_3l_Bqq << std::endl;
-//   std::cout << "varMatch_ttZ_3l_bqq: " << varMatch_ttZ_3l_bqq << std::endl;
-//   std::cout << "varMatch_ttZ_3l_Bbqq: " << varMatch_ttZ_3l_Bbqq << std::endl;
-//   std::cout << "varZLike_mass_leplep_SFOS_all: " << varZLike_mass_leplep_SFOS_all << std::endl;
+  
+
+  if (varMT_of_everything < -99) {
+    std::cout << "Error! varMT_of_everything = " << varMT_of_everything << std::endl; }
+  if (varnumMediumBJets < -99) {
+    std::cout << "Error! varnumMediumBJets = " << varnumMediumBJets << std::endl; }
+  if (varMatch_ttZ_3l_Bb < -99) {
+    std::cout << "Error! varMatch_ttZ_3l_Bb = " << varMatch_ttZ_3l_Bb << std::endl; }
+  if (varMatch_ttZ_3l_Bq < -99) {
+    std::cout << "Error! varMatch_ttZ_3l_Bq = " << varMatch_ttZ_3l_Bq << std::endl; }
+  if (varMatch_ttZ_3l_bq < -99) {
+    std::cout << "Error! varMatch_ttZ_3l_bq = " << varMatch_ttZ_3l_bq << std::endl; }
+  if (varMatch_ttZ_3l_Bbq < -99) {
+    std::cout << "Error! varMatch_ttZ_3l_Bbq = " << varMatch_ttZ_3l_Bbq << std::endl; }
+  if (varMatch_ttZ_3l_Bqq < -99) {
+    std::cout << "Error! varMatch_ttZ_3l_Bqq = " << varMatch_ttZ_3l_Bqq << std::endl; }
+  if (varMatch_ttZ_3l_bqq < -99) {
+    std::cout << "Error! varMatch_ttZ_3l_bqq = " << varMatch_ttZ_3l_bqq << std::endl; }
+  if (varMatch_ttZ_3l_Bbqq < -99 && (*jets)->size() >= 4) {
+    std::cout << "Error! varMatch_ttZ_3l_Bbqq = " << varMatch_ttZ_3l_Bbqq << std::endl; }
+  if (varZLike_mass_leplep_SFOS_all < -99) {
+    std::cout << "Error! varZLike_mass_leplep_SFOS_all = " << varZLike_mass_leplep_SFOS_all << std::endl; }
   
   for( unsigned int jj = 0 ; jj < 2 ; ++jj ) {
     

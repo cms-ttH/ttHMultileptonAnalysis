@@ -1,5 +1,5 @@
-label: ttV_Nov14
-output label: ttV_Nov14
+label: ttV_Jan23
+output label: ttV_Jan23 ## Moved FinalBDT edges from 0.9 to 0.89
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/3l_ttW_studies_2t_lepCut
@@ -77,6 +77,8 @@ weights:
 
 systematics:
     - nominal
+    #- JERUp
+    #- JERDown
     - JESUp
     - JESDown
     - weight_PUUp
@@ -308,22 +310,22 @@ distributions:
 #         binning: [*default_num_bins, -4, 2]
 
     FinalBDT:
-        expression: max(-0.9, min(0.9, FinalBDT_ttW_3l))
+        expression: max(-0.89, min(0.89, FinalBDT_ttW_3l))
         axis labels: ['final BDT', Events]
         binning: [6, -0.9, 0.9]
 
     FinalBDT_Oct31:
-        expression: max(-0.9, min(0.6, FinalBDT_ttW_3l_Oct31))
+        expression: max(-0.89, min(0.59, FinalBDT_ttW_3l_Oct31))
         axis labels: ['final BDT Oct 31', Events]
         binning: [5, -0.9, 0.6]
 
     FinalBDT_blind:
-        expression: max(-0.9, min(0.9, FinalBDT_ttW_3l))
+        expression: max(-0.89, min(0.89, FinalBDT_ttW_3l))
         axis labels: ['final BDT', Events]
         binning: [4, -0.9, 0.3]
 
     FinalBDT_Oct31_blind:
-        expression: max(-0.9, min(0.6, FinalBDT_ttW_3l_Oct31))
+        expression: max(-0.89, min(0.59, FinalBDT_ttW_3l_Oct31))
         axis labels: ['final BDT Oct 31', Events]
         binning: [3, -0.9, 0]
 
@@ -344,22 +346,22 @@ limits distributions:
 #         binning: [3, -0.5, 2.5]
 
     FinalBDT:
-        expression: max(-0.9, min(0.9, FinalBDT_ttW_3l))
+        expression: max(-0.89, min(0.89, FinalBDT_ttW_3l))
         axis labels: ['final BDT', Events]
         binning: [6, -0.9, 0.9]
 
-    FinalBDT_Oct31:
-        expression: max(-0.9, min(0.6, FinalBDT_ttW_3l_Oct31))
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [5, -0.9, 0.6]
+#     FinalBDT_Oct31:
+#         expression: max(-0.89, min(0.59, FinalBDT_ttW_3l_Oct31))
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [5, -0.9, 0.6]
         
     FinalBDT_blind:
-        expression: max(-0.9, min(0.9, FinalBDT_ttW_3l))
+        expression: max(-0.89, min(0.89, FinalBDT_ttW_3l))
         axis labels: ['final BDT', Events]
         binning: [4, -0.9, 0.3]
 
-    FinalBDT_Oct31_blind:
-        expression: max(-0.9, min(0.6, FinalBDT_ttW_3l_Oct31))
-        axis labels: ['final BDT Oct 31', Events]
-        binning: [3, -0.9, 0]
+#     FinalBDT_Oct31_blind:
+#         expression: max(-0.89, min(0.59, FinalBDT_ttW_3l_Oct31))
+#         axis labels: ['final BDT Oct 31', Events]
+#         binning: [3, -0.9, 0]
         

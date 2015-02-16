@@ -342,6 +342,13 @@ void MatchTester_ttbar_jj::evaluate() {
     
   //std::cout << "Finished jet loop" << std::endl;
 
+  if (branches["Match_ttbar_jj_Bqq_bq"].branchVal < -99) {
+    std::cout << "Error! Match_ttbar_jj_Bqq_bq = " << branches["Match_ttbar_jj_Bqq_bq"].branchVal << std::endl; }
+  if (branches["Match_ttbar_jj_Bq_bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttbar_jj_Bq_bqq = " << branches["Match_ttbar_jj_Bq_bqq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 6 && branches["Match_ttbar_jj_Bqq_bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttbar_jj_Bqq_bqq = " << branches["Match_ttbar_jj_Bqq_bqq"].branchVal << std::endl; }
+
   myVars.clear();
 
   for (typename map<TString, BranchInfo<double>>::iterator iBranch = branches.begin();

@@ -251,6 +251,16 @@ void MatchTester_ttW_3l::evaluate() {
   } //end for iLep1
 
   //std::cout << "Finished jet loop" << std::endl;
+
+  if ( abs((*leptons)->at(0)->tkCharge + (*leptons)->at(1)->tkCharge + (*leptons)->at(2)->tkCharge) == 1 ) {
+    if (branches["Match_ttW_3l_B"].branchVal < -99) {
+      std::cout << "Error! Match_ttW_3l_B = " << branches["Match_ttW_3l_B"].branchVal << std::endl; }
+    if (branches["Match_ttW_3l_b"].branchVal < -99) {
+      std::cout << "Error! Match_ttW_3l_b = " << branches["Match_ttW_3l_b"].branchVal << std::endl; }
+    if ((*jets)->size() >= 2 && branches["Match_ttW_3l_Bb"].branchVal < -99) {
+      std::cout << "Error! Match_ttW_3l_Bb = " << branches["Match_ttW_3l_Bb"].branchVal << std::endl; }
+  }
+  
   
   myVars.clear();
   

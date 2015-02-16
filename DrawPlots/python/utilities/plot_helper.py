@@ -772,14 +772,14 @@ class SampleInformation:
 
             'ttbarW': {'sample_type': 'MC',
                        'is_signal': False,
-                       'x_section': 0.208, #New NLO result; old number was 0.249 - AWB Feb 12, 2014
-                       'x_section_error': 0.208*0.2, #CERN x_sec error; ND x_sec error = 0.208*0.1
-                       'x_section_error_ttV': 0.208*0.123, 
+                       'x_section': 0.203, #NLO result from http://arxiv.org/abs/1208.2665 (previous typo had 0.208) -AWB Jan. 30, 2015
+                       'x_section_error': 0.203*0.2, #CERN x_sec error; ND x_sec error = 0.203*0.1
+                       'x_section_error_ttV': 0.203*0.123, 
                        'num_generated': 195396}, #ND number processed
 
             'ttbarZ': {'sample_type': 'MC',
                        'is_signal': False,
-                       'x_section': 0.206, #CERN x_sec; ND x_sec error = 0.208
+                       'x_section': 0.206, #CERN x_sec; ND x_sec = 0.208
                        'x_section_error': 0.206*0.2, #CERN x_sec error; ND x_sec error = 0.208*0.11
                        'x_section_error_ttV': 0.206*0.137, 
                        'num_generated': 209512},
@@ -1091,6 +1091,8 @@ def get_systematic_info(systematic):
         'nominal': {'weight_string': '1.0', 'systematic_label': ''},
         'JESUp': {'weight_string': '1.0', 'systematic_label': '_JESUp'},
         'JESDown': {'weight_string': '1.0', 'systematic_label': '_JESDown'},
+        'JERUp': {'weight_string': '1.0', 'systematic_label': '_JERUp'},
+        'JERDown': {'weight_string': '1.0', 'systematic_label': '_JERDown'},
         'weight_PUUp': {'weight_string': '(weight_PUUp/weight_PU)', 'systematic_label': '_weight_PUUp'},
         'weight_PUDown': {'weight_string': '(weight_PUDown/weight_PU)', 'systematic_label': '_weight_PUDown'},
         'csvWeightHFUp': {'weight_string': 'csvWeightHFUp', 'systematic_label': '_csvWeightHFUp'},

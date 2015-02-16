@@ -41,6 +41,7 @@ public:
   TwoObjectKinematic<BNjetCollection,BNjetCollection> * myMassOfJets;
   MatchTester_ttbar_jj * myMatchTester_ttbar_jj;
   MatchTester_ttbar_ll * myMatchTester_ttbar_ll;
+  BNleptonCollection **tightLoosePreselectedLeptons;
 
   FinalBDT_ttZ_vs_ttbar_OS(BNjetCollection **_jets,
                            BNjetCollection **_jets_40,
@@ -51,7 +52,8 @@ public:
                            TwoObjectKinematic<BNjetCollection,BNjetCollection> * _myMTOfJets,
                            TwoObjectKinematic<BNjetCollection,BNjetCollection> * _myMassOfJets,
                            MatchTester_ttbar_jj * _myMatchTester_ttbar_jj,
-                           MatchTester_ttbar_ll * _myMatchTester_ttbar_ll);
+                           MatchTester_ttbar_ll * _myMatchTester_ttbar_ll,
+                           BNleptonCollection **_tightLoosePreselectedLeptons);
 
   void evaluate();
 
@@ -66,10 +68,12 @@ FinalBDT_ttZ_vs_ttbar_OS::FinalBDT_ttZ_vs_ttbar_OS(BNjetCollection **_jets,
                                                    TwoObjectKinematic<BNjetCollection,BNjetCollection> * _myMTOfJets,
                                                    TwoObjectKinematic<BNjetCollection,BNjetCollection> * _myMassOfJets,
                                                    MatchTester_ttbar_jj * _myMatchTester_ttbar_jj,
-                                                   MatchTester_ttbar_ll * _myMatchTester_ttbar_ll):
+                                                   MatchTester_ttbar_ll * _myMatchTester_ttbar_ll,
+                                                   BNleptonCollection **_tightLoosePreselectedLeptons):
   jets(_jets), jets_40(_jets_40), myMHT(_myMHT), myMassLepLep(_myMassLepLep), myVectPtLepLep(_myVectPtLepLep),
   myDeltaRLepLep(_myDeltaRLepLep), myMTOfJets(_myMTOfJets), myMassOfJets(_myMassOfJets),
-  myMatchTester_ttbar_jj(_myMatchTester_ttbar_jj), myMatchTester_ttbar_ll(_myMatchTester_ttbar_ll) {
+  myMatchTester_ttbar_jj(_myMatchTester_ttbar_jj), myMatchTester_ttbar_ll(_myMatchTester_ttbar_ll),
+  tightLoosePreselectedLeptons(_tightLoosePreselectedLeptons) {
 
   //std::cout << "Setting up FinalBDT_ttZ_vs_ttbar_OS" << std::endl;
   
@@ -117,9 +121,24 @@ FinalBDT_ttZ_vs_ttbar_OS::FinalBDT_ttZ_vs_ttbar_OS(BNjetCollection **_jets,
 void FinalBDT_ttZ_vs_ttbar_OS::evaluate() {
   if (this->evaluatedThisEvent) return;
   if ((*jets)->size() < 5) return;
+  if ((*tightLoosePreselectedLeptons)->size() != 2) return;
+  if ( abs((*tightLoosePreselectedLeptons)->at(0)->tkCharge + (*tightLoosePreselectedLeptons)->at(1)->tkCharge) != 0 ) return;
   evaluatedThisEvent = true;
 
   //std::cout << "Inside FinalBDT_ttZ_vs_ttbar_OS::evaluate()" << std::endl;
+
+  varnumJets_40 = KinematicVariableConstants::FLOAT_INIT;
+  varmht = KinematicVariableConstants::FLOAT_INIT;
+  varmass_leplep = KinematicVariableConstants::FLOAT_INIT;
+  varvectPt_leplep = KinematicVariableConstants::FLOAT_INIT;
+  vardR_leplep = KinematicVariableConstants::FLOAT_INIT;
+  varMT_of_jets_mass_of_jets = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_jj_Bq_bqq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_jj_Bqq_bq = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_ll_Bb = KinematicVariableConstants::FLOAT_INIT;
+  varttbar_ll_B_CSV = KinematicVariableConstants::FLOAT_INIT;
+  varttbar_ll_b_CSV = KinematicVariableConstants::FLOAT_INIT;
+  varMatch_ttbar_jj_Bqq_bqq = KinematicVariableConstants::FLOAT_INIT;  
 
   myMHT->evaluate();
   myMassLepLep->evaluate();
@@ -156,7 +175,33 @@ void FinalBDT_ttZ_vs_ttbar_OS::evaluate() {
   
   //std::cout << "Here" << std::endl;
 
-  //   std::cout << "varnumJets_40: " << varnumJets_40 << std::endl;
+  //   std::cout << "Error! varnumJets_40: " << varnumJets_40 << std::endl;
+
+  if (varnumJets_40 < -99) {
+  	std::cout << "Error! varnumJets_40 = " << varnumJets_40 << std::endl; }
+  if (varmht < -99) {
+  	std::cout << "Error! varmht = " << varmht << std::endl; }
+  if (varmass_leplep < -99) {
+  	std::cout << "Error! varmass_leplep = " << varmass_leplep << std::endl; }
+  if (varvectPt_leplep < -99) {
+  	std::cout << "Error! varvectPt_leplep = " << varvectPt_leplep << std::endl; }
+  if (vardR_leplep < -99) {
+  	std::cout << "Error! vardR_leplep = " << vardR_leplep << std::endl; }
+  if (varMT_of_jets_mass_of_jets < -99) {
+  	std::cout << "Error! varMT_of_jets_mass_of_jets = " << varMT_of_jets_mass_of_jets << std::endl; }
+  if (varMatch_ttbar_jj_Bq_bqq < -99) {
+  	std::cout << "Error! varMatch_ttbar_jj_Bq_bqq = " << varMatch_ttbar_jj_Bq_bqq << std::endl; }
+  if (varMatch_ttbar_jj_Bqq_bq < -99) {
+  	std::cout << "Error! varMatch_ttbar_jj_Bqq_bq = " << varMatch_ttbar_jj_Bqq_bq << std::endl; }
+  if (varMatch_ttbar_ll_Bb < -99) {
+  	std::cout << "Error! varMatch_ttbar_ll_Bb = " << varMatch_ttbar_ll_Bb << std::endl; }
+  if (varttbar_ll_B_CSV < -99) {
+  	std::cout << "Error! varttbar_ll_B_CSV = " << varttbar_ll_B_CSV << std::endl; }
+  if (varttbar_ll_b_CSV < -99) {
+  	std::cout << "Error! varttbar_ll_b_CSV = " << varttbar_ll_b_CSV << std::endl; }
+  if (varMatch_ttbar_jj_Bqq_bqq < -99 && (*jets)->size() >= 6) {  
+  	std::cout << "Error! varMatch_ttbar_jj_Bqq_bqq = " << varMatch_ttbar_jj_Bqq_bqq << std::endl; }  
+
 
   for( unsigned int jj = 0 ; jj < 2 ; ++jj ) {
     

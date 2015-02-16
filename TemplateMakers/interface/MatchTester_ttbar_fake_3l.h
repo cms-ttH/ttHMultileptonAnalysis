@@ -164,7 +164,7 @@ void MatchTester_ttbar_fake_3l::evaluate() {
             bin = std::max(1, std::min(ratio_top_mass_lep_b->GetNbinsX(), ratio_top_mass_lep_b->GetXaxis()->FindBin(lep1_B_vect.M())) );
             ratio_B *= ratio_top_mass_lep_b->GetBinContent(bin);
             bin = std::max(1, std::min(ratio_top_mass_lep_blep->GetNbinsX(), ratio_top_mass_lep_blep->GetXaxis()->FindBin(lep2_blep_vect.M())) );
-            ratio_B *= ratio_top_mass_lep_b->GetBinContent(bin);
+            ratio_B *= ratio_top_mass_lep_blep->GetBinContent(bin);
 
             if (log(ratio_B) > branches["Match_ttbar_fake_3l_B"].branchVal) {
               branches["Match_ttbar_fake_3l_B"].branchVal = log(ratio_B);
@@ -266,6 +266,14 @@ void MatchTester_ttbar_fake_3l::evaluate() {
 
   //std::cout << "Finished jet loop" << std::endl;
 
+  if ( abs((*leptons)->at(0)->tkCharge + (*leptons)->at(1)->tkCharge + (*leptons)->at(2)->tkCharge) == 1 ) {
+    if (max(branches["Match_ttbar_fake_3l_B"].branchVal,branches["Match_ttbar_fake_3l_b"].branchVal) < -99) {
+      std::cout << "Error! max(Match_ttbar_fake_3l_B,Match_ttbar_fake_3l_b) = " << max(branches["Match_ttbar_fake_3l_B"].branchVal,branches["Match_ttbar_fake_3l_b"].branchVal) << std::endl; }
+    if ((*jets)->size() >= 2 && branches["Match_ttbar_fake_3l_Bb"].branchVal < -99) {
+      std::cout << "Error! Match_ttbar_fake_3l_Bb = " << branches["Match_ttbar_fake_3l_Bb"].branchVal << std::endl; }
+  }
+  
+  
   myVars.clear();
 
   for (typename map<TString, BranchInfo<double>>::iterator iBranch = branches.begin();

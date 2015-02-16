@@ -1064,9 +1064,9 @@ int main (int argc, char** argv) {
 //                                                                   "genMotherId", "all_Z_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
 //   kinVars.push_back(&ZLeptonGenMotherId);
 
-//   GenericCollectionMember<int, BNleptonCollection> NonZLeptonGenMotherId(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedNonZLeptons.ptrToItems),
-//                                                                   "genMotherId", "all_nonZ_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
-//   kinVars.push_back(&NonZLeptonGenMotherId);
+  GenericCollectionMember<int, BNleptonCollection> NonZLeptonGenMotherId(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedNonZLeptons.ptrToItems),
+                                                                  "genMotherId", "all_nonZ_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+  kinVars.push_back(&NonZLeptonGenMotherId);
 
 //   GenericCollectionMember<int, BNleptonCollection> ZLeptonGenGrandMotherId(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedZLeptons.ptrToItems),
 //                                                                   "genGrandMother00Id", "all_Z_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
@@ -1181,7 +1181,8 @@ int main (int argc, char** argv) {
   kinVars.push_back(&myFinalBDT_ttZ_3l_Oct31);
 
   FinalBDT_ttW_3l myFinalBDT_ttW_3l(&(met.ptrToItems), &myMTOfEverything, &(jets.ptrToItems), &(jetsByCSV.ptrToItems),
-                                    &myMatchTester_ttbar_fake_3l, &myMatchTester_ttW_3l, &(leptonsSS.ptrToItems));
+                                    &myMatchTester_ttbar_fake_3l, &myMatchTester_ttW_3l, &(leptonsSS.ptrToItems),
+                                    &(tightLoosePreselectedLeptons.ptrToItems));
   kinVars.push_back(&myFinalBDT_ttW_3l);
 
   FinalBDT_ttW_3l_Oct31 myFinalBDT_ttW_3l_Oct31(&(jets.ptrToItems), &(mediumCSVJets.ptrToItems), &myMTOfEverything,

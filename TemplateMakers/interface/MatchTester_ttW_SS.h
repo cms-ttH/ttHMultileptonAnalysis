@@ -633,6 +633,22 @@ void MatchTester_ttW_SS::evaluate() {
   } //end iLep
   //std::cout << "Finished jet loop" << std::endl;
 
+  if (branches["Match_ttW_SS_Bb"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_Bb = " << branches["Match_ttW_SS_Bb"].branchVal << std::endl; }
+  if (branches["Match_ttW_SS_Bq"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_Bq = " << branches["Match_ttW_SS_Bq"].branchVal << std::endl; }
+  if (branches["Match_ttW_SS_bq"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_bq = " << branches["Match_ttW_SS_bq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttW_SS_Bbq"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_Bbq = " << branches["Match_ttW_SS_Bbq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttW_SS_Bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_Bqq = " << branches["Match_ttW_SS_Bqq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 3 && branches["Match_ttW_SS_bqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_bqq = " << branches["Match_ttW_SS_bqq"].branchVal << std::endl; }
+  if ((*jets)->size() >= 4 && branches["Match_ttW_SS_Bbqq"].branchVal < -99) {
+    std::cout << "Error! Match_ttW_SS_Bbqq = " << branches["Match_ttW_SS_Bbqq"].branchVal << std::endl; }
+  
+
   myVars.clear();
 
   for (typename map<TString, BranchInfo<double>>::iterator iBranch = branches.begin();

@@ -53,23 +53,23 @@ jet tag categories:
 #     ge2j_metLD_bloose: " + #geq2 jets + MetLD + tags"
 #     ge4j_metLD_bloose: " + #geq4 jets + MetLD + tags"
 
-    eq3j_metLD_lf: " + #eq3 jets + MetLD + lf"
+    eq3j_metLD_lf: " + 3 jets + MetLD + lf"
     ge4j_metLD_lf: " + #geq4 jets + MetLD + lf"
-    eq3j_metLD_bloose: " + #eq3 jets + MetLD + tags"
+    eq3j_metLD_bloose: " + 3 jets + MetLD + tags"
     ge4j_metLD_bloose: " + #geq4 jets + MetLD + tags"
     
-#     eq0j_lowMet: " + #eq0 jets - MetLD"
-#     eq1j_lowMet: " + #eq1 jets - MetLD"
-#     eq2j_lowMet: " + #eq2 jets - MetLD"
+#     eq0j_lowMet: " + 0 jets - MetLD"
+#     eq1j_lowMet: " + 1 jets - MetLD"
+#     eq2j_lowMet: " + 2 jets - MetLD"
 
 #     le2j_lowMet: " + #leq2 jets - MetLD"
 #     le2j_hiMet: " + #leq2 jets + MetLD"
 
 #     ge0j_hiMet_lf: " + #geq0 jets + MetLD + lf"
-#     eq0j_hiMet: " + #eq0 jets + MetLD"
-#     eq1j_hiMet: " + #eq1 jets + MetLD"
-#     eq2j_hiMet: " + #eq2 jets + MetLD"
-#     eq3j_hiMet_lf: " + #eq3 jets + MetLD + lf"
+#     eq0j_hiMet: " + 0 jets + MetLD"
+#     eq1j_hiMet: " + 1 jets + MetLD"
+#     eq2j_hiMet: " + 2 jets + MetLD"
+#     eq3j_hiMet_lf: " + 3 jets + MetLD + lf"
 #     ge3j_hiMet_lf: " + #geq3 jets + MetLD + lf"
 #     ge4j_hiMet_lf: " + #geq4 jets + MetLD + lf"
     

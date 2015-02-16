@@ -5,6 +5,7 @@ legend y2: 0.89
 legend fill color: kWhite
 legend border size: 0
 legend n columns: 3
+legend precision: 1
 
 lumi text font: 42
 lumi text size: 0.035
