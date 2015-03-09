@@ -38,8 +38,9 @@ def getSelectedListFiles(listDirectory, executable):
     linesFromFile = open(executable + '_lists.txt').read().splitlines()[2:]
 
     for iLine in linesFromFile:
-        cleanLine = iLine.strip()
-        returnList.append(listDirectory+cleanLine+'.list')
+        if iLine: #skip blank lines
+            cleanLine = iLine.strip()
+            returnList.append(listDirectory+cleanLine+'.list')
     return returnList
 
 def getListThatMatches(everyList, sample) :
