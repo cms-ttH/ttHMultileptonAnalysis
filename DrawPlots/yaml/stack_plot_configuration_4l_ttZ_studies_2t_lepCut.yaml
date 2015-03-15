@@ -1,6 +1,6 @@
 #input and output file names
 input file location: histos/4l_ttZ_studies_2t_lepCut
-input file label: ttV_Sep10
+input file label: 03_01_ttV
 output file location: pdf/4l_ttZ_studies_2t_lepCut_blind
 
 #drawing options
@@ -10,7 +10,7 @@ draw legend: true
 log scale: false
 save png: true
 save pdf: true
-blinded: true
+blinded: false
 KS test: false
 selection info : false
 SF info: false
@@ -60,8 +60,9 @@ jet tag categories:
 #     ge2j_Zmask_lowMet_lf: " + #geq2 jets + Z mask + lowMet + lf"
 #     ge2j_Zmask_metLD_1bloose: " + #geq2 jets + Z mask + MetLD + tag"
 
-    ge1j_Zpeak_met30_1bloose: " + #geq1 jets + Z peak + Met30 + tag"
-    ge1j_Zmask_met30_1bloose: " + #geq1 jets + Z mask + Met30 + tag"
+#WPM changed "met30" to "mht30"
+    ge1j_Zpeak_mht30_1bloose: " + #geq1 jets + Z peak + Mht30 + tag"
+    ge1j_Zmask_mht30_1bloose: " + #geq1 jets + Z mask + Mht30 + tag"
 
 #     2lep_pt: " + 2 leps pT cut"
 #     3lep_pt: " + 3 leps pT cut"

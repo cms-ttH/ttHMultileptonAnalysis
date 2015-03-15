@@ -1,5 +1,5 @@
-label: ttV_SS_Jan23
-output label: ttV_SS_Jan23
+label: 03_01_ttV_SS
+output label: 03_01_ttV_SS
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/SS_ttW_studies_2t_lepCut

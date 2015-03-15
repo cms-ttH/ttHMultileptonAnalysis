@@ -62,6 +62,7 @@
 #include "ttHMultileptonAnalysis/TemplateMakers/interface/NOVa/DataDrivenFRLepCut.h"
 #include "ttHMultileptonAnalysis/TemplateMakers/interface/NOVa/DataDrivenFRLepCutPerLepton.h"
 #include "ttHMultileptonAnalysis/TemplateMakers/interface/MatchTester_ttbar_ll.h"
+#include "ttHMultileptonAnalysis/TemplateMakers/interface/NOVa/Pat2BDT_ttH_ll_vs_ttbar_geq6jbloose.h" //WPM
 #include "ttHMultileptonAnalysis/TemplateMakers/interface/NOVa/FinalBDT_ttZ_vs_ttbar_OS.h"
 #include "ttHMultileptonAnalysis/TemplateMakers/interface/NOVa/FinalBDT_ttZ_vs_zjets_OS.h"
 #include "ttHMultileptonAnalysis/TemplateMakers/interface/NOVa/FinalBDT_ttZ_vs_zjets_ttbar_OS.h"

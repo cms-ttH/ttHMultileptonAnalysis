@@ -1,5 +1,5 @@
-label: ttV_Sep10
-output label: ttV_Sep10
+label: 03_01_ttV
+output label: 03_01_ttV
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/4l_ttZ_studies_2t_lepCut

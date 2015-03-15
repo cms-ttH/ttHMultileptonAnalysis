@@ -1172,9 +1172,9 @@ int main (int argc, char** argv) {
   MatchTester_ttbar_fake_3l myMatchTester_ttbar_fake_3l(&(tightLoosePreselectedLeptons.ptrToItems), &(jetsByCSV.ptrToItems));
   kinVars.push_back(&myMatchTester_ttbar_fake_3l);
 
-  FinalBDT_ttZ_3l myFinalBDT_ttZ_3l(&(jets.ptrToItems), &myMTOfEverything, &(mediumCSVJets.ptrToItems),
-                                    &myMatchTester_ttZ_3l, &myZLikeMassLepLepSFOSAll);
-  kinVars.push_back(&myFinalBDT_ttZ_3l);
+  // FinalBDT_ttZ_3l myFinalBDT_ttZ_3l(&(jets.ptrToItems), &myMTOfEverything, &(mediumCSVJets.ptrToItems),
+  //                                  &myMatchTester_ttZ_3l, &myZLikeMassLepLepSFOSAll);
+  //kinVars.push_back(&myFinalBDT_ttZ_3l); //WPM
   
   FinalBDT_ttZ_3l_Oct31 myFinalBDT_ttZ_3l_Oct31(&(jets.ptrToItems), &(mediumCSVJets.ptrToItems),
                                                 &myMatchTester_ttZ_3l, &myZLikeMassLepLepSFOSAll);

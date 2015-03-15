@@ -1,6 +1,6 @@
 #input and output file names
 input file location: histos/SS_ttW_studies_2t_lepCut
-input file label: ttV_SS_Jan23
+input file label: 03_01_ttV_SS
 output file location: pdf/SS_ttW_studies_2t_lepCut
 
 #drawing options
@@ -10,7 +10,7 @@ draw legend: true
 log scale: false
 save png: true
 save pdf: true
-blinded: true
+blinded: false
 KS test: false
 selection info : false
 SF info: false
@@ -147,12 +147,14 @@ background samples:
 #         draw name: "ZZ*"
 #         color: kAzure-8
 #         samples: [zz_lowmll]
-        
+
+#WPM commented out multiboson        
     multiboson:
         draw name: "multiboson"
         color: kViolet
         samples: [www, wwz, WpWpqq, WWDPI] #wzz, zzz, WmWmqq
 
+#WPM commented out ttbarX
     ttbarX:
         draw name: "t#bar{t}+X"
         color: kSpring+8
@@ -162,7 +164,8 @@ background samples:
         draw name: "t#bar{t}H"
         color: kRed
         samples: [ttH125]
-                                        
+
+#WPM commented out ttbarZ and ttbarW                                        
     ttbarZ:
         draw name: "t#bar{t}Z"
         color: kSpring+2

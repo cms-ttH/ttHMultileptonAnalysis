@@ -1,7 +1,7 @@
 #input and output file names
 input file location: histos_OS_studies
-input file label: os_v1
-output file location: pdf_OS_studies/os_v1
+input file label: 01_28_test
+output file location: pdf_OS_studies/01_28_test
 
 #drawing options
 skip systematics: true

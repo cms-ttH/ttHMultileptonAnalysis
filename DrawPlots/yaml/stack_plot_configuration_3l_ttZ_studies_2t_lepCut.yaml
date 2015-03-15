@@ -1,6 +1,6 @@
 #input and output file names
 input file location: histos/3l_ttZ_studies_2t_lepCut
-input file label: ttV_Jan23
+input file label: 03_01_ttV
 output file location: pdf/3l_ttZ_studies_2t_lepCut
 
 #drawing options
@@ -10,7 +10,7 @@ draw legend: true
 log scale: false
 save png: true
 save pdf: true
-blinded: true
+blinded: false
 KS test: false
 selection info : false
 SF info: false

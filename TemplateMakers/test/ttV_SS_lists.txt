@@ -56,8 +56,6 @@ ttbarGStar_tt
 tbZ_ll
 WpWpqq
 WWDPI
-
-
 ttbar_jj
 ttbar_lj
 ttbar_ll
@@ -72,7 +70,6 @@ wjets_1p
 wjets_2p
 wjets_3p
 wjets_4p
-
 ttbarW_ND_gen
 ttbarZ_ND_gen
 ttbar_M166
@@ -81,4 +78,3 @@ ttbar_M171
 ttbar_M173
 ttbar_M175
 ttbar_M178
-

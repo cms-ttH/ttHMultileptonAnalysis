@@ -1,5 +1,5 @@
-label: ttV_Jan23
-output label: ttV_Jan23
+label: 03_01_ttV
+output label: 03_01_ttV
 luminosity: 19450.0
 input_trees_directory: tree_files
 output directory: histos/3l_ttZ_studies_2t_lepCut
@@ -531,6 +531,7 @@ distributions:
 #         axis labels: ['matched top mass bqq', Events]
 #         binning: [*default_num_bins, 70, 270]
 
+#WPM commented out FinalBDT stuff before, but FinalBDT and FinalBDT_blind were left in after merge
     FinalBDT:
         expression: FinalBDT_ttZ_3l
         axis labels: ['final BDT', Events]
@@ -1049,6 +1050,7 @@ limits distributions:
 #         axis labels: ['number of medium b-tagged jets', Events]
 #         binning: [3, -0.5, 2.5]
 
+#WPM commented out all of the below, but FinalBDT and FinalBDT_blind were uncommented
     FinalBDT:
         expression: FinalBDT_ttZ_3l
         axis labels: ['final BDT', Events]
@@ -1068,5 +1070,6 @@ limits distributions:
 #         expression: FinalBDT_ttZ_3l_Oct31
 #         axis labels: ['final BDT Oct 31', Events]
 #         binning: [2, [-1, -0.7, -0.4]]
+
 
 
