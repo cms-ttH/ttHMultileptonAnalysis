@@ -25,6 +25,9 @@ import os
 import FWCore.ParameterSet.Config as cms
 import sys
 
+sys.stderr.write('starting job: machine name is %s\n' % os.environ['HOSTNAME'])
+sys.stdout.write('starting job: machine name is %s\n' % os.environ['HOSTNAME'])
+
 cmssw_base = os.environ['CMSSW_BASE']
 try: #For running with submit_condor_jobs
     thisDir = open(os.path.basename(sys.argv[0]) + '_lists.txt').read().splitlines()[0]
