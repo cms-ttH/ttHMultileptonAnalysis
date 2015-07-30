@@ -200,7 +200,7 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
                 if not group_histogram_Up[systematic] or not group_histogram_Down[systematic]:
                     continue
                 if (group_histogram_Down[systematic].Integral() - group_histogram.Integral())*(group_histogram_Up[systematic].Integral() - group_histogram.Integral()) > 0.01:
-                    print 'Error in sample %s, systematic %s: down = %0.2f, nominal = %0.2f, up = %0.2f' % (sample, systematic, group_histogram_Down[systematic].Integral(), group_histogram.Integral(), group_histogram_Up[systematic].Integral())
+                    print 'ERROR! in sample %s, systematic %s: down = %0.2f, nominal = %0.2f, up = %0.2f' % (sample, systematic, group_histogram_Down[systematic].Integral(), group_histogram.Integral(), group_histogram_Up[systematic].Integral())
                                                   
 
         #End "for sample_part in cfg_data_sig_bkg[sample]['samples']" loop
@@ -281,18 +281,23 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
             background_yield = histograms_local['Background'].GetBinContent(bin)
             background_error = histograms_local['Background'].GetBinError(bin)
             this_yield = histograms_local[key].GetBinContent(bin)
+            if this_yield < 0:
+                print 'ERROR! in %s, %s: %s has negative yield of %f in bin %d.  Setting to 0.002.' % (lepton_category, jet_tag_category, key, this_yield, bin)
+                histograms_local[key].SetBinContent(bin, 0.002)
+                this_yield = 0
             this_error = histograms_local[key].GetBinError(bin)
             other_yield = signal_yield + background_yield - this_yield
             other_error = sqrt( pow(signal_error,2) + pow(background_error,2) - pow(this_error,2) )
+
 
             do_stat_uncert = False
             if not args.stat_uncert:
                 do_stat_uncert = False
             elif 'all' in args.stat_uncert:
-                if this_yield > 0.01:
+                if this_yield+this_error > 0.01:
                     do_stat_uncert = True	
             elif 'some' in args.stat_uncert:
-                if this_yield > 0.01 and this_yield/background_yield > 0.2 and signal_yield/background_yield > 0.1:
+                if this_yield+this_error > 0.01 and (this_yield+this_error)/background_yield > 0.2 and signal_yield/background_yield > 0.1:
                     do_stat_uncert = True
             elif 'ttH' in args.stat_uncert:
                 #### Statistical uncertainty bins from OS ttH analysis
@@ -319,7 +324,7 @@ def make_datacard_one_category(lepton_category, jet_tag_category, histograms):
                 histograms_local['%s_%s0Up' % (key, bin_syst_name)].SetDirectory(0)
                 
                 histograms_local['%s_%s0Down' % (key, bin_syst_name)] = histograms_local[key].Clone('x_%s_%sDown' % (key, bin_syst_name))
-                histograms_local['%s_%s0Down' % (key, bin_syst_name)].SetBinContent(bin, max(0.01, this_yield - this_error))
+                histograms_local['%s_%s0Down' % (key, bin_syst_name)].SetBinContent(bin, max(0.001, this_yield - this_error))
                 histograms_local['%s_%s0Down' % (key, bin_syst_name)].SetDirectory(0)
 
     print 'Total of %d bins need extra statistical uncertainty' % len(bin_syst_names)

@@ -701,6 +701,7 @@ int main (int argc, char** argv) {
     genTopParticles.keepSelectedParticles(topPDGID);
     genAntiTopParticles.initializeRawItems(mcParticles.rawItems);
     auto antitopPDGID = [] (BNmcparticle p) { return (p.id == -6); };
+    genAntiTopParticles.keepSelectedParticles(antitopPDGID);
 
 
     // reset all the vars

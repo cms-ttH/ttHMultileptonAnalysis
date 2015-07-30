@@ -1,7 +1,7 @@
 legend x1: 0.155
-legend y1: 0.77
+legend y1: 0.755
 legend x2: 0.92
-legend y2: 0.89
+legend y2: 0.875
 legend fill color: kWhite
 legend border size: 0
 legend n columns: 3
@@ -9,19 +9,18 @@ legend precision: 1
 
 lumi text font: 42
 lumi text size: 0.035
-lumi text first: 0.14
-lumi text second: 0.91
+lumi text x: 0.69
+lumi text y: 0.93
 
 selection text font: 42
-selection text size: 0.05
-selection text first: 0.45
-selection text second: 0.84
+selection text size: 0.035
+selection text x: 0.13
+selection text y: 0.93
 
 SF text font: 42
 SF text size: 0.05
 SF info min: 0.64
 SF info max: 0.77
-SF info: false
 
 mc error fill style: 3654
 mc error fill color: kBlack
@@ -53,7 +52,7 @@ top canvas left margin: 0.11
 bottom canvas left margin: 0.11
 top canvas right margin: 0.05
 bottom canvas right margin: 0.05
-top canvas top margin: 0.1
+top canvas top margin: 0.115
 bottom canvas bottom margin: 0.3
 
 pad bottom margin: 0.00001

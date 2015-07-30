@@ -1,177 +1,236 @@
 #input and output file names
 input file location: histos/SS_ttW_studies_2t_lepCut
-input file label: ttV_SS_Jan23
+input file label: ttV_SS_March16 ## Newest trees, should be identical to Jan23
+#input file label: ttV_SS_Jan23 ## Used for final fit
+#input file label: ttV_SS_Aug11 ## For fake rate and charge flip derivation / validation
+postFit file location: Limits/histos_postFitS_March19
 output file location: pdf/SS_ttW_studies_2t_lepCut
+#output file location: pdf/SS_ttW_studies_2t_lepCut_ttbarMC
+#output file location: pdf/SS_ttW_studies_2t_lepCut_scaled_NP_ttW
+#output file location: pdf/SS_ttW_studies_2t_lepCut_scaled_NP_ttW_lepVars
+#output file location: pdf/SS_ttW_studies_2t_lepCut_ttbarMC_sideband
 
 #drawing options
-skip systematics: true
+skip systematics: false
 draw ratio plot: true
 draw legend: true
 log scale: false
 save png: true
 save pdf: true
-blinded: true
 KS test: false
-selection info : false
+selection info : true
 SF info: false
 
 #luminosity and era
 luminosity: 19.5
 luminosity error: 0.044
 trigger SF error: 0.02
-lumi era string: "        #sqrt{s} = 8 TeV, L = 19.5 fb^{-1}"
+CMS string: "#scale[1.3]{#bf{              CMS}}"
+#CMS string: "#scale[1.3]{#bf{CMS}} #it{Preliminary}"
+lumi era string: "19.5 fb^{-1} (8 TeV)"
 
 #Lepton categories: "draw name"
 lepton categories:
     mu_mu:
         data samples: [DoubleMu]
+        postFit data samples: [data]
         excluded samples: []
-        tex name: "#mu #mu"
+        tex name: "#mu#scale[0.5]{ }#mu"
+        postFit label: ['ttW_2lss_mumu', '']
     mu_ele:
         data samples: [MuEG]
+        postFit data samples: [data]
         excluded samples: []
-        tex name: "#mu e"
+        tex name: "e#scale[0.5]{ }#mu"
+        postFit label: ['ttW_2lss_em', '']
     ele_ele:
         data samples: [DoubleElectron]
+        postFit data samples: [data]
         excluded samples: []
-        tex name: "e e"
+        tex name: "e#scale[0.5]{ }e"
+        postFit label: ['ttW_2lss_ee', '']
 
 
 #Jet-tag categories: "draw name"
 jet tag categories:
-#     eq2j: " + 2 jets"
-#     eq3j: " + 3 jets"
-#     ge4j: " + #geq4 jets"
-#     eq2j_metLD: " + 2 jets + metLD"
-#     eq3j_metLD: " + 3 jets + metLD"
-#     ge4j_metLD: " + #geq4 jets + metLD"
-#     eq2j_bloose: " + 2 jets + bloose"
-#     eq3j_bloose: " + 3 jets + bloose"
-#     ge4j_bloose: " + #geq4 jets + bloose"
-#     eq2j_metLD: " + 2 jets + metLD + bloose"
-#     eq3j_metLD: " + 3 jets + metLD + bloose"
-#     ge4j_metLD: " + #geq4 jets + metLD + bloose"
+    ## Signal region plots
+    eq3j_bloose: " + 3 jets + b-tags"
+    ge4j_bloose: " + #geq4 jets + b-tags"
+    # ge3j_bloose_hiBDT: " + #geq3 jets + b-tags + BDT"
 
-#     ge4j_ttH: " + #geq4 jets + ttH selection"
-
-#     ttbar: " + ttbar selection"
-#     ttbar_high_BDT: " + ttbar high BDT"
-
-#     eq0j: " + 0 jets"
-#     eq1j: " + 1 jets"
+#     ## Fake rate derivation / validation
 #     eq2j: " + 2 jets"
 #     eq3j_lf: " + 3 jets + lf"
 #     ge4j_lf: " + #geq4 jets + lf"
-    eq3j_bloose: " + 3 jets + tags"
-    ge4j_bloose: " + #geq4 jets + tags"
+
+#     ## Charge flip rate derivation / validation
+#     ## Use QF_sideband_neg
+#     ge0j_Zpeak: " + Z-peak + #geq0 jets"
+
+#     ge4j_ttH: " + #geq4 jets + ttH selection"
+#     ttbar: " + ttbar selection"
+#     ttbar_high_BDT: " + ttbar high BDT"
+
+#     eq3j_bloose_hiBDT: " + 3 jets + tags + BDT #geq 0.3"
+#     ge4j_bloose_hiBDT: " + #geq4 jets + tags + BDT #geq 0.1"
+
+#     ge3j_bloose_passChi2: " + #geq3 jets + tags + Chi2 #leq 10"
+#     ge3j_bloose_failChi2: " + #geq3 jets + tags + Chi2 #geq 10"
     
-#     ge0j_Zpeak: " + #geq0 jets"
-# #     eq0j_Zpeak: " + 0 jets"
-# #     eq1j_Zpeak: " + 1 jets"
-# #     eq2j_Zpeak: " + 2 jets"
+#     eq0j_Zpeak: " + 0 jets"
+#     eq1j_Zpeak: " + 1 jets"
+#     eq2j_Zpeak: " + 2 jets"
     
 #Systematics used in error bars
 systematics:
     - nominal
-    - weight_PUUp
-    - weight_PUDown
-    - topPtWgtDown
-    - topPtWgtUp
-    - csvWeightHFUp
-    - csvWeightHFDown
-    - csvWeightLFUp
-    - csvWeightLFDown
+    #- weight_PUUp
+    #- weight_PUDown
+    #- topPtWgtDown
+    #- topPtWgtUp
+    #- csvWeightHFUp
+    #- csvWeightHFDown
+    #- csvWeightLFUp
+    #- csvWeightLFDown
     
 # Samples drawn on top, scaling (1.0, 2.0, "norm" for area-normalized) 
 signal samples:
     ttW:
-        draw name: "t#bar{t}W"
-        #color: kGreen-5
-        color: kBlue
+        draw name: "t#bar{t}W "
+        color: kGreen-5
+        #color: kBlue
         samples: [ttbarW]
-        stack or line: line
+        postFit samples: [TTW]
+        stack or line: stack
         line width: 2 # must be integer
-        scale: "norm"
+        scale: 1.0
+        #scale: "norm"
+        #scale: 1.9
+
+#     ttbar:
+#         draw name: "t#bar{t} MC "
+#         color: kOrange+7
+#         samples: [ttbar_lj, ttbar_ll]
+#         stack or line: line
+#         line width: 4 # must be integer
+#         scale: "norm"
+
+#     ttbar_99:
+#         draw name: "t#bar{t} -99 MC "
+#         color: kRed
+#         samples: [ttbar_lj_99, ttbar_ll_99]
+#         stack or line: line
+#         line width: 2 # must be integer
+#         scale: "norm"
+
+#     ttbar_tight:
+#         draw name: "tight t#bar{t} MC "
+#         color: kRed
+#         samples: [ttbar_lj, ttbar_ll]
+#         stack or line: line
+#         line width: 4 # must be integer
+#         scale: 1.0
 
 #Samples in each group will be added together and appear as a single entry in the stack plot
 background samples:
 #     inclusive_data_NP_sideband:
-#         draw name: "Fakes"
+#         draw name: "NP "
 #         color: kGray
 #         systematics: [40PercentRateUp, 40PercentRateDown]
 #         samples: [inclusive_data_NP_sideband]
 
     DoubleMu_NP_sideband:
-        draw name: "Fakes"
+        draw name: "Non-prompt "
         color: kGray
-        systematics: [40PercentRateUp, 40PercentRateDown]
+        #systematics: [40PercentRateUp, 40PercentRateDown]
         samples: [DoubleMu_NP_sideband]
+        #samples: [DoubleMu_NP_sideband_scale_0p5]
+        postFit samples: [FR_data]
 
     MuEG_NP_sideband:
-        draw name: "Fakes"
+        draw name: "Non-prompt "
         color: kGray
-        systematics: [40PercentRateUp, 40PercentRateDown]
-        samples: [MuEG_NP_sideband, MuEG_QF_sideband_neg]
-        #samples: [MuEG_NP_sideband]
+        #systematics: [40PercentRateUp, 40PercentRateDown]
+        #samples: [MuEG_NP_sideband, MuEG_QF_sideband_neg]
+        samples: [MuEG_NP_sideband]
+        #samples: [MuEG_NP_sideband_scale_0p6]
+        postFit samples: [FR_data]
 
     DoubleElectron_NP_sideband:
-        draw name: "Fakes"
+        draw name: "Non-prompt "
         color: kGray
-        systematics: [40PercentRateUp, 40PercentRateDown]
-        samples: [DoubleElectron_NP_sideband, DoubleElectron_QF_sideband_neg]
-        #samples: [DoubleElectron_NP_sideband]
+        #systematics: [40PercentRateUp, 40PercentRateDown]
+        #samples: [DoubleElectron_NP_sideband, DoubleElectron_QF_sideband_neg]
+        samples: [DoubleElectron_NP_sideband]
+        #samples: [DoubleElectron_NP_sideband_scale_0p7]
+        postFit samples: [FR_data]
 
     MuEG_QF_sideband:
-        draw name: "Q flip"
+        draw name: "Ch. flip "
         color: kGray+1
-        systematics: [40PercentRateUp, 40PercentRateDown]
+        #systematics: [40PercentRateUp, 40PercentRateDown]
         samples: [MuEG_QF_sideband]
+        postFit samples: [QF_data]
 
     DoubleElectron_QF_sideband:
-        draw name: "Q flip"
+        draw name: "Ch. flip "
         color: kGray+1
-        systematics: [40PercentRateUp, 40PercentRateDown]
+        #systematics: [40PercentRateUp, 40PercentRateDown]
         samples: [DoubleElectron_QF_sideband]
+        postFit samples: [QF_data]
 
     wz_lll:
-        draw name: "WZ"
+        draw name: "WZ "
         color: kViolet-4
         samples: [wz_lll]
-        
-    zz_llll:
-        draw name: "ZZ"
-        color: kAzure-9
-        samples: [zz_llll]
-        
-#     zz_lowmll:
-#         draw name: "ZZ*"
-#         color: kAzure-8
-#         samples: [zz_lowmll]
-        
-    multiboson:
-        draw name: "multiboson"
-        color: kViolet
-        samples: [www, wwz, WpWpqq, WWDPI] #wzz, zzz, WmWmqq
+        postFit samples: [WZ_LF, WZ_CC, WZ_B, WZ_2B]
 
-    ttbarX:
-        draw name: "t#bar{t}+X"
+    Other:
+        draw name: "Other"
         color: kSpring+8
-        samples: [tbZ_ll, ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
+        samples: [zz_llll, www, wwz, WpWpqq, WWDPI, tbZ_ll, ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
+        postFit samples: [ZZ_LF, ZZ_CC, ZZ_B, ZZ_2B, WWqq, VVV, TBZ, TTG, TTStarG, TT2W]
+        
+#     zz_llll:
+#         draw name: "ZZ "
+#         color: kAzure-9
+#         samples: [zz_llll]
+#         postFit samples: [ZZ_LF, ZZ_CC, ZZ_B, ZZ_2B]
+        
+# #     zz_lowmll:
+# #         draw name: "ZZ* "
+# #         color: kAzure-8
+# #         samples: [zz_lowmll]
+        
+#     multiboson:
+#         draw name: "multiboson "
+#         color: kViolet
+#         samples: [www, wwz, WpWpqq, WWDPI] #wzz, zzz, WmWmqq
+#         postFit samples: [WWqq, VVV]
+
+#     ttbarX:
+#         draw name: "t#bar{t}+X "
+#         color: kSpring+8
+#         samples: [tbZ_ll, ttbarG, ttbarGStar_ee, ttbarGStar_mm, ttbarGStar_tt, ttbarWW]
+#         postFit samples: [TBZ, TTG, TTStarG, TT2W]
 
     ttH125:
-        draw name: "t#bar{t}H"
+        draw name: "t#bar{t}H "
         color: kRed
         samples: [ttH125]
-                                        
+        postFit samples: [TTH]
+        
     ttbarZ:
-        draw name: "t#bar{t}Z"
+        draw name: "t#bar{t}Z "
         color: kSpring+2
         samples: [ttbarZ]
-                                        
-    ttbarW:
-        draw name: "t#bar{t}W"
-        color: kGreen-5
-        samples: [ttbarW]
+        postFit samples: [TTZ]
+                                       
+#     ttbarW:
+#         draw name: "t#bar{t}W "
+#         color: kGreen-5
+#         samples: [ttbarW]
+#         postFit samples: [TTW]
 
 #     ttbar_lj:
 #         draw name: ttbar_lj
@@ -188,51 +247,151 @@ background samples:
 #         color: kBlue
 #         samples: [zjets_0p, zjets_1p, zjets_2p, zjets_3p, zjets_4p]
 
+#     ttbar_fail:
+#         draw name: "sideband t#bar{t} MC "
+#         color: kGray
+#         samples: [ttbar_lj_NP_sideband, ttbar_ll_NP_sideband]
+        
 #distribution: [title, underflow, overflow]
-distributions:
-    numAllLeptons: [number of leptons, false, false]
-    numAllMuons: [number of muons, false, false]
-    numJets: ['number of jets', false, false]
-    numLooseBJets: ['number of loose b-tagged jets', false, false]
-    numMediumBJets: ['number of medium b-tagged jets', false, false]
-    all_leptons_by_pt_1_pt: ['First lepton pT', false, false]
-    all_leptons_by_pt_2_pt: ['Second lepton pT', false, false]
-    #NP_lepton_pt: ['NP lepton pT', false, true]
-    all_leptons_by_pt_1_eta: ['First lepton eta', false, false]
-    all_leptons_by_pt_2_eta: ['Second lepton eta', false, false]
-    max_lepton_eta: ['Max lepton eta', false, false]
-    #NP_lepton_eta: ['NP lepton eta', false, false]
-    #all_leptons_by_pt_1_jetBTagCSV: ['First lepton jetBTagCSV', true, false]
-    #all_leptons_by_pt_2_jetBTagCSV: ['Second lepton jetBTagCSV', true, false]
-    #max_lepton_jetBTagCSV: ['max lepton jetBTag CSV', true, false]
-    #NP_lepton_jetBTagCSV: ['NP lepton jetBTag CSV', true, false]
-    jets_by_pt_1_pt: ['First jet pT', false, false]
-    jets_by_pt_2_pt: ['Second jet pT', false, false]
-    min_mass_leplep: ['Min dilepton mass', false, false]
-    mass_lep1_lep2: ['Mass lep1-lep2', false, false]
-    met_pt: ['MET', false, true]
-    mht: ['MHT', false, true]
-    met_ld: ['MetLD', false, true]
-    #sum_pt: ['Sum pT', true, true]
-    #sum_jet_pt: ['Sum jet pT', false, true]
-    #mass_of_jets: ['Mass of all jets', false, true]
-    #jets_MT_mass_ratio: ['MT/mass of all jets', false, false]
-    #everything_MT_mass_ratio: ['MT/mass of everything', false, false]
-    MT_of_everything: ['MT of everything', true, true]
-    ttbar_fake_SS_top_MT_met_lep_B: ['ttbar fake leptonic top MT', true, true]
-    ttbar_fake_SS_top_mass_blep_qq: ['ttbar fake hadronic top mass', true, true]
-    jets_by_CSV_2_btagCombinedSecVertex: ['second highest jet CSV', true, true]
-    #Match_ttbar_fake_SS_Bq: ['match score ttbar Bq', true, true]
-    Match_ttbar_fake_SS_Bqq: ['match score ttbar Bqq', true, true]
-    #Match_ttW_SS_Bb: ['match score ttW Bb', true, true]
-    #Match_ttW_SS_Bq: ['match score ttW Bq', true, true]
-    #Match_ttW_SS_bq: ['match score ttW bq', true, true]
-    Match_ttW_SS_Bbq: ['match score ttW Bbq', true, true]
-    Match_ttW_SS_Bqq: ['match score ttW Bqq', true, true]
-    Match_ttW_SS_Bbqq: ['match score ttW Bbqq', true, true]
-    FinalBDT_QCD: ['final BDT vs. QCD', false, false]
-    FinalBDT: ['t#bar{t}W BDT', false, false]
-    #FinalBDT_blind: ['t#bar{t}W BDT', false, false]
-#     FinalBDT_Oct31: ['final BDT Oct 31', false, false]
-#     FinalBDT_Oct31_blind: ['final BDT Oct 31', false, false]
+postFit distributions:
+    FinalBDT: ['t#bar{t}W BDT', true, true]
+
     
+distributions:
+
+    #################
+    ## Core variables
+    #################
+    all_leptons_by_pt_1_tkCharge: ['Leading lepton charge', false, false]
+    numJets: ['Number of jets', false, true]
+    numMediumBJets: ['Number of medium b-tagged jets', false, true]
+    
+    #############
+    ## BDT inputs
+    #############
+    MT_of_everything: ['M_{T} of everything', true, true]
+    all_leptons_by_pt_1_pt: ['Highest lepton p_{T}', false, false]
+    all_leptons_by_pt_2_pt: ['2^{nd} highest lepton p_{T}', false, false]
+    met_pt: ['MET', false, true]
+    jets_by_CSV_2_btagCombinedSecVertex: ['2^{nd} highest jet CSV', true, true]
+    ttbar_fake_SS_top_MT_met_lep_B: ['M_{T} of t #rightarrow bl#nu matched to t#bar{t}', true, true]
+    ttbar_fake_SS_top_mass_blep_qq: ['Mass of t #rightarrow l_{b}q#bar{q} matched to t#bar{t}', true, true]
+    Match_ttbar_fake_SS_Bqq: ['Match score t#bar{t} #rightarrow l_{b}q#bar{q} bl#nu', true, true]
+    Match_ttW_SS_Bbq: ['Match score t#bar{t}W #rightarrow l#nu bl#nu bq', true, true]
+    Match_ttW_SS_Bbqq: ['Match score t#bar{t}W #rightarrow l#nu bl#nu bq#bar{q}', true, true]
+    FinalBDT: ['t#bar{t}W BDT', false, false]
+    
+#     ####################################
+#     ## Fake rate derivation / validation
+#     ###################################
+#     numJets: ['Number of jets', false, true]
+#     numMediumBJets: ['Number of medium b-tagged jets', false, true]
+#     all_leptons_by_pt_1_pt: ['Highest lepton p_{T}', false, false]
+#     all_leptons_by_pt_2_pt: ['2^{nd} highest lepton p_{T}', false, false]
+#     all_leptons_by_pt_1_eta: ['Leading lepton |#eta|', false, false]
+#     all_leptons_by_pt_2_eta: ['Trailing lepton |#eta|', false, false]
+#     max_lepton_eta: ['Max lepton |#eta|', false, false]
+    
+#     ####################
+#     ## Various variables
+#     ####################
+#     numAllLeptons: [number of leptons, false, false]
+#     numAllMuons: [number of muons, false, false]
+#     numJets: ['number of jets', false, false]
+#     numLooseBJets: ['number of loose b-tagged jets', false, false]
+#     numMediumBJets: ['number of medium b-tagged jets', false, false]
+#     numTightBJets: ['number of tight b-tagged jets', false, false]
+#     lepton_charge: ['Lepton charge', false, false]
+#     all_leptons_by_pt_1_pt: ['First lepton pT', false, false]
+#     all_leptons_by_pt_2_pt: ['Second lepton pT', false, false]
+#     #NP_lepton_pt: ['NP lepton pT', false, true]
+#     all_leptons_by_pt_1_eta: ['First lepton eta', false, false]
+#     all_leptons_by_pt_2_eta: ['Second lepton eta', false, false]
+#     jets_by_pt_1_pt: ['First jet pT', false, false]
+#     jets_by_pt_2_pt: ['Second jet pT', false, false]
+#     min_mass_leplep: ['Min dilepton mass', false, false]
+#     deltaR_leplep: ['deltaR between leptons', false, false]
+#     deltaEta_leplep: ['deltaEta between leptons', false, false]
+#     deltaPhi_leplep: ['deltaPhi between leptons', true, true]
+#     mass_lep1_lep2: ['Mass lep1-lep2', false, false]
+#     met_pt: ['MET', false, true]
+#     mht: ['MHT', false, true]
+#     met_ld: ['MetLD', false, true]
+#     #sum_pt: ['Sum pT', true, true]
+#     #sum_jet_pt: ['Sum jet pT', false, true]
+#     #mass_of_jets: ['Mass of all jets', false, true]
+#     #jets_MT_mass_ratio: ['MT/mass of all jets', false, false]
+#     #everything_MT_mass_ratio: ['MT/mass of everything', false, false]
+#     MT_of_everything: ['MT of everything', true, true]
+#     ttbar_fake_SS_top_MT_met_lep_B: ['ttbar fake leptonic top MT', true, true]
+#     ttbar_fake_SS_top_mass_blep_qq: ['ttbar fake hadronic top mass', true, true]
+#     jets_by_CSV_2_btagCombinedSecVertex: ['second highest jet CSV', true, true]
+#     #Match_ttbar_fake_SS_Bq: ['match score ttbar Bq', true, true]
+#     Match_ttbar_fake_SS_Bqq: ['match score ttbar Bqq', true, true]
+#     #Match_ttW_SS_Bb: ['match score ttW Bb', true, true]
+#     #Match_ttW_SS_Bq: ['match score ttW Bq', true, true]
+#     #Match_ttW_SS_bq: ['match score ttW bq', true, true]
+#     Match_ttW_SS_Bbq: ['match score ttW Bbq', true, true]
+#     Match_ttW_SS_Bqq: ['match score ttW Bqq', true, true]
+#     Match_ttW_SS_Bbqq: ['Semi-leptonic t#bar{t} full match score', true, true]
+#     FinalBDT_QCD: ['final BDT vs. QCD', false, false]
+#     FinalBDT: ['t#bar{t}W BDT', false, false]
+#     FinalBDT_left: ['t#bar{t}W BDT (left)', false, false]
+#     FinalBDT_4bin: ['t#bar{t}W BDT (4 bin)', false, false]
+#     FinalBDT_8bin: ['t#bar{t}W BDT (8 bin)', false, false]
+#     FinalBDT_blind: ['t#bar{t}W BDT (blind)', false, false]
+    
+
+#     #################################################
+#     ## Punch-through / decay-in-flight lepton studies
+#     #################################################
+# #     all_leptons_by_pt_1_lfLepVeto: ['First lepton lfLepVeto', false, false]
+# #     all_leptons_by_pt_2_lfLepVeto: ['Second lepton lfLepVeto', false, false]
+# #     #NP_lepton_eta: ['NP lepton eta', false, false]
+# #     #all_leptons_by_pt_1_jetBTagCSV: ['First lepton jetBTagCSV', true, false]
+# #     #all_leptons_by_pt_2_jetBTagCSV: ['Second lepton jetBTagCSV', true, false]
+# #     #NP_lepton_jetBTagCSV: ['NP lepton jetBTag CSV', true, false]
+# #     min_lepton_lepMVA: ['min lepton lepMVA', true, true]
+# #     max_lepton_DBCorrectedRelIsoDR04: ['max lepton relative isolation', true, true]
+# #     max_lepton_jetBTagCSV: ['max lepton jetBTagCSV', true, true]
+# #     min_lepton_jetPtRatio: ['min lepton jetPtRatio', false, true]
+# #     max_lepton_jetDeltaR: ['max lepton jetDeltaR', false, true]
+# #     max_lepton_IP: ['max lepton IP (#mum)', false, true]
+# #     max_lepton_SIP: ['max lepton SIP', false, true]
+# #     max_lepton_correctedD0Vertex: ['max lepton correctedD0Vertex (#mum)', false, true]
+# #     max_lepton_correctedDZ: ['max lepton correctedDZ (#mum)', false, true]
+# #     min_lepton_numberOfMatchedStations: ['min lepton matched stations', false, true]
+# #     min_lepton_isTrackerMuon: ['min isTrackerMuon', false, true]
+# #     min_lepton_isGlobalMuon: ['min isGlobalMuon', false, true]
+# #     min_lepton_numberOfValidMuonHits: ['min lepton valid muon hits', false, true]
+# #     max_lepton_normalizedChi2: ['max lepton normalizedChi2', false, true]
+# #     min_lepton_isGlobalMuonPromptTight: ['min isGlobalMuonPromptTight', false, true]
+# #     min_lepton_isGoodMuon_1StationTight: ['min isTMOneStationTight', false, true]
+# #     min_lepton_numberOfValidTrackerHits: ['min lepton valid tracker hits', false, true]
+# #     min_lepton_numberOfLayersWithMeasurement: ['min lepton layers with measurement', false, true]
+#     #####################
+#     ## High chi2 lepton
+#     #####################
+#     chi2_lepton_pt: ['High chi2 lepton pT', false, false]
+#     chi2_lepton_eta: ['High chi2 lepton eta', false, false]
+#     chi2_lepton_lepMVA: ['High chi2 lepton lepMVA', true, true]
+#     chi2_lepton_DBCorrectedRelIsoDR04: ['High chi2 lepton relative isolation', true, true]
+#     chi2_lepton_jetBTagCSV: ['High chi2 lepton jetBTagCSV', true, true]
+#     chi2_lepton_jetPtRatio: ['High chi2 lepton jetPtRatio', false, true]
+#     chi2_lepton_jetDeltaR: ['High chi2 lepton jetDeltaR', false, true]
+#     chi2_lepton_IP: ['High chi2 lepton IP (#mum)', false, true]
+#     chi2_lepton_SIP: ['High chi2 lepton SIP', false, true]
+#     chi2_lepton_correctedD0Vertex: ['High chi2 lepton correctedD0Vertex (#mum)', false, true]
+#     chi2_lepton_correctedDZ: ['High chi2 lepton correctedDZ (#mum)', false, true]
+#     chi2_lepton_numberOfMatchedStations: ['High chi2 lepton matched stations', false, true]
+#     chi2_lepton_isTrackerMuon: ['High chi2 isTrackerMuon', false, true]
+#     chi2_lepton_isGlobalMuon: ['High chi2 isGlobalMuon', false, true]
+#     chi2_lepton_numberOfValidMuonHits: ['High chi2 lepton valid muon hits', false, true]
+#     chi2_lepton_normalizedChi2: ['High chi2 lepton normalizedChi2', false, true]
+#     chi2_lepton_isGlobalMuonPromptTight: ['High chi2 isGlobalMuonPromptTight', false, true]
+#     chi2_lepton_isGoodMuon_1StationTight: ['High chi2 isTMOneStationTight', false, true]
+#     chi2_lepton_numberOfValidTrackerHits: ['High chi2 lepton valid tracker hits', false, true]
+#     chi2_lepton_numberOfLayersWithMeasurement: ['High chi2 lepton layers with measurement', false, true]
+#     #####################
+#     ## End high chi2 lepton
+#     #####################

@@ -772,7 +772,7 @@ int main (int argc, char** argv) {
     tightTaus.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatTausPFlow");
     tightTaus.keepSelectedParticles(tauTightID);
     tightLooseTaus.initializeRawItems(tightTaus.rawItems);
-    tightLooseTaus.keepSelectedParticles(tauTightID);
+    tightLooseTaus.keepSelectedParticles(tauLooseID);
     tightLoosePreselectedTaus.initializeRawItems(tightTaus.rawItems);
     tightLoosePreselectedTaus.keepSelectedParticles(tauPreselectedID);
 
@@ -802,6 +802,7 @@ int main (int argc, char** argv) {
     genTopParticles.keepSelectedParticles(topPDGID);
     genAntiTopParticles.initializeRawItems(mcParticles.rawItems);
     auto antitopPDGID = [] (BNmcparticle p) { return (p.id == -6); };
+    genAntiTopParticles.keepSelectedParticles(antitopPDGID);
 
     float lep1_eta = KinematicVariableConstants::FLOAT_INIT;
     float lep1_phi = KinematicVariableConstants::FLOAT_INIT;

@@ -11,7 +11,7 @@ def main ():
             #print line
             list_files = open('../../listsForSkims2012_53x_v3_hadoop/%s.list' % (line)).read().splitlines()[0:]
             input_lists = len(list_files)
-            output_files =  len([name for name in os.listdir('batch_trees/%s_%s' % (line, label)) if 'root' in name])
+            output_files =  len([name for name in os.listdir('batch_trees/%s_lepEff_March18_lepVars' % (line)) if 'root' in name])
             if input_lists != output_files:
                 print '%d input lists and %d output files in %s' % (input_lists, output_files, line)
             #print input_lists

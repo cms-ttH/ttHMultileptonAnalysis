@@ -129,6 +129,7 @@ int main (int argc, char** argv) {
   GenericCollection<BNmuonCollection> preselectedMuons(beanHelper);
   GenericCollection<BNmuonCollection> tightLooseMuons(beanHelper);
   GenericCollection<BNmuonCollection> tightLoosePreselectedMuons(beanHelper);
+  // GenericCollection<BNmuonCollection> unselectedMuons(beanHelper);
 
   GenericCollection<BNleptonCollection> tightLeptons(beanHelper);
   GenericCollection<BNleptonCollection> tightLooseLeptons(beanHelper);
@@ -178,7 +179,7 @@ int main (int argc, char** argv) {
 
   GenericCollectionSizeVariable<BNjetCollection> numJets(&(jets.ptrToItems), "numJets");
   kinVars.push_back(&numJets);
-  numJets.setCutMin(2);
+  numJets.setCutMin(0);
   cutVars.push_back(&numJets);
 
   GenericCollectionSizeVariable<BNjetCollection> numLooseBJets(&(looseCSVJets.ptrToItems), "numLooseBJets");
@@ -445,37 +446,177 @@ int main (int argc, char** argv) {
   }
   cutVars.push_back(&allLeptonTkCharge);
 
-//   GenericCollectionMember<double, BNleptonCollection> allLeptonSIP(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-//                                                                    "SIP", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-//   kinVars.push_back(&allLeptonSIP);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonSIP(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                   "SIP", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonSIP);
   
-// //   GenericCollectionMember<double, BNleptonCollection> allLeptonD0(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-// //                                                                   "correctedD0Vertex", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-// //   kinVars.push_back(&allLeptonD0);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonD0(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                  "correctedD0Vertex", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonD0);
   
-// //   GenericCollectionMember<double, BNleptonCollection> allLeptonDZ(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-// //                                                                   "correctedDZ", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-// //   kinVars.push_back(&allLeptonDZ);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonDZ(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                  "correctedDZ", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonDZ);
   
-//   GenericCollectionMember<double, BNleptonCollection> allLeptonIP(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-//                                                                   "IP", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-//   kinVars.push_back(&allLeptonIP);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonIP(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                  "IP", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonIP);
   
-// //   GenericCollectionMember<double, BNleptonCollection> allLeptonIPError(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-// //                                                                        "IPError", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-// //   kinVars.push_back(&allLeptonIPError);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonIPError(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                       "IPError", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonIPError);
   
   GenericCollectionMember<double, BNleptonCollection> allLeptonJetBTagCSV(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
                                                                           "jetBTagCSV", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
   kinVars.push_back(&allLeptonJetBTagCSV);
 
-//   GenericCollectionMember<double, BNleptonCollection> allLeptonJetPtRatio(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-//                                                                           "jetPtRatio", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-//   kinVars.push_back(&allLeptonJetPtRatio);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonJetPtRatio(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                          "jetPtRatio", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonJetPtRatio);
   
-// //   GenericCollectionMember<double, BNleptonCollection> allLeptonJetDeltaR(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
-// //                                                                          "jetDeltaR", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
-// //   kinVars.push_back(&allLeptonJetDeltaR);
+  GenericCollectionMember<double, BNleptonCollection> allLeptonJetDeltaR(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+                                                                         "jetDeltaR", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+  kinVars.push_back(&allLeptonJetDeltaR);
+
+//   // Additional variables for light flavor and punch-through or decay in flight muons
+
+//   // Same as numberOfMatches
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonNumberOfMatchedStations(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "numberOfMatchedStations", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfMatchedStations);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonIsTrackerMuon(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "isTrackerMuon", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonIsTrackerMuon);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonIsGlobalMuon(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "isGlobalMuon", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonIsGlobalMuon);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonIsGlobalMuonPromptTight(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "isGlobalMuonPromptTight", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonIsGlobalMuonPromptTight);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonIsGoodMuon_1StationTight(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "isGoodMuon_1StationTight", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonIsGoodMuon_1StationTight);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonNumberOfValidMuonHits(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "numberOfValidMuonHits", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfValidMuonHits);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonNumberOfValidPixelHits(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "numberOfValidPixelHits", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfValidPixelHits);
+
+//   // Same as comNormChi2
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonNormalizedChi2(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "normalizedChi2", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonNormalizedChi2);
+
+// //   GenericCollectionMember<double, BNleptonCollection> allLeptonPtErr(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+// //                                                                          "ptErr", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+// //   kinVars.push_back(&allLeptonPtErr);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonNumberOfValidTrackerHits(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "numberOfValidTrackerHits", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfValidTrackerHits);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonNumberOfLayersWithMeasurement(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "numberOfLayersWithMeasurement", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonNumberOfLayersWithMeasurement);
+
+//   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myDeltaRLepLepAll("deltaR", "min", "deltaR_leplep_all",
+//                                                                                &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 1,
+//                                                                                &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 2, 2);
+//   kinVars.push_back(&myDeltaRLepLepAll);
+  
+//   TwoObjectKinematic<BNleptonCollection,BNleptonCollection> myDeltaEtaLepLepAll("deltaEta", "min", "deltaEta_leplep_all",
+//                                                                                &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 1, 1,
+//                                                                                &(tightLoosePreselectedLeptons.ptrToItems), "all_leptons_by_pt", 2, 2);
+//   kinVars.push_back(&myDeltaEtaLepLepAll);
+  
+//   GenericCollectionMember<double, BNleptonCollection> LeptonPhi(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                 "phi", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&LeptonPhi);
+
+//   // Extra variables to check decay-in-flight vs. punch-through
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonTkNormChi2(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "tkNormChi2", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonTkNormChi2);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonSamNormChi2(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "samNormChi2", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonSamNormChi2);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonTkPT(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "tkPT", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonTkPT);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonSamPT(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "samPT", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonSamPT);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonComPT(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "comPT", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonComPT);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonTkEta(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "tkEta", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonTkEta);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonSamEta(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "samEta", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonSamEta);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonComEta(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "comEta", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonComEta);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonTkPhi(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "tkPhi", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonTkPhi);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonSamPhi(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "samPhi", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonSamPhi);
+
+//   GenericCollectionMember<double, BNleptonCollection> allLeptonComPhi(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                          "comPhi", "all_leptons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 2);
+//   kinVars.push_back(&allLeptonComPhi);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonSamCharge(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "samCharge", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonSamCharge);
+
+//   GenericCollectionMember<int, BNleptonCollection> allLeptonComCharge(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
+//                                                                      "comCharge", "all_leptons_by_pt",  KinematicVariableConstants::INT_INIT, 2);
+//   kinVars.push_back(&allLeptonComCharge);
+  
+//   // GenericCollectionSizeVariable<BNmuonCollection> numUnselectedMuons(&(unselectedMuons.ptrToItems), "numUnselectedMuons");
+//   // kinVars.push_back(&numUnselectedMuons);
+
+//   // TwoObjectKinematic<BNmuonCollection,BNmuonCollection> myDeltarMuMuUnselected("deltaR", "min", "min_deltaR_mumu_unselected",
+//   //                                                                              &(unselectedMuons.ptrToItems), "unselected_muons_by_pt", 1, 6,
+//   //                                                                              &(unselectedMuons.ptrToItems), "unselected_muons_by_pt", 1, 6);
+//   // kinVars.push_back(&myDeltarMuMuUnselected);
+  
+//   // TwoObjectKinematic<BNmuonCollection,BNmuonCollection> myDeltarMuMuTightUnselected("deltaR", "min", "min_deltaR_mumu_tight_unselected",
+//   //                                                                              &(tightMuons.ptrToItems), "tight_muons_by_pt", 1, 2,
+//   //                                                                              &(unselectedMuons.ptrToItems), "unselected_muons_by_pt", 1, 6);
+//   // kinVars.push_back(&myDeltarMuMuTightUnselected);
+  
+//   // GenericCollectionMember<double, BNmuonCollection> UnselectedMuonPt(Reflex::Type::ByName("BNmuon"), &(unselectedMuons.ptrToItems),
+//   //                                                                 "pt", "unselected_muons_by_pt",  KinematicVariableConstants::FLOAT_INIT, 6);
+//   // kinVars.push_back(&UnselectedMuonPt);
+
+//   // GenericCollectionMember<double, BNmuonCollection> UnselectedMuonEta(Reflex::Type::ByName("BNmuon"), &(unselectedMuons.ptrToItems),
+//   //                                                                 "eta", "unselected_muons_by_eta",  KinematicVariableConstants::FLOAT_INIT, 6);
+//   // kinVars.push_back(&UnselectedMuonEta);
+
+//   // GenericCollectionMember<double, BNmuonCollection> UnselectedMuonPhi(Reflex::Type::ByName("BNmuon"), &(unselectedMuons.ptrToItems),
+//   //                                                                 "phi", "unselected_muons_by_phi",  KinematicVariableConstants::FLOAT_INIT, 6);
+//   // kinVars.push_back(&UnselectedMuonPhi);
 
   // isMuon  
   GenericCollectionMember<int, BNleptonCollection> allLeptonIsMuon(Reflex::Type::ByName("BNlepton"), &(tightLoosePreselectedLeptons.ptrToItems),
@@ -686,6 +827,7 @@ int main (int argc, char** argv) {
 //     jetsForLepMVA.initializeRawItemsSortedByCSV(ev, "BNproducer","selectedPatJetsPFlow");
 //     //jetsForLepMVA.correctRawJets();
     
+    // unselectedMuons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatMuonsLoosePFlow");
     tightLoosePreselectedMuons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatMuonsLoosePFlow");
     tightLoosePreselectedElectrons.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatElectronsGSF");
 //     tightLoosePreselectedTaus.initializeRawItemsSortedByPt(ev, "BNproducer","selectedPatTausPFlow");

@@ -669,12 +669,6 @@ int main (int argc, char** argv) {
                                &myMatchTester_ttbar_jj, &myMatchTester_ttbar_ll, &(tightLoosePreselectedLeptons.ptrToItems));
   kinVars.push_back(&myFinalBDT_ttZ_vs_ttbar_OS);
   
-  FinalBDT_ttZ_vs_ttbar_OS_Oct31
-    myFinalBDT_ttZ_vs_ttbar_OS_Oct31(&(jets.ptrToItems), &(jets_40.ptrToItems), &myMHT, &myMassLepLep,
-                               &myVectPtLepLep, &myDeltaRLepLep, &myMTOfJets, &myMassOfJets,
-                               &myMatchTester_ttbar_jj, &myMatchTester_ttbar_ll);
-  kinVars.push_back(&myFinalBDT_ttZ_vs_ttbar_OS_Oct31);
-  
   FinalBDT_ttZ_vs_zjets_OS
     myFinalBDT_ttZ_vs_zjets_OS(&(jets.ptrToItems), &(jets_40.ptrToItems), &myMTOfLepsJets,
                                &myMassOfLepsJets, &(jetsByCSV.ptrToItems), 
@@ -688,12 +682,18 @@ int main (int argc, char** argv) {
                                      &myFinalBDT_ttZ_vs_ttbar_OS);
   kinVars.push_back(&myFinalBDT_ttZ_vs_zjets_ttbar_OS);
   
-  FinalBDT_ttZ_vs_zjets_ttbar_OS_Oct31
-    myFinalBDT_ttZ_vs_zjets_ttbar_OS_Oct31(&(jets.ptrToItems), &(jets_40.ptrToItems), &myMTOfLepsJets,
-                                     &myMassOfLepsJets, &(jetsByCSV.ptrToItems), 
-                                     &myMatchTester_ttbar_jj, &chiSquareTopMasses,
-                                     &myFinalBDT_ttZ_vs_ttbar_OS_Oct31);
-  kinVars.push_back(&myFinalBDT_ttZ_vs_zjets_ttbar_OS_Oct31);
+//   FinalBDT_ttZ_vs_ttbar_OS_Oct31
+//     myFinalBDT_ttZ_vs_ttbar_OS_Oct31(&(jets.ptrToItems), &(jets_40.ptrToItems), &myMHT, &myMassLepLep,
+//                                &myVectPtLepLep, &myDeltaRLepLep, &myMTOfJets, &myMassOfJets,
+//                                &myMatchTester_ttbar_jj, &myMatchTester_ttbar_ll);
+//   kinVars.push_back(&myFinalBDT_ttZ_vs_ttbar_OS_Oct31);
+  
+//   FinalBDT_ttZ_vs_zjets_ttbar_OS_Oct31
+//     myFinalBDT_ttZ_vs_zjets_ttbar_OS_Oct31(&(jets.ptrToItems), &(jets_40.ptrToItems), &myMTOfLepsJets,
+//                                      &myMassOfLepsJets, &(jetsByCSV.ptrToItems), 
+//                                      &myMatchTester_ttbar_jj, &chiSquareTopMasses,
+//                                      &myFinalBDT_ttZ_vs_ttbar_OS_Oct31);
+//   kinVars.push_back(&myFinalBDT_ttZ_vs_zjets_ttbar_OS_Oct31);
   
   ///////////////////////////
   // End for MatchLD and BDT 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os, sys
 from argparse import ArgumentParser
+import copy
 import math
 import yaml
 import ttHMultileptonAnalysis.DrawPlots.utilities.plot_helper as plot_helper
@@ -15,6 +16,9 @@ parser.add_argument('cosmetics_file_name', nargs='?', default='stack_plot_cosmet
 parser.add_argument('-w', '--web', action='store_true', help='post each plot to the user\'s AFS space')
 parser.add_argument('--label', help='Override the label designated in the configuration file with LABEL')
 parser.add_argument('-p', '--pie', action='store_true', help='Post pie plots of background composition and print signal/bg table')
+parser.add_argument('--blind', action='store_true', help='Make data-blind plots')
+parser.add_argument('--postFit', action='store_true', help='Use post-fit histograms')
+parser.add_argument('--postFitNorms', action='store_true', help='Use post-fit normalizations and uncertainties, but not shapes')
 args = parser.parse_args()
 
 ## config is mostly options that change the substance of what is displayed
@@ -28,7 +32,12 @@ with open(args.cosmetics_file_name) as cosmetics_file:
 lepton_categories = config['lepton categories']
 jet_tag_categories = config['jet tag categories']
 distributions = config['distributions']
-distributions['integral_histo'] = ['isCleanEvent', False, False]
+if args.postFit:
+    distributions = config['postFit distributions']
+if args.postFitNorms:
+    for distribution in config['postFit distributions']:
+        distribution_norm =  distribution
+#distributions['integral_histo'] = ['isCleanEvent', False, False]
 signal_samples = config.get('signal samples', {})
 background_samples = config.get('background samples', {})
 draw_names = lambda d: [d[x]['draw name'] for x in d.keys()]
@@ -44,8 +53,12 @@ def main():
         config['input file label'] = args.label
 
     out_location = config['output file location']
-    if config['blinded']:
+    if args.blind:
         out_location += '_blind'
+    if args.postFit:
+        out_location += '_postFitS'
+    if args.postFitNorms:
+        out_location += '_postFitSNorms'
     if args.cosmetics_file_name.startswith('cosmetics_'):
         out_location += (args.cosmetics_file_name.replace('cosmetics','')).replace('.yaml','')
 
@@ -67,7 +80,7 @@ def main():
                 print 'Drawing distribution: %s with jet selection printing name: %s' %  (distribution, jet_tag_categories[jet_tag_category])
                 draw_stack_plot(lepton_category, jet_tag_category, distribution)
 
-            draw_stack_plot(lepton_category, jet_tag_category, 'integral_histo')
+            #draw_stack_plot(lepton_category, jet_tag_category, 'integral_histo')
 
     print_yield_table(yields, 'final yields', '.2f')
     print_yield_table(raw_yields, 'raw yields', '.0f')
@@ -98,11 +111,15 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
     stack_plot = THStack("theStack", "")
     stack_plot_legend = make_legend()
 
-    (luminosity_info_tex, selection_info_tex, SF_info_tex) = make_info_tex_objects(lepton_category, jet_tag_category)
+    (luminosity_info_tex, selection_info_tex, CMS_info_tex, fit_status_tex, SF_info_tex) = make_info_tex_objects(lepton_category, jet_tag_category)
 
     out_location = config['output file location']
-    if config['blinded']:
+    if args.blind:
         out_location = config['output file location']+'_blind'
+    if args.postFit:
+        out_location = config['output file location']+'_postFitS'
+    if args.postFitNorms:
+        out_location = config['output file location']+'_postFitSNorms'
     if args.cosmetics_file_name.startswith('cosmetics_'):
         out_location += (args.cosmetics_file_name.replace('cosmetics','')).replace('.yaml','')
         
@@ -122,23 +139,46 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
         systematics = plot_helper.customize_systematics(config['systematics'], background_samples[sample_group].get('systematics', 'common'))
         if config['skip systematics']:
             systematics = ['nominal']
-        systematics_by_sample[sample_group] = systematics
+        systematics_by_sample[sample_group] = copy.deepcopy(systematics)
         for systematic in systematics:
             samples_in_group = background_samples[sample_group]['samples']
+            if args.postFit:
+               samples_in_group = background_samples[sample_group]['postFit samples'] 
             group_histogram = get_group_histogram(distribution, systematic, samples_in_group, lepton_category, jet_tag_category, sample_group)
             # Add one entry (the sum of all samples in the group) for each sample group to the
             # dictionary; the group will be treated as a single sample for subsequent error calculations
+            if args.postFitNorms and (group_histogram or 'nominal' in systematic):
+               samples_in_group_norms = background_samples[sample_group]['postFit samples']
+               args.postFit = true
+               group_histogram_norm = get_group_histogram(distribution_norm, 'nominal', samples_in_group_norms, lepton_category, jet_tag_category, sample_group)                                              
+
+               args.postFit = false
+               if group_histogram_norm.Integral() > 0 and group_histogram.Integral() > 0:
+                   group_histogram.Scale(group_histogram_norm.Integral()/group_histogram.Integral())
+
+                   if 'nominal' in systematic:
+                       relative_error = group_histogram_norm.GetBinError(1) / group_histogram_norm.GetBinContent(1)
+                       for bin in range(1, group_histogram.GetNbinsX()+1):
+                           if group_histogram.GetBinContent(bin) > 0:
+                               old_bin_error = group_histogram.GetBinError(bin)
+                               group_histogram.SetBinError(bin, math.sqrt( pow(old_bin_error, 2) + pow(relative_error*group_histogram.GetBinContent(bin), 2) ))                   
+               else:
+                   if (group_histogram_norm.Integral() > 0.01) + (group_histogram.Integral() > 0.01) != 0:
+                       print 'ERROR! %s has pre-fit value of %.2f, post-fit of %.2f' % (sample_group, group_histogram.Integral(), group_histogram_norm.Integral())
+               
             try:
                 histogram_dictionary[sample_group+'_'+systematic] = group_histogram.Clone()
             except AttributeError:
-                print 'Problems finding any input files for sample group %s.  Skipping sample group..' % sample_group
+                print 'Problems finding any input files for sample group %s, systematic %s.  Skipping sample group / systematic ...' % (sample_group, systematic)
+                if systematic in systematics_by_sample[sample_group]:
+                    systematics_by_sample[sample_group].remove(systematic)
                 continue
             if systematic == 'nominal':
                 histogram = group_histogram.Clone('stack')
                 mc_sum += histogram.Integral()
                 stack_plot.Add(histogram, 'hist')
                 if cosmetics['legend precision'] == -1:
-                    stack_plot_legend.AddEntry(histogram, '%s' % (background_samples[sample_group]['draw name']) )
+                    stack_plot_legend.AddEntry(histogram, '%s' % (background_samples[sample_group]['draw name']), 'f' )
                 elif cosmetics['legend precision'] == 0 or histogram.Integral() >= 19.95:
                     stack_plot_legend.AddEntry(histogram, '%s (%.0f)' % (background_samples[sample_group]['draw name'], histogram.Integral()), 'f')
                 else:
@@ -153,14 +193,38 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
         systematics = plot_helper.customize_systematics(config['systematics'], signal_samples[sample_group].get('systematics', 'common'))
         if config['skip systematics']:
             systematics = ['nominal']
-        systematics_by_sample[sample_group] = systematics
+        systematics_by_sample[sample_group] = copy.deepcopy(systematics)
         for systematic in systematics:
             samples_in_group = signal_samples[sample_group]['samples']
+            if args.postFit:
+                samples_in_group = signal_samples[sample_group]['postFit samples']
             group_histogram = get_group_histogram(distribution, systematic, samples_in_group, lepton_category, jet_tag_category, sample_group)
+            if args.postFitNorms and (group_histogram or 'nominal' in systematic):
+                samples_in_group_norms = signal_samples[sample_group]['postFit samples']
+                args.postFit = true
+                group_histogram_norm = get_group_histogram(distribution_norm, 'nominal', samples_in_group_norms, lepton_category, jet_tag_category, sample_group)
+ 
+                args.postFit = false
+                if group_histogram_norm.Integral() > 0 and group_histogram.Integral() > 0:
+                    group_histogram.Scale(group_histogram_norm.Integral()/group_histogram.Integral())
+
+                    if 'nominal' in systematic:
+                        relative_error = group_histogram_norm.GetBinError(1) / group_histogram_norm.GetBinContent(1)
+                        for bin in range(1, group_histogram.GetNbinsX()+1):
+                            if group_histogram.GetBinContent(bin) > 0:
+                                old_bin_error = group_histogram.GetBinError(bin)
+                                group_histogram.SetBinError(bin, math.sqrt( pow(old_bin_error, 2) + pow(relative_error*group_histogram.GetBinContent(bin), 2) ))                   
+                    
+                else:
+                    if (group_histogram_norm.Integral() > 0.01) + (group_histogram.Integral() > 0.01) != 0:
+                        print 'ERROR! %s has pre-fit value of %.2f, post-fit of %.2f' % (sample_group, group_histogram.Integral(), group_histogram_norm.Integral())
+
             try:
                 histogram_dictionary[sample_group+'_'+systematic] = group_histogram.Clone()
             except AttributeError:
-                print 'Problems finding any input files for sample group %s.  Skipping sample group..' % sample_group
+                print 'Problems finding any input files for sample group %s, systematic %s.  Skipping sample group / systematic ...' % (sample_group, systematic)
+                if systematic in systematics_by_sample[sample_group]:
+                    systematics_by_sample[sample_group].remove(systematic)
                 continue
             if systematic == 'nominal':
                 signal_histograms[sample_group] = group_histogram.Clone(sample_group)
@@ -211,12 +275,17 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
                 all_signals += signal_sum
 
     ## Draw the data histogram, put in legend
-    skip_data = config['blinded']
-    if not any([config['lepton categories'][lep_cat].get('data samples') for lep_cat in config['lepton categories']]):
+    skip_data = args.blind
+    if not any([lepton_categories[lep_cat].get('data samples') for lep_cat in lepton_categories]):
         skip_data = True
     if not skip_data:
         group_histogram = None
-        samples_in_group = config['lepton categories'][lepton_category].get('data samples', [])
+        samples_in_group = lepton_categories[lepton_category].get('data samples', [])
+        if args.postFit:
+            samples_in_group = lepton_categories[lepton_category].get('postFit data samples', [])
+        if args.postFitNorms:
+            samples_in_group_norms = lepton_categories[lepton_category].get('postFit data samples', [])
+        
         group_histogram = get_group_histogram(distribution, 'nominal', samples_in_group, lepton_category, jet_tag_category, 'data')
         if not group_histogram:
             print 'Problem finding the requested data histograms.  Skipping them and continuing on...'
@@ -226,9 +295,9 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
             data_histogram = group_histogram.Clone('data')
             data_sum = data_histogram.Integral()
             if cosmetics['legend precision'] == -1:
-                stack_plot_legend.AddEntry(data_histogram, 'Data', 'lpe')
+                stack_plot_legend.AddEntry(data_histogram, 'Data', 'lp')
             else:
-                stack_plot_legend.AddEntry(data_histogram, 'Data (%.0f)' % data_sum, 'lpe')
+                stack_plot_legend.AddEntry(data_histogram, 'Data (%.0f)' % data_sum, 'lp')
             yields[jet_tag_category]['data'][lepton_category] = data_histogram.Integral()
             raw_yields[jet_tag_category]['data'][lepton_category] = data_histogram.GetEntries()
 
@@ -250,31 +319,48 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
             return
 
     if draw_mc_error_histo:
-        #mc_error_histogram = TH1D('mc_error_histogram', '', nBins, xMin, xMax)
         mc_error_histogram = stack_plot.GetStack().Last().Clone('mc_error_histogram')
         mc_error_histogram.SetTitle('')
         for i in range(1, nBins+1):
             mc_error_histogram.SetBinContent(i, stack_plot.GetStack().Last().GetBinContent(i))
-            bin_error_squared = math.pow(lumi_trigger_SF_error * stack_plot.GetStack().Last().GetBinContent(i), 2)
-            for sample_group, systematics in systematics_by_sample.items(): #systematics_by_sample is a dictionary (keys: samples and sample groups, values: systematics list)
+            bin_error_squared = math.pow(mc_error_histogram.GetBinError(i), 2) ## Bin statistical error and cross section error
+            bin_error_squared += math.pow(lumi_trigger_SF_error * stack_plot.GetStack().Last().GetBinContent(i), 2)
+            ## Correlate systematics
+            bin_error_syst = {}
+            for sample_group, sample_systs in systematics_by_sample.items(): #systematics_by_sample is a dictionary (keys: samples and sample groups, values: systematics list)
                 if sample_group in lepton_categories[lepton_category].get('excluded samples', []):
                     continue
                 if 'sideband' in sample_group and not plot_helper.is_matching_data_sample(lepton_categories[lepton_category].get('data samples', []), sample_group):
                     continue
-                for systematic in systematics:
-                    bin_error_squared += math.pow(histogram_dictionary[sample_group+'_'+systematic].GetBinContent(i) - histogram_dictionary[sample_group+'_nominal'].GetBinContent(i), 2)
+                for syst in sample_systs:
+                    if not syst in bin_error_syst.keys():
+                        bin_error_syst[syst] = histogram_dictionary[sample_group+'_'+syst].GetBinContent(i) - histogram_dictionary[sample_group+'_nominal'].GetBinContent(i)
+                    else:
+                        bin_error_syst[syst] += histogram_dictionary[sample_group+'_'+syst].GetBinContent(i) - histogram_dictionary[sample_group+'_nominal'].GetBinContent(i)
 
+                    ## Acting as if all systematics were uncorrelated
+                    #bin_error_squared += math.pow(histogram_dictionary[sample_group+'_'+systematic].GetBinContent(i) - histogram_dictionary[sample_group+'_nominal'].GetBinContent(i), 2)
+
+            for syst in bin_error_syst.keys():
+                bin_error_squared += math.pow(bin_error_syst[syst], 2)
             mc_error_histogram.SetBinError(i, math.sqrt(bin_error_squared))
-
+            
         mc_error_histogram.SetFillStyle(cosmetics['mc error fill style'])
         mc_error_histogram.SetFillColor(cosmetics['mc error fill color'])
 
         if cosmetics['legend precision'] == -1:
             True
         elif cosmetics['legend precision'] == 0 or mc_sum + signal_sum >= 19.95:
-            stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%.0f)' % (mc_sum + signal_sum), 'f')
+            stack_plot_legend.AddEntry(mc_error_histogram, 'Sum Pred. (%.0f)' % (mc_sum + signal_sum), 'f')
         else:
-            stack_plot_legend.AddEntry(mc_error_histogram, 'Sum MC (%0.1f)' % (mc_sum + signal_sum), 'f')
+            stack_plot_legend.AddEntry(mc_error_histogram, 'Sum Pred. (%0.1f)' % (mc_sum + signal_sum), 'f')
+
+    if args.postFit:
+        ## Post-fit error histogram has correct error bands but incorrect central value; need to fill legend before
+        mc_error_histogram = get_histogram(distribution, 'nominal', 'err_hist_1_sigma', lepton_category, jet_tag_category)
+        mc_error_histogram.SetFillStyle(cosmetics['mc error fill style'])
+        mc_error_histogram.SetFillColor(cosmetics['mc error fill color'])
+        mc_error_histogram_2_sigma = get_histogram(distribution, 'nominal', 'err_hist_2_sigma', lepton_category, jet_tag_category)
 
     yields[jet_tag_category]['all backgrounds'][lepton_category] = mc_sum
     yields[jet_tag_category]['all signals'][lepton_category] = all_signals
@@ -304,10 +390,18 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
     stack_plot.Draw()
 
     ## For some reason can't be done before Draw()
-    if draw_mc_error_histo:
-        stack_plot.GetYaxis().SetTitleSize(cosmetics['stack y axis title size'])
-        stack_plot.GetYaxis().SetTitleOffset(cosmetics['stack y axis title offset'])
+    stack_plot.GetYaxis().SetTitleSize(cosmetics['stack y axis title size'])
+    stack_plot.GetYaxis().SetTitleOffset(cosmetics['stack y axis title offset'])
+    stack_plot.GetYaxis().SetNdivisions(cosmetics['stack y axis Ndivisions'])
+    stack_plot.GetYaxis().SetLabelSize(cosmetics['stack y axis label size'])
+    stack_plot.GetYaxis().SetLabelOffset(cosmetics['stack y axis label offset'])
+
+    stack_plot.GetXaxis().SetNdivisions(cosmetics['ratio hist x axis Ndivisions'])    
+    
+    if draw_mc_error_histo or args.postFit or args.postFitNorms:
         mc_error_histogram.Draw(cosmetics['mc error histogram draw style'])
+        if args.postFit and abs(1 - mc_error_histogram.Integral()/stack_plot.GetStack().Last().Integral()) > 0.01:
+            print 'WARNING: mc_error and stack differ by %0.2f percent overall' % (abs(1 - mc_error_histogram.Integral()/stack_plot.GetStack().Last().Integral())*100.0)
     for sample_group in signal_samples:
         if config['signal samples'][sample_group]['stack or line'] == 'line':
             signal_histograms[sample_group].Draw(cosmetics['signal histogram draw style'])
@@ -318,16 +412,18 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
         ggg.Draw(cosmetics['ggg draw style'])
 
     ## calculate the KS test result, put it somewhere
-    if config['KS test'] and not skip_data and draw_mc_error_histo:
+    if config['KS test'] and not skip_data and (draw_mc_error_histo or args.postFit or args.postFitNorms):
         ks_result = data_histogram.KolmogorovTest(mc_error_histogram)
         luminosity_info_tex.SetTitle('%s (KS = %0.2f)' % (luminosity_info_tex.GetTitle(), ks_result))
 
     if config['draw legend']:
         stack_plot_legend.Draw()
 
-    luminosity_info_tex.DrawLatex(cosmetics['lumi text first'], cosmetics['lumi text second'], luminosity_info_tex.GetTitle())
+    luminosity_info_tex.DrawLatex(cosmetics['lumi text x'], cosmetics['lumi text y'], luminosity_info_tex.GetTitle())
     if config['selection info']:
-        selection_info_tex.DrawLatex(cosmetics['selection text first'], cosmetics['selection text second'], selection_info_tex.GetTitle())
+        selection_info_tex.DrawLatex(cosmetics['selection text x'], cosmetics['selection text y'], selection_info_tex.GetTitle())
+        CMS_info_tex.DrawLatex(cosmetics['CMS text x'], cosmetics['CMS text y'], CMS_info_tex.GetTitle())
+        fit_status_tex.DrawLatex(cosmetics['fit status text x'], cosmetics['fit status text y'], fit_status_tex.GetTitle())
 
     if config['SF info']:
         if (dist.find('CFMlpANN') != -1):
@@ -335,23 +431,37 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
 
     bottom_canvas.cd()
 
-    if draw_mc_error_histo and config.get('draw ratio plot', True):
+    if (draw_mc_error_histo or args.postFit or args.postFitNorms) and config.get('draw ratio plot', True):
         if not skip_data:
-            (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram)
+            (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram, stack_plot)
         else:
-            (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, signal_histograms.items()[0][1])
+            (ratio_histogram, ratio_error_histogram) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, signal_histograms.items()[0][1], stack_plot)
             ratio_histogram.Scale(1.0/signal_scaling)
 
         ratio_histogram = configure_ratio_histogram(ratio_histogram, distribution)
         ratio_error_histogram = configure_ratio_error_histogram(ratio_error_histogram)
 
+        if args.postFit:
+            (ratio_histogram_2_sigma, ratio_error_histogram_2_sigma) = make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram_2_sigma, data_histogram, stack_plot)
+            ratio_error_histogram_2_sigma = configure_ratio_error_histogram(ratio_error_histogram_2_sigma)
+            ratio_error_histogram_2_sigma.SetFillColor(kYellow)
+
         if not skip_data:
+            g_ratio = make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, mc_error_histogram, stack_plot)
+            g_ratio = configure_data_ratio_asymmetric_errors(g_ratio)
+
+            ratio_histogram.SetLineColor(kWhite)
+            ratio_histogram.SetMarkerColor(kWhite)
+            ratio_histogram.SetFillColor(kWhite)
+            ## We're really just drawing the ratio histogram to get the proper dimensions / format
+            ## for the ratio histogram box.  The real data ratio histogram is g_ratio.  Unfortunately,
+            ## g_ratio is a TGraphAsymmErrors, which doesn't take all the same histo options as a TH1
             ratio_histogram.DrawCopy()
+            if args.postFit:
+                ratio_error_histogram_2_sigma.DrawCopy('e2same')
             ratio_error_histogram.DrawCopy('e2same')
             ratio_histogram.Draw('sameaxis')
             ## asymmetrical poisson errors for data in ratio plot
-            g_ratio = make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, signal_histograms.items()[0][1], stack_plot)
-            g_ratio = configure_data_ratio_asymmetric_errors(g_ratio)
             g_ratio.Draw('psame')
 
         else:
@@ -361,10 +471,11 @@ def draw_stack_plot(lepton_category, jet_tag_category, distribution):
         l = TLine()
         l.DrawLine(xMin, 1., xMax, 1.)
 
-    if config.get('draw cumalitive plot'):
-        cumalitive_histo = make_cumalitive_histo(nBins, xMin, xMax, mc_error_histogram, histogram_dictionary[config['draw cumalitive plot']+'_nominal'], distribution)
-        cumalitive_histo.DrawCopy()
-        cumalitive_histo.Draw('sameaxis')
+    if config.get('draw cumulative plot'):
+        print 'Making a cumulative plot'
+        cumulative_histo = make_cumulative_histo(nBins, xMin, xMax, mc_error_histogram, histogram_dictionary[config['draw cumulative plot']+'_nominal'], distribution)
+        cumulative_histo.DrawCopy()
+        cumulative_histo.Draw('sameaxis')
 
     output_dir = os.path.join(out_location, lepton_category+'_'+jet_tag_category)
     if not os.path.exists(output_dir):
@@ -396,6 +507,7 @@ def get_group_histogram(distribution, systematic, samples_in_group, lepton_categ
             else:
                 group_histogram.Add(sample_histogram)
         except Exception, e:
+            print 'This is an exception in get_group_histogram'
             print e
             continue
 
@@ -406,10 +518,19 @@ def get_histogram(distribution, systematic, sample, lepton_category, jet_tag_cat
     histogram = None
 
     name = '%s_%s' % (distribution, systematic)
-    if systematic == 'nominal' or plot_helper.is_matching_data_sample(lepton_categories[lepton_category]['data samples'], sample_group):
+    if systematic == 'nominal':
         name = '%s' % distribution
+    if plot_helper.is_matching_data_sample(lepton_categories[lepton_category]['data samples'], sample_group):
+        if not 'sideband' in sample and not 'Sideband' in sample:
+            name = '%s' % distribution
+    if args.postFit:
+        name = '%s' % sample
+        if args.postFitNorms and not 'err_hist' in sample:
+            name = '%s_norm' % sample
 
     file_name = os.path.join(config['input file location'], lepton_category, '%s_%s_%s_%s.root' % (lepton_category, jet_tag_category, sample, config['input file label']))
+    if args.postFit:
+        file_name = os.path.join(config['postFit file location'], '%s_%s%s.root' % (lepton_categories[lepton_category]['postFit label'][0], jet_tag_category, lepton_categories[lepton_category]['postFit label'][1]) )
     try:
         root_file = TFile(file_name)
     except ReferenceError:
@@ -420,6 +541,15 @@ def get_histogram(distribution, systematic, sample, lepton_category, jet_tag_cat
         raise ReferenceError('Problem finding %s in file %s, skipping it...' % (name, file_name))
 
     histogram.SetDirectory(0) ##Decouples histogram from root file
+
+    ## Set the bin statistical error and cross section error
+    if not args.postFit:
+        sample_info = plot_helper.SampleInformation(sample)
+        for bin in range(1, histogram.GetNbinsX()):
+            bin_error_squared = math.pow(histogram.GetBinError(bin), 2)
+            if not args.postFitNorms:
+                bin_error_squared += math.pow(histogram.GetBinContent(bin)*sample_info.x_section_error_ttV/sample_info.x_section, 2)
+            histogram.SetBinError(bin, math.sqrt(bin_error_squared))
 
     if distributions[distribution][0] == '':
         distributions[distribution][0] = histogram.GetXaxis().GetTitle()
@@ -464,16 +594,38 @@ def make_legend():
 
 def make_info_tex_objects(lepton_category, jet_tag_category):
     luminosity_info_tex = TLatex()
+    luminosity_info_tex.SetTextAlign(11)
     luminosity_info_tex.SetNDC()
     luminosity_info_tex.SetTextFont(cosmetics['lumi text font'])
     luminosity_info_tex.SetTextSize(cosmetics['lumi text size'])
-    luminosity_info_tex.SetTitle(lepton_categories[lepton_category]['tex name']+jet_tag_categories[jet_tag_category]+config['lumi era string'])
+    luminosity_info_tex.SetTitle(config['lumi era string'])
 
     selection_info_tex = TLatex()
+    selection_info_tex.SetTextAlign(11)
     selection_info_tex.SetNDC()
     selection_info_tex.SetTextFont(cosmetics['selection text font'])
     selection_info_tex.SetTextSize(cosmetics['selection text size'])
-    selection_info_tex.SetTitle(lepton_categories[lepton_category]['tex name']+jet_tag_categories[jet_tag_category])
+    selection_info_tex.SetTitle('%s%s' % (lepton_categories[lepton_category]['tex name'], jet_tag_categories[jet_tag_category]))
+        
+    CMS_info_tex = TLatex()
+    CMS_info_tex.SetTextAlign(11)
+    CMS_info_tex.SetNDC()
+    CMS_info_tex.SetTextFont(cosmetics['CMS text font'])
+    CMS_info_tex.SetTextSize(cosmetics['CMS text size'])
+    CMS_info_tex.SetTitle(config['CMS string'])
+    if args.blind:
+        CMS_info_tex.SetTitle(config['CMS string'].replace('Preliminary', 'Simulation'))
+
+    fit_status_tex = TLatex()
+    fit_status_tex.SetTextAlign(11)
+    fit_status_tex.SetNDC()
+    fit_status_tex.SetTextFont(cosmetics['fit status text font'])
+    fit_status_tex.SetTextSize(cosmetics['fit status text size'])
+    fit_status_tex.SetTitle('#it{Pre-fit}')
+    if args.postFit:
+        fit_status_tex.SetTitle('#it{Post-fit}')
+    if args.postFitNorms:
+        fit_status_tex.SetTitle('#it{Post-fit yields}')
 
     SF_info_tex = TLatex()
     SF_info_tex.SetNDC()
@@ -482,7 +634,7 @@ def make_info_tex_objects(lepton_category, jet_tag_category):
     SF_strings = ['%s x %s' % (signal_samples[sample_group]['draw name'], signal_samples[sample_group]['scale']) for sample_group in signal_samples]
     SF_info_tex.SetTitle(', '.join(SF_strings))
 
-    return luminosity_info_tex, selection_info_tex, SF_info_tex
+    return luminosity_info_tex, selection_info_tex, CMS_info_tex, fit_status_tex, SF_info_tex
 ## end of make_info_tex_objects
 
 def move_extra_into_hist(histogram):
@@ -517,12 +669,13 @@ def move_overflow_into_hist(histogram):
 def configure_stack(stack_plot, plot_max):
     stack_plot.SetTitle(';;Events')
     legend_factor = (cosmetics['legend y2'] - cosmetics['top canvas y1']) / (cosmetics['legend y1'] - cosmetics['top canvas y1'])
+    if config['selection info']:
+        legend_factor = (cosmetics['legend y2'] - cosmetics['top canvas y1']) / (cosmetics['CMS text y'] - 0.015 - cosmetics['top canvas y1'])
     stack_plot.SetMinimum(cosmetics['stack minimum'])
     stack_plot.SetMaximum( max(cosmetics['stack lowest maximum'], plot_max*legend_factor) )
     if (config['log scale']):
-        #legend_factor = (cosmetics['legend y2'] - cosmetics['top canvas y1']) / (cosmetics['legend y1'] - cosmetics['top canvas y1'])
         stack_plot.SetMinimum(cosmetics['stack minimum log scale'])
-        stack_plot.SetMaximum( max(cosmetics['stack lowest maximum log scale'], plot_max*legend_factor) )
+        stack_plot.SetMaximum( max(cosmetics['stack lowest maximum log scale'], plot_max*cosmetics['stack maximum factor log scale']) )
 
     return stack_plot
 ## end configure_stack
@@ -555,6 +708,7 @@ def get_configured_data_asymmetric_errors(data_histogram):
         NN = ggg.GetY()[bin]
         if NN == 0:
             LOW = 0
+            ggg.SetPoint(bin, ggg.GetX()[bin], 0.001) ## So you can see points with 0 events
         else:
             LOW =  Math.gamma_quantile(alpha/2, NN, 1.)
         UP =  Math.gamma_quantile_c(alpha/2, NN+1, 1)
@@ -568,20 +722,20 @@ def get_configured_data_asymmetric_errors(data_histogram):
 
     return ggg
 
-def make_cumalitive_histo(n_bins, x_min, x_max, bg_histo, signal_histo, distribution):
-    cumalitive_histo = TH1D('cumalitive_histo', '', n_bins, x_min, x_max)
-    cumalitive_histo.SetStats(kFALSE)
+def make_cumulative_histo(n_bins, x_min, x_max, bg_histo, signal_histo, distribution):
+    cumulative_histo = TH1D('cumulative_histo', '', n_bins, x_min, x_max)
+    cumulative_histo.SetStats(kFALSE)
     ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'C. BG/sig')
-    cumalitive_histo.SetTitle(ratio_title_string)
-    cumalitive_histo.GetYaxis().SetTitleSize(cosmetics['ratio hist y axis title size'])
-    cumalitive_histo.GetYaxis().SetTitleOffset(cosmetics['ratio hist y axis title offset'])
-    cumalitive_histo.GetYaxis().CenterTitle()
-    cumalitive_histo.GetYaxis().SetLabelSize(cosmetics['ratio hist y axis label size'])
-    cumalitive_histo.GetYaxis().SetNdivisions(cosmetics['ratio hist y axis Ndivisions'])
-    cumalitive_histo.GetXaxis().SetLabelSize(cosmetics['ratio hist x axis label size'])
-    cumalitive_histo.GetXaxis().SetLabelOffset(cosmetics['ratio hist x axis label offset'])
-    cumalitive_histo.GetXaxis().SetTitleOffset(cosmetics['ratio hist x axis title offset'])
-    cumalitive_histo.GetXaxis().SetTitleSize(cosmetics['ratio hist x axis title size'])
+    cumulative_histo.SetTitle(ratio_title_string)
+    cumulative_histo.GetYaxis().SetTitleSize(cosmetics['ratio hist y axis title size'])
+    cumulative_histo.GetYaxis().SetTitleOffset(cosmetics['ratio hist y axis title offset'])
+    cumulative_histo.GetYaxis().CenterTitle()
+    cumulative_histo.GetYaxis().SetLabelSize(cosmetics['ratio hist y axis label size'])
+    cumulative_histo.GetYaxis().SetNdivisions(cosmetics['ratio hist y axis Ndivisions'])
+    cumulative_histo.GetXaxis().SetLabelSize(cosmetics['ratio hist x axis label size'])
+    cumulative_histo.GetXaxis().SetLabelOffset(cosmetics['ratio hist x axis label offset'])
+    cumulative_histo.GetXaxis().SetTitleOffset(cosmetics['ratio hist x axis title offset'])
+    cumulative_histo.GetXaxis().SetTitleSize(cosmetics['ratio hist x axis title size'])
 
     bg_total = 0
     signal_total = 0
@@ -592,11 +746,11 @@ def make_cumalitive_histo(n_bins, x_min, x_max, bg_histo, signal_histo, distribu
         signal_total += signal_histo.GetBinContent(i)
         if (bg_total != 0 and signal_total != 0):
             ratio = (bg_total/bg_integral) / (signal_total/signal_integral)
-            cumalitive_histo.SetBinContent(i, ratio)
+            cumulative_histo.SetBinContent(i, ratio)
 
-    return cumalitive_histo
+    return cumulative_histo
 
-def make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram):
+def make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram, stack_plot):
     #ratio_histogram = TH1D('ratio_histogram', '', nBins, xMin, xMax)
     #ratio_error_histogram = TH1D('ratio_error_histogram', '', nBins, xMin, xMax)
 
@@ -606,8 +760,12 @@ def make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram):
     ratio_error_histogram.SetTitle('')
 
     for i in range(1, nBins+1):
-        mc_value = mc_error_histogram.GetBinContent(i)
+        ## May be different from the value of of mc_error_histogram.GetBinContent(i)
+        mc_value = stack_plot.GetStack().Last().GetBinContent(i)
         mc_error = mc_error_histogram.GetBinError(i)
+        mc_error_center = mc_error_histogram.GetBinContent(i)
+        if args.postFit and abs(1 - mc_error_center/mc_value) > 0.1:
+            print 'WARNING: mc_error and stack differ by %0.2f percent in bin %d' % (abs(1 - mc_error_center/mc_value)*100, i)
         data_value = data_histogram.GetBinContent(i)
         data_error = data_histogram.GetBinError(i)
         if (mc_value !=0 and data_value != 0):
@@ -624,7 +782,7 @@ def make_ratio_histogram(nBins, xMin, xMax, mc_error_histogram, data_histogram):
             ratio_histogram.SetBinContent(i, ratio_value)
             ratio_histogram.SetBinError(i, ratio_error)
         if mc_value != 0:
-            ratio_error_histogram.SetBinContent(i, 1)
+            ratio_error_histogram.SetBinContent(i, mc_error_center/mc_value)
             ratio_error_histogram.SetBinError(i, ratio_error_mc)
 
     return ratio_histogram, ratio_error_histogram
@@ -634,24 +792,29 @@ def configure_ratio_histogram(ratio_histogram, distribution):
     ratio_histogram.SetStats(kFALSE)
     ratio_histogram.SetMinimum(cosmetics['ratio hist min'])
     ratio_histogram.SetMaximum(cosmetics['ratio hist max'])
-    ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'Data/MC')
+    ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'Data/Pred.')
     ratio_histogram.SetTitle(ratio_title_string)
+    
+    ratio_histogram.GetYaxis().CenterTitle()
     ratio_histogram.GetYaxis().SetTitleSize(cosmetics['ratio hist y axis title size'])
     ratio_histogram.GetYaxis().SetTitleOffset(cosmetics['ratio hist y axis title offset'])
-    ratio_histogram.GetYaxis().CenterTitle()
-    ratio_histogram.GetYaxis().SetLabelSize(cosmetics['ratio hist y axis label size'])
     ratio_histogram.GetYaxis().SetNdivisions(cosmetics['ratio hist y axis Ndivisions'])
+    ratio_histogram.GetYaxis().SetLabelSize(cosmetics['ratio hist y axis label size'])
+    ratio_histogram.GetYaxis().SetLabelOffset(cosmetics['ratio hist y axis label offset'])
+    
+    ratio_histogram.GetXaxis().SetTitleSize(cosmetics['ratio hist x axis title size'])
+    ratio_histogram.GetXaxis().SetTitleOffset(cosmetics['ratio hist x axis title offset'])
+    ratio_histogram.GetXaxis().SetNdivisions(cosmetics['ratio hist x axis Ndivisions'])
     ratio_histogram.GetXaxis().SetLabelSize(cosmetics['ratio hist x axis label size'])
     ratio_histogram.GetXaxis().SetLabelOffset(cosmetics['ratio hist x axis label offset'])
-    ratio_histogram.GetXaxis().SetTitleOffset(cosmetics['ratio hist x axis title offset'])
-    ratio_histogram.GetXaxis().SetTitleSize(cosmetics['ratio hist x axis title size'])
+    
     ratio_histogram.SetLineColor(cosmetics['ratio hist line color'])
     ratio_histogram.SetMarkerColor(cosmetics['ratio hist marker color'])
 
-    if config['blinded']:
+    if args.blind:
         ratio_histogram.SetMinimum(0)
-        ratio_histogram.SetMaximum(1)
-        ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'Signal/MC')
+        ratio_histogram.SetMaximum(0.3)
+        ratio_title_string = ';%s;%s' % (distributions[distribution][0], 'Signal/Pred.')
         ratio_histogram.SetTitle(ratio_title_string)
         ratio_histogram.SetLineColor(config['signal samples'][config['signal samples'].keys()[0]]['color'])
         ratio_histogram.SetMarkerColor(config['signal samples'][config['signal samples'].keys()[0]]['color'])
@@ -660,13 +823,14 @@ def configure_ratio_histogram(ratio_histogram, distribution):
 ## end configure_ratio_histogram
 
 def configure_ratio_error_histogram(ratio_error_histogram):
-    ratio_error_histogram.SetMarkerColor(cosmetics['ratio err hist marker color'])
+    ratio_error_histogram.SetMarkerColor(cosmetics['ratio err hist marker color']) ## Does nothing
+    ratio_error_histogram.SetMarkerSize(0)
     ratio_error_histogram.SetFillColor(cosmetics['ratio err hist fill color'])
 
     return ratio_error_histogram
 
-def make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, signal_histogram , stack_plot):
-    ratio_max = 2.3
+def make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, mc_error_histogram, stack_plot):
+    ratio_max = cosmetics['ratio hist max']
     g_ratio = TGraphAsymmErrors(ggg.GetN())
     for bin in range(0, g_ratio.GetN()):
         x_point = data_histogram.GetBinCenter(bin+1)
@@ -674,23 +838,24 @@ def make_data_ratio_asymmetric_errors(nBins, xMin, xMax, ggg, data_histogram, si
         yG = ggg.GetY()[bin]
         yG_low  = ggg.GetEYlow()[bin]
         yG_high = ggg.GetEYhigh()[bin]
-        if not config['blinded']:
+        if not args.blind:
             y_data = data_histogram.GetBinContent(bin+1)
         else:
-            y_data = signal_histogram.GetBinContent(bin+1)
+            y_data = mc_error_histogram.GetBinContent(bin+1)
 
-        yBkg = stack_plot.GetStack().Last().GetBinContent(bin+1)
+        ## May be different from the value of of mc_error_histogram.GetBinContent()
+        yMC = stack_plot.GetStack().Last().GetBinContent(bin+1)
 
-        if yBkg > 0.0:
-            yG_ratio = yG/yBkg
-            yG_ratio_low = yG_low/yBkg
-            yG_ratio_high = yG_high/yBkg
+        if yMC > 0.0:
+            yG_ratio = yG/yMC
+            yG_ratio_low = yG_low/yMC
+            yG_ratio_high = yG_high/yMC
         else:
             yG_ratio = 0.0
             yG_ratio_low = 0.0
             yG_ratio_high = 0.0
 
-        if y_data > 0:
+        if y_data > -1: ## Include points with 0 data
             g_ratio.SetPoint(bin, x_point, yG_ratio)
             g_ratio.SetPointEYlow(bin, yG_ratio_low)
             g_ratio.SetPointEYhigh(bin, yG_ratio_high)
