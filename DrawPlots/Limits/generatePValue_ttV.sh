@@ -3,43 +3,33 @@ combineLocation=/afs/crc.nd.edu/user/a/abrinke1/CMSSW_6_1_1/src/HiggsAnalysis/Co
 
 systFile=systsEnv_Jan23.txt
 # systFile=systsEnv_Jan23_Xsec.txt
-# systFile=systsEnv_Nov14.txt
-# systFile=systsEnv_Nov14_Xsec.txt
-# systFile=systsEnv_Nov14_minus_NP.txt
-# systFile=systsEnv_Nov14_minus_csvWgt.txt
-# systFile=systsEnv_Nov14_minus_extra_jets.txt
-# systFile=systsEnv_Nov14_minus_extra_HF.txt
-# systFile=systsEnv_Nov14_minus_JES.txt
-# systFile=systsEnv_Nov14_minus_lepton.txt
-# systFile=systsEnv_Nov14_minus_prompt_bkg.txt
-# systFile=systsEnv_Nov14_minus_lumi_PU.txt
-# systFile=systsEnv_Jan23_minus_signal_ttW.txt
-# systFile=systsEnv_Jan23_minus_signal_ttZ.txt
-# systFile=systsEnv_Jan23_minus_signal_ttW_ttZ.txt
-# systFile=systsEnv_Jan23_minus_signal_ttW_ttH.txt
-# systFile=systsEnv_Nov14_minus_all.txt
-# systFile=systsEnv_Nov14_minus_top_pt.txt
+# systFile=systsEnv_Jan23_ttW_Xsec.txt
+# systFile=systsEnv_Jan23_ttZ_Xsec.txt
+# systFile=systsEnv_Jan23_minus_NP.txt
+# systFile=systsEnv_Jan23_minus_csvWgt.txt
+# systFile=systsEnv_Jan23_minus_extra_jets.txt
+# systFile=systsEnv_Jan23_minus_extra_HF.txt
+# systFile=systsEnv_Jan23_minus_JES.txt
+# systFile=systsEnv_Jan23_minus_lepton.txt
+# systFile=systsEnv_Jan23_minus_prompt_bkg.txt
+# systFile=systsEnv_Jan23_minus_lumi_PU.txt
+# systFile=systsEnv_Jan23_minus_all.txt
 
-labelOrig_=March16_
+# labelOrig_=March16_
 # labelOrig_=March16_Xsec_
-# labelOrig_=Jan23_
+labelOrig_=Jan23_
 # labelOrig_=Jan23_Xsec_
-# labelOrig_=Nov14_
-# labelOrig_=Nov14_Xsec_
-# labelOrig_=Nov14_minus_NP_
-# labelOrig_=Nov14_minus_csvWgt_
-# labelOrig_=Nov14_minus_extra_jets_
-# labelOrig_=Nov14_minus_extra_HF_
-# labelOrig_=Nov14_minus_JES_
-# labelOrig_=Nov14_minus_lepton_
-# labelOrig_=Nov14_minus_prompt_bkg_
-# labelOrig_=Nov14_minus_lumi_PU_
-# labelOrig_=Jan23_minus_signal_ttW_
-# labelOrig_=Jan23_minus_signal_ttZ_
-# labelOrig_=Jan23_minus_signal_ttW_ttZ_
-# labelOrig_=Jan23_minus_signal_ttW_ttH_
-# labelOrig_=Nov14_minus_all_
-# labelOrig_=Nov14_minus_top_pt_
+# labelOrig_=Jan23_ttW_Xsec_
+# labelOrig_=Jan23_ttZ_Xsec_
+# labelOrig_=Jan23_minus_NP_
+# labelOrig_=Jan23_minus_csvWgt_
+# labelOrig_=Jan23_minus_extra_jets_
+# labelOrig_=Jan23_minus_extra_HF_
+# labelOrig_=Jan23_minus_JES_
+# labelOrig_=Jan23_minus_lepton_
+# labelOrig_=Jan23_minus_prompt_bkg_
+# labelOrig_=Jan23_minus_lumi_PU_
+# labelOrig_=Jan23_minus_all_
 
 SSttWvarOrig=FinalBDT
 threeLttWvarOrig=FinalBDT
@@ -208,13 +198,13 @@ echo "-----------------"
 echo "Combining cards"
 echo "-----------------"
 echo ""
-combineCards.py ND_cards/ttW_2lss_mumu_*j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_mumu_bloose_2t_$label_$SSttWvar.card.txt
-combineCards.py ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt   > ND_cards/cardComb/ttW_2lss_em_bloose_2t_$label_$SSttWvar.card.txt
-combineCards.py ND_cards/ttW_2lss_ee_*j_bloose_2t_$label_$SSttWvar.card.txt   > ND_cards/cardComb/ttW_2lss_ee_bloose_2t_$label_$SSttWvar.card.txt
+# combineCards.py ND_cards/ttW_2lss_mumu_*j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_mumu_bloose_2t_$label_$SSttWvar.card.txt
+# combineCards.py ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt   > ND_cards/cardComb/ttW_2lss_em_bloose_2t_$label_$SSttWvar.card.txt
+# combineCards.py ND_cards/ttW_2lss_ee_*j_bloose_2t_$label_$SSttWvar.card.txt   > ND_cards/cardComb/ttW_2lss_ee_bloose_2t_$label_$SSttWvar.card.txt
 
-combineCards.py ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt ND_cards/ttW_2lss_ee_*j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_em_ee_bloose_2t_$label_$SSttWvar.card.txt
-combineCards.py ND_cards/ttW_2lss_mumu_ge4j_bloose_2t_$label_$SSttWvar.card.txt ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_no_mumu_eq3j_bloose_2t_$label_$SSttWvar.card.txt
-combineCards.py ND_cards/ttW_2lss_*_ge4j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_ge4j_bloose_2t_$label_$SSttWvar.card.txt
+# combineCards.py ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt ND_cards/ttW_2lss_ee_*j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_em_ee_bloose_2t_$label_$SSttWvar.card.txt
+# combineCards.py ND_cards/ttW_2lss_mumu_ge4j_bloose_2t_$label_$SSttWvar.card.txt ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt ND_cards/ttW_2lss_em_*j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_no_mumu_eq3j_bloose_2t_$label_$SSttWvar.card.txt
+# combineCards.py ND_cards/ttW_2lss_*_ge4j_bloose_2t_$label_$SSttWvar.card.txt > ND_cards/cardComb/ttW_2lss_ge4j_bloose_2t_$label_$SSttWvar.card.txt
 
 combineCards.py ND_cards/ttW_2lss_*_*j_bloose_2t_$label_$SSttWvar.card.txt            > ND_cards/cardComb/ttW_2lss_bloose_2t_$label_$SSttWvar.card.txt
 combineCards.py ND_cards/ttW_3l_*j_bloose_2t_$label_$threeLttWvar.card.txt            > ND_cards/cardComb/ttW_3l_bloose_2t_$label_$threeLttWvar.card.txt
@@ -252,14 +242,18 @@ then
 	combinePrefixCompute='-M HybridNew --testStat=PL --singlePoint 0 --onlyTestStat -v 2'
 elif [ "$computeOpt" = "maxLike" ]
 then
-	#combinePrefixCompute='-M MaxLikelihoodFit'
-	combinePrefixCompute='-M MaxLikelihoodFit --robustFit=1 --do95=1 --rMin -4 --rMax 8 --minimizerToleranceForMinos=0.001'
+	combinePrefixCompute='-M MaxLikelihoodFit'
+    ## Use the command below instead to get 95% CL (takes much longer)
+	#combinePrefixCompute='-M MaxLikelihoodFit --robustFit=1 --do95=1 --rMin -4 --rMax 8 --minimizerToleranceForMinos=0.001'
+
+	## Options for MaxLikelihoodFit
 	## '--minos all': With all the bin-by-bin uncertainties, fit takes infinite time for expected signal strength.
 	##                With real data and bin-by-bin uncertainties, much slower, but (probably) less than an hour.                  
 	## '--robustFit=1 --do95=1': Gets 2 sigma bands. 'do95' requires 'robust' and does not work with '--minos all'
 	## '--rMin -4 --rMax 8': Does not appear to change xSec uncertainties or fit time significantly.
 	##                       Need rMin below 0 for some 95% xSec ranges.
 	## '--minimizerToleranceForMinos=0.001': Gets 2 sigma bands faster than 0.0001, and basically as accurate.
+	
 elif [ "$computeOpt" = "maxLikeVerbose" ]
 then
 	combinePrefixCompute='-M MaxLikelihoodFit -v 2'
