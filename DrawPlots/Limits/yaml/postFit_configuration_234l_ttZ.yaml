@@ -1,0 +1,52 @@
+
+workspace label: ttZ_234l_someStat_minos_March10
+datacard label: Jan23_1D_realData_someStat
+number of toys: 400
+debug level: 1
+
+fit types:
+#     preFit: nuisances_prefit_res
+#     postFitB: fit_b
+    postFitS: fit_s
+
+channels:
+    ch1: [ttZ_3l_eq3j_bloose_2t, FinalBDT]
+    ch2: [ttZ_3l_ge4j_bloose_2t, FinalBDT]
+    ch3: [ttZ_4l_ge1j_Zmask_mht30_1bloose_4l, numMediumBJets]
+    ch4: [ttZ_4l_ge1j_Zpeak_mht30_1bloose_4l, numMediumBJets]
+    ch5: [ttZ_2los_em_eq5j_ge1t_2l, BDT_zjets_ttbar]
+    ch6: [ttZ_2los_em_ge6j_ge1t_2l, BDT_zjets_ttbar]
+    ch7: [ttZ_2los_llsf_eq5j_ge1t_2l, BDT_zjets_ttbar]
+    ch8: [ttZ_2los_llsf_ge6j_ge1t_2l, BDT_zjets_ttbar]
+
+signal samples:
+    - TTZ
+
+background samples:
+    - FR_data
+    - FR_TTJets
+    - FR_WZ
+    - ZJets_LF
+    - ZJets_CC
+    - ZJets_B
+    - ZJets_2B
+    - TTJets_LF
+    - TTJets_CC
+    - TTJets_B
+    - TTJets_2B
+    - WZ_LF
+    - WZ_CC
+    - WZ_B
+    - WZ_2B
+    - ZZ_LF
+    - ZZ_CC
+    - ZZ_B
+    - ZZ_2B
+    - VVV
+    - TBZ
+    - TTG
+    - TTStarG
+    - TT2W
+    - TTH
+    - TTW
+    

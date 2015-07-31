@@ -1,0 +1,38 @@
+
+workspace label: ttW_23l_someStat_minos_March10
+datacard label: 2t_Jan23_1D_realData_someStat
+number of toys: 400
+debug level: 1
+
+fit types:
+#     preFit: nuisances_prefit_res
+#     postFitB: fit_b
+    postFitS: fit_s
+
+channels:
+    ch7: [ttW_3l_eq1j_bloose, FinalBDT]
+    ch8: [ttW_3l_ge2j_bloose, FinalBDT]
+
+signal samples:
+    - TTW
+
+background samples:
+    - FR_data
+    - WZ_LF
+    - WZ_CC
+    - WZ_B
+    - WZ_2B
+    - ZZ_LF
+    - ZZ_CC
+    - ZZ_B
+    - ZZ_2B
+    - VVV
+    - TBZ
+    - TTG
+    - TTStarG
+    - TT2W
+    - TTH
+    - TTZ
+    
+    
+            

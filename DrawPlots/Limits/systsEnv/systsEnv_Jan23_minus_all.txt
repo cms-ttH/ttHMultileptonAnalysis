@@ -1,0 +1,7 @@
+## Compare to AN_13_360 uncertainties
+## as seen in systsEnv_new_AN_13_360_like.txt
+
+## Final datacard: https://svnweb.cern.ch/cern/wsvn/cmshcg/trunk/summer2013/couplings/tth/125/ttH_hbb_8TeV.txt
+
+## luminosity
+lumi_8TeV      : ttH.*|T.*|V.*|W.*|Z.* : .* : 1.001
